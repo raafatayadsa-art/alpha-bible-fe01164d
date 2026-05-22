@@ -30,6 +30,25 @@ import {
   verseKey,
 } from "@/lib/reading-state";
 import { cn } from "@/lib/utils";
+import {
+  useDictionary,
+  buildDictionaryIndex,
+  normalizeAr,
+  type DictionaryEntry,
+  type DictionaryIndex,
+} from "@/lib/dictionary";
+
+function entryToSheet(e: DictionaryEntry): MeaningSheetData {
+  const overview = (e.meaning || e.description || "").trim();
+  const short = overview.length > 220 ? overview.slice(0, 220).trim() + "…" : overview;
+  return {
+    word: e.word,
+    kind: e.category,
+    meaning: short,
+    spiritualRole: e.description && e.description !== short ? e.description : undefined,
+    origin: e.meaning && e.meaning !== short ? e.meaning : undefined,
+  };
+}
 
 export const Route = createFileRoute("/$book/$chapter")({
   ssr: false,
@@ -42,61 +61,7 @@ export const Route = createFileRoute("/$book/$chapter")({
   component: ScriptureReader,
 });
 
-/* ---------------- Glossary ---------------- */
-
-type Kind = "person" | "place" | "prophecy" | "symbol" | "concept";
-
-const GLOSSARY: Record<string, MeaningSheetData & { kindHint?: Kind }> = {
-  الله: {
-    word: "الله",
-    kind: "اسم إلهي",
-    kindHint: "concept",
-    meaning: "الإله الواحد، خالق السموات والأرض.",
-    origin: "أصل سامي مشترك يدل على الإله الأعلى.",
-    firstAppearance: "تكوين 1:1",
-    spiritualRole: "محور الكتاب المقدس كله، مصدر الحياة والخلاص.",
-  },
-  الرب: { word: "الرب", kind: "اسم إلهي", kindHint: "concept", meaning: "السيد، يهوه — الإله القدوس." },
-  يسوع: {
-    word: "يسوع",
-    kind: "شخصية",
-    kindHint: "person",
-    meaning: "الذي يخلّص شعبه من خطاياهم.",
-    origin: "من العبرية «يَهوشُع»: الرب يخلّص.",
-    firstAppearance: "متى 1:21",
-    spiritualRole: "المسيح المخلّص، الكلمة المتجسد.",
-  },
-  المسيح: { word: "المسيح", kind: "لقب", kindHint: "person", meaning: "الممسوح، الفادي الموعود به." },
-  موسى: { word: "موسى", kind: "نبي", kindHint: "person", meaning: "نبي الخروج ومستلم الشريعة." },
-  إبراهيم: { word: "إبراهيم", kind: "أب الآباء", kindHint: "person", meaning: "أبو المؤمنين، صديق الله." },
-  داود: { word: "داود", kind: "ملك ونبي", kindHint: "person", meaning: "ملك إسرائيل، كاتب المزامير." },
-  مريم: { word: "مريم", kind: "شخصية", kindHint: "person", meaning: "والدة المسيح، العذراء." },
-  بطرس: { word: "بطرس", kind: "رسول", kindHint: "person" },
-  بولس: { word: "بولس", kind: "رسول", kindHint: "person" },
-  أورشليم: {
-    word: "أورشليم",
-    kind: "مكان",
-    kindHint: "place",
-    meaning: "مدينة السلام، عاصمة الإيمان.",
-    firstAppearance: "يشوع 10:1",
-    mapLabel: "أورشليم — يهوذا",
-  },
-  بيتلحم: { word: "بيتلحم", kind: "مكان", kindHint: "place", meaning: "مولد المسيح." },
-  مصر: { word: "مصر", kind: "مكان", kindHint: "place" },
-  جلجلة: { word: "جلجلة", kind: "مكان", kindHint: "place", meaning: "موضع الصلب." },
-  النور: { word: "النور", kind: "رمز روحي", kindHint: "symbol", meaning: "حضور الله وحقّه في العالم." },
-  الماء: { word: "الماء", kind: "رمز روحي", kindHint: "symbol", meaning: "الطهارة، الحياة، الروح القدس." },
-  الحياة: { word: "الحياة", kind: "مفهوم", kindHint: "concept", meaning: "الحياة الأبدية في الله." },
-  الروح: { word: "الروح", kind: "مفهوم إلهي", kindHint: "concept", meaning: "الروح القدس، نسمة الله." },
-  القيامة: { word: "القيامة", kind: "نبوءة وحدث", kindHint: "prophecy", meaning: "قيامة المسيح من الأموات." },
-  الخلاص: { word: "الخلاص", kind: "مفهوم", kindHint: "concept" },
-  السلام: { word: "السلام", kind: "مفهوم", kindHint: "concept" },
-  الإيمان: { word: "الإيمان", kind: "مفهوم", kindHint: "concept" },
-  المحبة: { word: "المحبة", kind: "مفهوم", kindHint: "concept" },
-  الملكوت: { word: "الملكوت", kind: "نبوءة", kindHint: "prophecy" },
-};
-
-const HIGHLIGHT_WORDS = Object.keys(GLOSSARY);
+/* Highlight matches now come from the dictionary_entries table via useDictionary(). */
 
 /* ---------------- Reader ---------------- */
 
@@ -111,6 +76,13 @@ function ScriptureReader() {
   const [progress, setProgress] = useState(0);
   const [typeOpen, setTypeOpen] = useState(false);
   const [activeVerse, setActiveVerse] = useState<string | null>(null);
+
+  // Dictionary words from Supabase (dictionary_entries) — drives highlight + meaning sheet.
+  const dict = useDictionary();
+  const dictIndex = useMemo<DictionaryIndex>(
+    () => buildDictionaryIndex(dict.data ?? []),
+    [dict.data],
+  );
 
   // Persistent typography prefs
   const { prefs, setPrefs, reset: resetPrefs } = useTypographyPrefs();
@@ -326,6 +298,7 @@ function ScriptureReader() {
       className={cn(
         "relative min-h-screen w-full overflow-x-hidden transition-colors duration-500",
         bgClass,
+        spiritualMode && "reader-spiritual",
       )}
     >
       {/* Soft cloud atmosphere — light mode parchment haze */}
@@ -509,7 +482,11 @@ function ScriptureReader() {
                       text: v?.verse_text ?? "",
                     })
                   }
-                  onSelectWord={(w, k) => setSheet(GLOSSARY[w] ?? { word: w, kind: k })}
+                  onSelectWord={(w) => {
+                    const e = dictIndex.map.get(normalizeAr(w));
+                    if (e) setSheet(entryToSheet(e));
+                  }}
+                  dictIndex={dictIndex}
                   showRef={showRef}
                   onOpenRef={() =>
                     setSheet({
@@ -608,6 +585,7 @@ function VerseCard({
   onTap,
   onToggleSave,
   onSelectWord,
+  dictIndex,
   showRef,
   onOpenRef,
 }: {
@@ -619,7 +597,8 @@ function VerseCard({
   surfaceClass: string;
   onTap: () => void;
   onToggleSave: () => void;
-  onSelectWord: (w: string, k?: string) => void;
+  onSelectWord: (w: string) => void;
+  dictIndex: DictionaryIndex;
   showRef: boolean;
   onOpenRef: () => void;
 }) {
@@ -645,7 +624,7 @@ function VerseCard({
           {num}
         </span>
         <p className="flex-1 min-w-0">
-          {renderVerse(text, onSelectWord)}
+          {renderVerse(text, dictIndex, onSelectWord)}
           {showRef && <ReferenceIndicator count={2} onClick={(e?: any) => { e?.stopPropagation?.(); onOpenRef(); }} />}
         </p>
         <button
@@ -971,29 +950,34 @@ function SliderRow({
 
 /* ---------------- Verse renderer ---------------- */
 
+/**
+ * Splits a verse into Arabic-letter runs vs the rest, then wraps each run that
+ * normalizes to a word in the dictionary index in a `HighlightedWord` button.
+ * Tashkeel and alef variants are normalized so matches survive Arabic spelling.
+ */
 function renderVerse(
   text: string,
-  onSelect: (w: string, kind?: string) => void,
+  dictIndex: DictionaryIndex,
+  onSelect: (w: string) => void,
 ): React.ReactNode {
   if (!text) return null;
-  const words = [...HIGHLIGHT_WORDS].sort((a, b) => b.length - a.length);
-  if (!words.length) return text;
-  const pattern = new RegExp(`(${words.map((w) => escapeReg(w)).join("|")})`, "g");
-  const parts = text.split(pattern);
+  if (!dictIndex.map.size) return text;
+  // Split into Arabic-letter runs (group 1) and the surrounding glue (group 0/even indices).
+  const parts = text.split(/([\u0600-\u06FF\u0750-\u077F]+)/g);
   return parts.map((p, i) => {
-    if (words.includes(p)) {
-      const meta = GLOSSARY[p];
-      const kind = (meta?.kindHint ?? "concept") as Kind;
-      return (
-        <HighlightedWord key={i} kind={kind} onSelect={() => onSelect(p, meta?.kind)}>
-          {p}
-        </HighlightedWord>
-      );
+    if (!p) return null;
+    if (i % 2 === 1) {
+      // Arabic word run
+      const key = normalizeAr(p);
+      if (key && dictIndex.map.has(key)) {
+        return (
+          <HighlightedWord key={i} onSelect={() => onSelect(p)}>
+            {p}
+          </HighlightedWord>
+        );
+      }
     }
     return <span key={i}>{p}</span>;
   });
 }
 
-function escapeReg(s: string) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
