@@ -962,18 +962,18 @@ function SliderRow({
 function renderVerse(
   text: string,
   dictIndex: DictionaryIndex,
+  seenWords: Set<string>,
   onSelect: (w: string) => void,
 ): React.ReactNode {
   if (!text) return null;
   if (!dictIndex.map.size) return text;
-  // Split into Arabic-letter runs (group 1) and the surrounding glue (group 0/even indices).
   const parts = text.split(/([\u0600-\u06FF\u0750-\u077F]+)/g);
   return parts.map((p, i) => {
     if (!p) return null;
     if (i % 2 === 1) {
-      // Arabic word run
       const key = normalizeAr(p);
-      if (key && dictIndex.map.has(key)) {
+      if (key && dictIndex.map.has(key) && !seenWords.has(key)) {
+        seenWords.add(key);
         return (
           <HighlightedWord key={i} onSelect={() => onSelect(p)}>
             {p}
