@@ -6,7 +6,6 @@ import {
   BookmarkCheck,
   Home as HomeIcon,
   Search,
-  Settings2,
   Type as TypeIcon,
   ChevronUp,
   ChevronDown,
