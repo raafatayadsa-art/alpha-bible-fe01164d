@@ -7,10 +7,7 @@ type Speed = (typeof SPEEDS)[number];
 
 /**
  * Floating glass auto-scroll controller.
- * - Cinematic dark navy / emerald glass pill with soft gold border + neon green active glow.
- * - Apple/Kindle-style overlay visibility:
- *     appears on ANY tap / touch / interaction with the reader,
- *     stays visible 5 seconds, then fades smoothly to a low-opacity ghost.
+ * Visibility is controlled by the shared reader chrome timer when `visible` is provided.
  */
 export function AutoScrollControls({
   spiritualMode,
@@ -37,7 +34,7 @@ export function AutoScrollControls({
   const eased = useRef<number>(0);
   const idleTimer = useRef<number | null>(null);
   const controlled = visible !== undefined;
-  const active = controlled ? (visible || playing) : internalActive;
+  const active = controlled ? Boolean(visible) : internalActive;
 
   // Fallback (uncontrolled) visibility: dim after idle.
   const kick = () => {
@@ -64,12 +61,7 @@ export function AutoScrollControls({
 
   useEffect(() => {
     if (controlled) return;
-    if (playing) {
-      setInternalActive(true);
-      if (idleTimer.current) window.clearTimeout(idleTimer.current);
-    } else {
-      kick();
-    }
+    kick();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing, speedIdx, spiritualMode, controlled]);
 
