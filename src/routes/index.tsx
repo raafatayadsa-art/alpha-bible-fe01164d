@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import splashImage from "@/assets/splash.png";
 
+
 export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
