@@ -75,7 +75,7 @@ function OnboardingScreen() {
               {isSelected && (
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded-full"
+                  className="pointer-events-none absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full"
                   style={{ background: "#b8893a" }}
                 >
                   <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} />
