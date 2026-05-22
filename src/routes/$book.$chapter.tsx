@@ -505,14 +505,22 @@ function VerticalProgress({
         className={cn(
           "flex flex-col items-center gap-1.5 rounded-full border px-1.5 py-2 backdrop-blur-xl",
           spiritualMode
-            ? "bg-white/[0.05] border-white/10"
+            ? "bg-[#0c1828]/55 border-white/[0.07] shadow-[0_0_18px_-6px_rgba(231,201,122,0.25),inset_0_1px_0_rgba(255,255,255,0.04)]"
             : "bg-[#fbf3e1]/70 border-white/70 shadow-[0_8px_18px_-12px_rgba(120,80,30,0.35),inset_0_1px_0_rgba(255,255,255,0.7)]",
         )}
       >
         {/* progress fill */}
-        <div className="relative h-40 w-1 rounded-full bg-[#ecdcb6]/60 overflow-hidden">
+        <div
+          className={cn(
+            "relative h-40 w-1 rounded-full overflow-hidden",
+            spiritualMode ? "bg-white/[0.06]" : "bg-[#ecdcb6]/60",
+          )}
+        >
           <div
-            className="absolute inset-x-0 top-0 rounded-full bg-gradient-to-b from-[#e7c97a] via-[#c79356] to-[#7a4a26] transition-[height] duration-300"
+            className={cn(
+              "absolute inset-x-0 top-0 rounded-full bg-gradient-to-b from-[#e7c97a] via-[#c79356] to-[#7a4a26] transition-[height] duration-300",
+              spiritualMode && "shadow-[0_0_8px_rgba(231,201,122,0.6)]",
+            )}
             style={{ height: `${Math.max(2, progress)}%` }}
           />
         </div>
