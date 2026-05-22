@@ -139,10 +139,11 @@ function BooksGrid() {
                 <BookCard
                   key={b}
                   name={displayName(b)}
-                  to={`/${b}`}
+                  bookParam={b}
                   tone={i % 3 === 1 ? "purple" : i % 3 === 2 ? "ivory" : "gold"}
                 />
               ))}
+
             </div>
           )}
         </section>
