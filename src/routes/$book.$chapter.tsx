@@ -453,7 +453,7 @@ function ScriptureReader() {
                   saved={saved}
                   spiritualMode={spiritualMode}
                   surfaceClass={verseCardClass}
-                  onTap={() => setActiveVerse((cur) => (cur === id ? null : id))}
+                  onTap={() => setActiveVerse(id)}
                   onToggleSave={() =>
                     toggleSaved({
                       book,
