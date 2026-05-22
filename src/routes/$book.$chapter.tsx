@@ -576,11 +576,12 @@ function ScriptureReader() {
         />
       )}
 
-      {/* Auto-scroll above the dock — manages its own 5s visibility overlay */}
+      {/* Auto-scroll above the dock — visibility is synchronized with the bottom nav */}
       <AutoScrollControls
         spiritualMode={spiritualMode}
         onToggleSpiritual={() => setSpiritualMode((s) => !s)}
-        bottomClass="bottom-[96px]"
+        bottomClass="bottom-[104px]"
+        visible={chromeVisible}
       />
 
       {/* Persistent global navigation */}
