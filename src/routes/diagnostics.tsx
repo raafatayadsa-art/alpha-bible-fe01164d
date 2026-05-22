@@ -100,6 +100,20 @@ function Diagnostics() {
               ? `${sampleVerse.book_name} ${sampleVerse.chapter_number}:${sampleVerse.verse_number} — ${sampleVerse.verse_text}`
               : null
           }
+        <Row k="Total books" v={booksCount} />
+        <Row k="Total chapters (selected book)" v={chaptersCount} />
+        <Row k="Total verses" v={versesCount} />
+        <Row k="Selected book" v={selectedBook} />
+        <Row k="Selected chapter" v={selectedChapter} />
+        <Row k="Last query result" v={lastQueryResult} />
+        <Row k="Last fetch error" v={lastError} />
+        <Row
+          k="Sample first verse"
+          v={
+            sampleVerse
+              ? `${sampleVerse.book_name} ${sampleVerse.chapter_number}:${sampleVerse.verse_number} — ${sampleVerse.verse_text}`
+              : null
+          }
         />
       </div>
     </main>
