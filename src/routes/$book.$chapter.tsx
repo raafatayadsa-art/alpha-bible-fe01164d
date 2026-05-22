@@ -325,19 +325,33 @@ function ScriptureReader() {
         />
       )}
 
-      {/* Cinematic glow atmosphere (dark mode only) */}
+      {/* Cinematic dark cloud atmosphere — layered navy haze + soft spiritual bloom */}
       {spiritualMode && (
-        <div
-          aria-hidden
-          className="pointer-events-none fixed inset-0 z-0"
-          style={{
-            background:
-              "radial-gradient(60% 40% at 50% 0%, rgba(231,201,122,0.10), transparent 70%)," +
-              "radial-gradient(50% 35% at 85% 30%, rgba(140,110,210,0.07), transparent 75%)," +
-              "radial-gradient(70% 45% at 15% 85%, rgba(110,160,220,0.06), transparent 80%)," +
-              "radial-gradient(100% 60% at 50% 100%, rgba(0,0,0,0.55), transparent 70%)",
-          }}
-        />
+        <>
+          <div
+            aria-hidden
+            className="pointer-events-none fixed inset-0 z-0"
+            style={{
+              background:
+                "radial-gradient(70% 45% at 50% -5%, rgba(231,201,122,0.13), transparent 70%)," +
+                "radial-gradient(55% 40% at 85% 25%, rgba(140,110,210,0.09), transparent 75%)," +
+                "radial-gradient(70% 45% at 15% 80%, rgba(62,180,130,0.08), transparent 80%)," +
+                "radial-gradient(60% 35% at 50% 50%, rgba(110,160,220,0.05), transparent 75%)," +
+                "radial-gradient(120% 70% at 50% 110%, rgba(0,0,0,0.65), transparent 65%)",
+            }}
+          />
+          {/* drifting cloud diffusion layer */}
+          <div
+            aria-hidden
+            className="pointer-events-none fixed inset-0 z-0 mix-blend-screen opacity-[0.18] animate-[abFog_28s_ease-in-out_infinite_alternate]"
+            style={{
+              background:
+                "radial-gradient(40% 30% at 30% 40%, rgba(180,200,230,0.35), transparent 70%)," +
+                "radial-gradient(35% 25% at 70% 65%, rgba(160,180,220,0.30), transparent 70%)",
+              filter: "blur(40px)",
+            }}
+          />
+        </>
       )}
 
       {/* Top thin progress */}
