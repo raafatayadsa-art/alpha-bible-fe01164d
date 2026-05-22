@@ -110,18 +110,18 @@ export function MeaningSheet({
 
           <header className="flex items-center justify-between gap-3 px-4 pb-3" dir="rtl">
             <div className="min-w-0">
-              <h3 className="font-arabic-serif text-[20px] font-bold text-[#3a2a18] truncate">
+              <h3 className="font-arabic-serif text-[20px] font-bold text-[#f4f9ee] truncate">
                 {data?.word}
               </h3>
               {data?.kind && (
-                <p className="text-[11px] font-bold text-[#b8893a]">{data.kind}</p>
+                <p className="text-[11px] font-bold text-[#e7c97a]">{data.kind}</p>
               )}
             </div>
             <button
               type="button"
               onClick={onClose}
               aria-label="إغلاق"
-              className="grid h-9 w-9 place-items-center rounded-full bg-white/80 border border-[#efe2c4] text-[#3a2a18] active:scale-90 transition-transform"
+              className="grid h-9 w-9 place-items-center rounded-full bg-white/10 border border-[#7af0b8]/30 text-[#eaf6ec] active:scale-90 transition-transform"
             >
               <X className="h-4 w-4" />
             </button>
