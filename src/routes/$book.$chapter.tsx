@@ -30,6 +30,25 @@ import {
   verseKey,
 } from "@/lib/reading-state";
 import { cn } from "@/lib/utils";
+import {
+  useDictionary,
+  buildDictionaryIndex,
+  normalizeAr,
+  type DictionaryEntry,
+  type DictionaryIndex,
+} from "@/lib/dictionary";
+
+function entryToSheet(e: DictionaryEntry): MeaningSheetData {
+  const overview = (e.meaning || e.description || "").trim();
+  const short = overview.length > 220 ? overview.slice(0, 220).trim() + "…" : overview;
+  return {
+    word: e.word,
+    kind: e.category,
+    meaning: short,
+    spiritualRole: e.description && e.description !== short ? e.description : undefined,
+    origin: e.meaning && e.meaning !== short ? e.meaning : undefined,
+  };
+}
 
 export const Route = createFileRoute("/$book/$chapter")({
   ssr: false,
