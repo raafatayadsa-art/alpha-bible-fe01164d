@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
  * Mirrors the approved Home dock — glass surface, raised center, safe-area aware.
  * Use on any page that should keep the global navigation visible.
  */
-export function BottomDock({ className = "" }: { className?: string }) {
+export function BottomDock({ className = "", hidden = false }: { className?: string; hidden?: boolean }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const isActive = (match: string | RegExp) =>
@@ -19,7 +19,8 @@ export function BottomDock({ className = "" }: { className?: string }) {
       dir="rtl"
       aria-label="التنقل السفلي"
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 pointer-events-none",
+        "fixed inset-x-0 bottom-0 z-50 pointer-events-none transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        hidden ? "translate-y-[120%] opacity-0" : "translate-y-0 opacity-100",
         className,
       )}
       style={{ paddingBottom: "max(env(safe-area-inset-bottom), 8px)" }}
