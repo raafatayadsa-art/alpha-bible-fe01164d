@@ -259,7 +259,7 @@ function ScriptureReader() {
 
   // Palette
   const bgClass = spiritualMode
-    ? "bg-[#070d1a] text-[#e8e2cf]"
+    ? "bg-[#070d1a] text-[#f5ecd2]"
     : "bg-[#f8efdc] text-[#3a2a18]";
   const surfaceClass = spiritualMode
     ? "bg-[#0e1a2e]/55 border-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_8px_22px_-16px_rgba(0,0,0,0.7)]"
@@ -267,6 +267,7 @@ function ScriptureReader() {
   const verseCardClass = spiritualMode
     ? "bg-[#0e1a2e]/55 border-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_6px_18px_-14px_rgba(0,0,0,0.65)]"
     : "bg-white/65 border-[#efe2c4]/80 shadow-[0_6px_18px_-14px_rgba(120,80,30,0.30)]";
+
 
   const totalVerses = verses.data?.length ?? 0;
 
@@ -391,13 +392,16 @@ function ScriptureReader() {
               to="/bible"
               aria-label="الرئيسية للكتاب المقدس"
               className={cn(
-                "grid h-9 w-9 place-items-center rounded-full border active:scale-90 transition-transform",
-                surfaceClass,
+                "grid h-9 w-9 place-items-center rounded-full border backdrop-blur-xl active:scale-90 transition-all duration-300",
+                spiritualMode
+                  ? "bg-gradient-to-br from-[#0c2236]/80 to-[#0a1a2c]/70 border-[#3eb482]/35 text-[#f0d78c] shadow-[0_0_14px_-2px_rgba(62,180,130,0.45),0_0_22px_-6px_rgba(231,201,122,0.30),inset_0_1px_0_rgba(255,255,255,0.06)]"
+                  : "bg-gradient-to-br from-white/90 to-[#fff1c7]/80 border-[#c79356]/45 text-[#7a4a26] shadow-[0_8px_18px_-10px_rgba(120,80,20,0.45),0_0_12px_-4px_rgba(62,180,130,0.30)]",
               )}
             >
               <HomeIcon className="h-4 w-4" />
             </Link>
           </div>
+
 
           <div className="text-center min-w-0 flex-1 px-1">
             <p
