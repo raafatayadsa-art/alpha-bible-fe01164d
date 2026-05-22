@@ -680,18 +680,6 @@ function VerticalProgress({
   book: string;
   spiritualMode: boolean;
 }) {
-  const windowed = useMemo(() => {
-    if (!chapters.length) return [] as number[];
-    const max = 12;
-    if (chapters.length <= max) return chapters;
-    const i = Math.max(0, chapters.indexOf(current));
-    const half = Math.floor(max / 2);
-    let start = Math.max(0, i - half);
-    const end = Math.min(chapters.length, start + max);
-    start = Math.max(0, end - max);
-    return chapters.slice(start, end);
-  }, [chapters, current]);
-
   // sparse markers: first, last, current
   const markers = useMemo(() => {
     if (!chapters.length) return [] as number[];
