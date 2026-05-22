@@ -892,8 +892,10 @@ function TypographySheet({
           display={`${readingWidth}px`}
           spiritualMode={spiritualMode}
         />
+        </div>
       </div>
     </>
+
   );
 }
 
