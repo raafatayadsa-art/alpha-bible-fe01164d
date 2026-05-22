@@ -61,61 +61,7 @@ export const Route = createFileRoute("/$book/$chapter")({
   component: ScriptureReader,
 });
 
-/* ---------------- Glossary ---------------- */
-
-type Kind = "person" | "place" | "prophecy" | "symbol" | "concept";
-
-const GLOSSARY: Record<string, MeaningSheetData & { kindHint?: Kind }> = {
-  الله: {
-    word: "الله",
-    kind: "اسم إلهي",
-    kindHint: "concept",
-    meaning: "الإله الواحد، خالق السموات والأرض.",
-    origin: "أصل سامي مشترك يدل على الإله الأعلى.",
-    firstAppearance: "تكوين 1:1",
-    spiritualRole: "محور الكتاب المقدس كله، مصدر الحياة والخلاص.",
-  },
-  الرب: { word: "الرب", kind: "اسم إلهي", kindHint: "concept", meaning: "السيد، يهوه — الإله القدوس." },
-  يسوع: {
-    word: "يسوع",
-    kind: "شخصية",
-    kindHint: "person",
-    meaning: "الذي يخلّص شعبه من خطاياهم.",
-    origin: "من العبرية «يَهوشُع»: الرب يخلّص.",
-    firstAppearance: "متى 1:21",
-    spiritualRole: "المسيح المخلّص، الكلمة المتجسد.",
-  },
-  المسيح: { word: "المسيح", kind: "لقب", kindHint: "person", meaning: "الممسوح، الفادي الموعود به." },
-  موسى: { word: "موسى", kind: "نبي", kindHint: "person", meaning: "نبي الخروج ومستلم الشريعة." },
-  إبراهيم: { word: "إبراهيم", kind: "أب الآباء", kindHint: "person", meaning: "أبو المؤمنين، صديق الله." },
-  داود: { word: "داود", kind: "ملك ونبي", kindHint: "person", meaning: "ملك إسرائيل، كاتب المزامير." },
-  مريم: { word: "مريم", kind: "شخصية", kindHint: "person", meaning: "والدة المسيح، العذراء." },
-  بطرس: { word: "بطرس", kind: "رسول", kindHint: "person" },
-  بولس: { word: "بولس", kind: "رسول", kindHint: "person" },
-  أورشليم: {
-    word: "أورشليم",
-    kind: "مكان",
-    kindHint: "place",
-    meaning: "مدينة السلام، عاصمة الإيمان.",
-    firstAppearance: "يشوع 10:1",
-    mapLabel: "أورشليم — يهوذا",
-  },
-  بيتلحم: { word: "بيتلحم", kind: "مكان", kindHint: "place", meaning: "مولد المسيح." },
-  مصر: { word: "مصر", kind: "مكان", kindHint: "place" },
-  جلجلة: { word: "جلجلة", kind: "مكان", kindHint: "place", meaning: "موضع الصلب." },
-  النور: { word: "النور", kind: "رمز روحي", kindHint: "symbol", meaning: "حضور الله وحقّه في العالم." },
-  الماء: { word: "الماء", kind: "رمز روحي", kindHint: "symbol", meaning: "الطهارة، الحياة، الروح القدس." },
-  الحياة: { word: "الحياة", kind: "مفهوم", kindHint: "concept", meaning: "الحياة الأبدية في الله." },
-  الروح: { word: "الروح", kind: "مفهوم إلهي", kindHint: "concept", meaning: "الروح القدس، نسمة الله." },
-  القيامة: { word: "القيامة", kind: "نبوءة وحدث", kindHint: "prophecy", meaning: "قيامة المسيح من الأموات." },
-  الخلاص: { word: "الخلاص", kind: "مفهوم", kindHint: "concept" },
-  السلام: { word: "السلام", kind: "مفهوم", kindHint: "concept" },
-  الإيمان: { word: "الإيمان", kind: "مفهوم", kindHint: "concept" },
-  المحبة: { word: "المحبة", kind: "مفهوم", kindHint: "concept" },
-  الملكوت: { word: "الملكوت", kind: "نبوءة", kindHint: "prophecy" },
-};
-
-const HIGHLIGHT_WORDS = Object.keys(GLOSSARY);
+/* Highlight matches now come from the dictionary_entries table via useDictionary(). */
 
 /* ---------------- Reader ---------------- */
 
