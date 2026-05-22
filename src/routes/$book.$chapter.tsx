@@ -565,20 +565,23 @@ function ScriptureReader() {
         />
       )}
 
-      {/* Auto-scroll above the dock — manages its own 5s visibility overlay */}
-      <AutoScrollControls
-        spiritualMode={spiritualMode}
-        onToggleSpiritual={() => setSpiritualMode((s) => !s)}
-        bottomClass="bottom-[96px]"
-      />
+      {/* Auto-scroll above the dock — hides while typography panel is open */}
+      {!typeOpen && (
+        <AutoScrollControls
+          spiritualMode={spiritualMode}
+          onToggleSpiritual={() => setSpiritualMode((s) => !s)}
+          bottomClass="bottom-[96px]"
+        />
+      )}
 
-      {/* Persistent global navigation */}
-      <BottomDock hidden={chromeHidden} />
+      {/* Persistent global navigation — also hides while typography panel is open */}
+      <BottomDock hidden={chromeHidden || typeOpen} />
 
       <MeaningSheet data={sheet} onClose={() => setSheet(null)} />
     </main>
   );
 }
+
 
 /* ---------------- Verse Card ---------------- */
 
@@ -819,15 +822,28 @@ function TypographySheet({
       <div
         dir="rtl"
         className={cn(
-          "fixed left-1/2 -translate-x-1/2 z-50 w-[min(92vw,340px)] rounded-3xl border p-3 backdrop-blur-3xl animate-in fade-in zoom-in-95 duration-300",
-          "bottom-[150px]",
-          spiritualMode
-            ? "bg-[#0b1a2c]/55 border-[#e7c97a]/22 text-[#e8e2cf] shadow-[0_24px_60px_-20px_rgba(0,0,0,0.85),0_0_28px_-10px_rgba(231,201,122,0.30),inset_0_1px_0_rgba(255,255,255,0.06)]"
-            : "bg-white/55 border-white/70 text-[#3a2a18] shadow-[0_20px_50px_-18px_rgba(120,80,30,0.45),inset_0_1px_0_rgba(255,255,255,0.85)]",
+          "fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[460px] px-3 pb-[max(env(safe-area-inset-bottom),10px)] animate-in slide-in-from-bottom-4 fade-in duration-300",
         )}
         role="dialog"
         aria-label="إعدادات النص"
       >
+        <div
+          className={cn(
+            "rounded-3xl border p-3 backdrop-blur-3xl",
+            spiritualMode
+              ? "bg-[#0b1a2c]/55 border-[#e7c97a]/22 text-[#f3e6c4] shadow-[0_24px_60px_-20px_rgba(0,0,0,0.85),0_0_28px_-10px_rgba(231,201,122,0.30),inset_0_1px_0_rgba(255,255,255,0.06)]"
+              : "bg-white/55 border-white/70 text-[#3a2a18] shadow-[0_-12px_40px_-18px_rgba(120,80,30,0.45),inset_0_1px_0_rgba(255,255,255,0.85)]",
+          )}
+        >
+          {/* drag handle */}
+          <div
+            aria-hidden
+            className={cn(
+              "mx-auto mb-2 h-1 w-10 rounded-full",
+              spiritualMode ? "bg-white/15" : "bg-[#c79356]/30",
+            )}
+          />
+
         <div className="flex items-center justify-between mb-2 px-0.5">
           <p className="text-[11.5px] font-extrabold tracking-wide opacity-90">إعدادات القراءة</p>
           <button
