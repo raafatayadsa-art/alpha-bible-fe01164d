@@ -155,22 +155,23 @@ function HomeScreen() {
         </section>
 
         {/* Quick access grid 3x2 */}
-        <section className="mt-4 grid grid-cols-3 gap-3">
+        <section className="mt-4 grid grid-cols-3 gap-2.5">
           {quickCards.map((c) => (
-            <Pressable key={c.key} to={c.to} ariaLabel={c.title}>
-              <div className="relative h-full rounded-3xl bg-[#fbf3e1] border border-[#efe2c4] shadow-[0_10px_24px_-14px_rgba(120,80,30,0.35),inset_0_1px_0_rgba(255,255,255,0.7)] p-3 text-center">
-                <div className="mx-auto h-[88px] w-full grid place-items-center">
-                  <img src={c.icon} alt="" className="max-h-[88px] w-auto object-contain drop-shadow-[0_8px_10px_rgba(80,40,10,0.18)]" draggable={false} />
+            <Pressable key={c.key} to={c.to} ariaLabel={c.title} className="min-w-0">
+              <div className="relative h-full rounded-3xl bg-[#fbf3e1] border border-[#efe2c4] shadow-[0_10px_24px_-14px_rgba(120,80,30,0.35),inset_0_1px_0_rgba(255,255,255,0.7)] px-2 pt-2.5 pb-2 text-center min-w-0">
+                <div className="mx-auto h-[72px] w-full grid place-items-center overflow-hidden">
+                  <img src={c.icon} alt="" className="max-h-[72px] max-w-full object-contain drop-shadow-[0_8px_10px_rgba(80,40,10,0.18)]" draggable={false} />
                 </div>
-                <h3 className="mt-2 text-[13px] font-extrabold text-[#3a2a18] leading-tight">{c.title}</h3>
-                <p className="mt-1 text-[10px] leading-snug text-[#6a543a] whitespace-pre-line">{c.sub}</p>
-                <div className="mt-2 flex justify-center">
+                <h3 className="mt-1.5 text-[12px] font-extrabold text-[#3a2a18] leading-tight [word-break:keep-all] [overflow-wrap:normal]">{c.title}</h3>
+                <p className="mt-0.5 text-[10px] leading-[1.35] text-[#6a543a] whitespace-pre-line [word-break:keep-all]">{c.sub}</p>
+                <div className="mt-1 flex justify-center">
                   <ChevronLeft className="h-3.5 w-3.5 text-[#b8893a]" />
                 </div>
               </div>
             </Pressable>
           ))}
         </section>
+
 
         {/* Continue your journey */}
         <section className="mt-4">
