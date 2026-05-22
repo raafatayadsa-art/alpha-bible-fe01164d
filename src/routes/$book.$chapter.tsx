@@ -26,11 +26,15 @@ function ChapterReader() {
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12" dir="rtl">
-      <nav className="mb-6 text-sm text-muted-foreground">
-        <Link to="/" className="hover:text-foreground">الأسفار</Link>
-        <span className="mx-2">/</span>
-        <Link to="/$book" params={{ book }} className="hover:text-foreground">{book}</Link>
-      </nav>
+      <div className="mb-6">
+        <Link
+          to="/$book"
+          params={{ book }}
+          className="inline-flex items-center rounded-md border border-border bg-card px-4 py-2 text-sm text-card-foreground hover:bg-accent hover:text-accent-foreground"
+        >
+          → رجوع إلى الإصحاحات
+        </Link>
+      </div>
 
       <header className="mb-10 text-center">
         <h1 className="font-serif text-4xl text-foreground">
