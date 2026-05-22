@@ -128,7 +128,7 @@ function ScriptureReader() {
       <div className="relative mx-auto w-full max-w-[640px] px-4 pt-[max(env(safe-area-inset-top),12px)] pb-40">
         {/* Header */}
         <header className="flex items-center justify-between gap-2 pt-3">
-          <BackButton to={`/${book}` as any} />
+          <BackButton />
           <div className="text-center min-w-0">
             <p className={cn("text-[10px] font-bold tracking-wider", spiritualMode ? "text-[#c79356]" : "text-[#b8893a]")}>
               {isNT ? "العهد الجديد" : "العهد القديم"}
