@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { booksQueryOptions } from "@/lib/bible";
-import { groupBooks } from "@/lib/bible-books";
+import { groupBooks, displayName } from "@/lib/bible-books";
 
 export const Route = createFileRoute("/")({
   ssr: false,
