@@ -178,7 +178,7 @@ function ScriptureReader() {
     };
   }, [book, chapter]);
 
-  // Track which verse is currently visible (top half of viewport).
+  // Track currently visible verse and auto-highlight it (immersive auto-scroll focus).
   useEffect(() => {
     if (!verses.data?.length) return;
     const els = Array.from(
@@ -192,14 +192,18 @@ function ScriptureReader() {
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
         if (visible) {
           const n = Number((visible.target as HTMLElement).dataset.verseNum);
-          if (n) visibleVerseRef.current = n;
+          if (n) {
+            visibleVerseRef.current = n;
+            const id = verseKey(book, ch, n);
+            setActiveVerse((cur) => (cur === id ? cur : id));
+          }
         }
       },
-      { rootMargin: "-15% 0px -65% 0px", threshold: 0.01 },
+      { rootMargin: "-30% 0px -55% 0px", threshold: 0.01 },
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, [verses.data]);
+  }, [verses.data, book, ch]);
 
   // Persist reading session (throttled) + restore scroll on first load.
   const restoredRef = useRef(false);
