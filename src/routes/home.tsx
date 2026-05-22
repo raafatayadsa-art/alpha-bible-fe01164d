@@ -63,6 +63,25 @@ function GlassChip({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
+function useHideOnScroll() {
+  const [visible, setVisible] = useState(true);
+  const lastY = useRef(0);
+  useEffect(() => {
+    lastY.current = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const dy = y - lastY.current;
+      if (y < 40) setVisible(true);
+      else if (dy > 6) setVisible(false);
+      else if (dy < -6) setVisible(true);
+      lastY.current = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return visible;
+}
+
 // ===== screen =====
 function HomeScreen() {
   const greeting = useGreeting();
@@ -70,6 +89,7 @@ function HomeScreen() {
   const [saved, setSaved] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [notifCount] = useState(1);
+  const dockVisible = useHideOnScroll();
 
   const quickCards = [
     { key: "bible", icon: iconBible, title: "اكمل القراءة", sub: "تابع حيث توقفت\nفي الكتاب المقدس", to: "/books" },
