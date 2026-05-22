@@ -32,6 +32,8 @@ export const Route = createFileRoute("/bible")({
 function BibleHome() {
   const { data: books } = useQuery(booksQueryOptions());
   const grouped = books ? groupBooks(books) : { old: [], neu: [], other: [] };
+  const session = useCurrentSession();
+
 
   return (
     <main
