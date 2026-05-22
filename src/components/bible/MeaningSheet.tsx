@@ -170,8 +170,8 @@ export function MeaningSheet({
                     key={i}
                     className="rounded-2xl bg-white/70 border border-[#efe2c4] p-3"
                   >
-                    <p className="text-[11px] font-bold text-[#b8893a]">{v.reference}</p>
-                    <p className="mt-1 font-arabic-serif text-[14px] leading-relaxed text-[#3a2a18]">
+                    <p className="text-[11px] font-bold text-[#e7c97a]">{v.reference}</p>
+                    <p className="mt-1 font-arabic-serif text-[14px] leading-relaxed text-[#eaf6ec]">
                       {v.text}
                     </p>
                   </div>
@@ -187,10 +187,10 @@ export function MeaningSheet({
                     className="flex items-center justify-between rounded-2xl bg-white/70 border border-[#efe2c4] p-3"
                   >
                     <div>
-                      <p className="text-[13px] font-bold text-[#3a2a18]">{p.name}</p>
-                      {p.role && <p className="text-[11px] text-[#6a543a]">{p.role}</p>}
+                      <p className="text-[13px] font-bold text-[#eaf6ec]">{p.name}</p>
+                      {p.role && <p className="text-[11px] text-[#cfe4d5]">{p.role}</p>}
                     </div>
-                    <Users className="h-4 w-4 text-[#b8893a]" />
+                    <Users className="h-4 w-4 text-[#e7c97a]" />
                   </div>
                 ))}
                 {!(data?.relatedPeople?.length) && <Empty label="لا توجد أشخاص مرتبطون بعد." />}
@@ -201,8 +201,8 @@ export function MeaningSheet({
                 {(data?.timeline ?? []).map((t, i) => (
                   <li key={i} className="relative">
                     <span className="absolute -start-[7px] top-1.5 h-3 w-3 rounded-full bg-[#c79356] ring-2 ring-[#fbf3e1]" />
-                    {t.year && <p className="text-[11px] font-bold text-[#b8893a]">{t.year}</p>}
-                    <p className="text-[13px] text-[#3a2a18]">{t.event}</p>
+                    {t.year && <p className="text-[11px] font-bold text-[#e7c97a]">{t.year}</p>}
+                    <p className="text-[13px] text-[#eaf6ec]">{t.event}</p>
                   </li>
                 ))}
                 {!(data?.timeline?.length) && <Empty label="لا يوجد تسلسل زمني بعد." />}
@@ -238,8 +238,8 @@ function OverviewBlock({ data }: { data: MeaningSheetData | null }) {
     <div className="space-y-2.5">
       {items.map((it) => (
         <div key={it.label} className="rounded-2xl bg-white/70 border border-[#efe2c4] p-3">
-          <p className="text-[11px] font-bold text-[#b8893a]">{it.label}</p>
-          <p className="mt-1 text-[13.5px] leading-relaxed text-[#3a2a18]">{it.value}</p>
+          <p className="text-[11px] font-bold text-[#e7c97a]">{it.label}</p>
+          <p className="mt-1 text-[13.5px] leading-relaxed text-[#eaf6ec]">{it.value}</p>
         </div>
       ))}
     </div>
@@ -249,8 +249,8 @@ function OverviewBlock({ data }: { data: MeaningSheetData | null }) {
 function TextBlock({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-2xl bg-white/70 border border-[#efe2c4] p-4">
-      <p className="text-[11px] font-bold text-[#b8893a]">{title}</p>
-      <p className="mt-1.5 text-[14px] leading-relaxed text-[#3a2a18]">{children}</p>
+      <p className="text-[11px] font-bold text-[#e7c97a]">{title}</p>
+      <p className="mt-1.5 text-[14px] leading-relaxed text-[#eaf6ec]">{children}</p>
     </div>
   );
 }
@@ -259,7 +259,7 @@ function Empty({ label }: { label: string }) {
   return (
     <div className="grid place-items-center py-10 text-center">
       <Sparkles className="h-5 w-5 text-[#c79356]" />
-      <p className="mt-2 text-[12px] text-[#6a543a]">{label}</p>
+      <p className="mt-2 text-[12px] text-[#cfe4d5]">{label}</p>
     </div>
   );
 }
