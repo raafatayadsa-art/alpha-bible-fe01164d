@@ -638,6 +638,7 @@ function VerseCard({
   onTap,
   onToggleSave,
   onSelectWord,
+  dictIndex,
   showRef,
   onOpenRef,
 }: {
@@ -649,7 +650,8 @@ function VerseCard({
   surfaceClass: string;
   onTap: () => void;
   onToggleSave: () => void;
-  onSelectWord: (w: string, k?: string) => void;
+  onSelectWord: (w: string) => void;
+  dictIndex: DictionaryIndex;
   showRef: boolean;
   onOpenRef: () => void;
 }) {
@@ -675,7 +677,7 @@ function VerseCard({
           {num}
         </span>
         <p className="flex-1 min-w-0">
-          {renderVerse(text, onSelectWord)}
+          {renderVerse(text, dictIndex, onSelectWord)}
           {showRef && <ReferenceIndicator count={2} onClick={(e?: any) => { e?.stopPropagation?.(); onOpenRef(); }} />}
         </p>
         <button
