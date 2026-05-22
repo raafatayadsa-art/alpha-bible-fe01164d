@@ -443,7 +443,7 @@ function ScriptureReader() {
           <article
             ref={articleRef}
             className={cn(
-              "mt-5 font-arabic-serif tracking-[0.2px] transition-[font-size,line-height] duration-200 space-y-2",
+              "mt-5 font-arabic-serif tracking-[0.2px] transition-[font-size,line-height] duration-200 space-y-3.5",
               spiritualMode ? "text-[#f3e6c4]" : "text-[#3a2a18]",
             )}
             style={{ fontSize: `${fontSize}px`, lineHeight, wordSpacing: "0.06em" }}
