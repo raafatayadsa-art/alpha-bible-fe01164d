@@ -27,18 +27,18 @@ export function AutoScrollControls({
 }) {
   const [playing, setPlaying] = useState(false);
   const [speedIdx, setSpeedIdx] = useState(0);
-  const [visible, setVisible] = useState(true);
+  const [active, setActive] = useState(true);
   const speed: Speed = SPEEDS[speedIdx];
   const raf = useRef<number | null>(null);
   const last = useRef<number>(0);
   const eased = useRef<number>(0);
   const idleTimer = useRef<number | null>(null);
 
-  // Apple-video-style overlay: show immediately on any interaction, hide after 5s.
+  // Stable visibility: always rendered, dim to a soft idle state after 4s of no interaction.
   const kick = () => {
-    setVisible(true);
+    setActive(true);
     if (idleTimer.current) window.clearTimeout(idleTimer.current);
-    idleTimer.current = window.setTimeout(() => setVisible(false), 5000);
+    idleTimer.current = window.setTimeout(() => setActive(false), 4000);
   };
 
   useEffect(() => {
@@ -46,22 +46,20 @@ export function AutoScrollControls({
     const onAny = () => kick();
     window.addEventListener("pointerdown", onAny, { passive: true });
     window.addEventListener("touchstart", onAny, { passive: true });
-    window.addEventListener("click", onAny, { passive: true });
-    window.addEventListener("keydown", onAny);
+    window.addEventListener("scroll", onAny, { passive: true });
     return () => {
       window.removeEventListener("pointerdown", onAny);
       window.removeEventListener("touchstart", onAny);
-      window.removeEventListener("click", onAny);
-      window.removeEventListener("keydown", onAny);
+      window.removeEventListener("scroll", onAny);
       if (idleTimer.current) window.clearTimeout(idleTimer.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // While playing, keep the controller visible so the user can see speed/pause.
+  // While playing, keep the controller active.
   useEffect(() => {
     if (playing) {
-      setVisible(true);
+      setActive(true);
       if (idleTimer.current) window.clearTimeout(idleTimer.current);
     } else {
       kick();
