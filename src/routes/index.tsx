@@ -18,11 +18,14 @@ function SplashScreen() {
   const navigate = useNavigate();
   const [leaving, setLeaving] = useState(false);
 
+  const [pressed, setPressed] = useState(false);
+
   const enter = () => {
     if (leaving) return;
     setLeaving(true);
-    setTimeout(() => navigate({ to: "/books" }), 550);
+    setTimeout(() => navigate({ to: "/onboarding" }), 550);
   };
+
 
   return (
     <div
