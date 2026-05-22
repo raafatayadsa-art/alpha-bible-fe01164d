@@ -602,10 +602,8 @@ function VerseCard({
       <div className="flex items-start gap-2.5">
         <span
           className={cn(
-            "shrink-0 mt-0.5 grid min-h-[26px] min-w-[26px] place-items-center rounded-full px-1.5 text-[12px] font-extrabold tabular-nums font-arabic-serif",
-            spiritualMode
-              ? "bg-gradient-to-br from-[#e7c97a]/25 to-[#a87a35]/15 text-[#f0d78c] ring-1 ring-[#e7c97a]/35"
-              : "bg-gradient-to-br from-[#fff1c7] to-[#e7c07a] text-[#7a4a26] ring-1 ring-[#c79356]/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]",
+            "shrink-0 mt-0.5 min-w-[18px] text-center text-[15px] font-extrabold tabular-nums font-arabic-serif leading-none pt-[2px]",
+            spiritualMode ? "text-[#f0d78c]" : "text-[#a87a35]",
           )}
         >
           {num}
