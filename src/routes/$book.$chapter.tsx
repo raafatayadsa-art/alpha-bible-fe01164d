@@ -352,6 +352,7 @@ function ScriptureReader() {
       className={cn(
         "relative min-h-screen w-full overflow-x-hidden transition-colors duration-500",
         bgClass,
+        spiritualMode && "reader-spiritual",
       )}
     >
       {/* Soft cloud atmosphere — light mode parchment haze */}
