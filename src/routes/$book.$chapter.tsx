@@ -457,7 +457,7 @@ function ScriptureReader() {
             )}
             style={{ fontSize: `${fontSize}px`, lineHeight, wordSpacing: "0.06em" }}
           >
-            {verses.data!.map((v, i) => {
+            {(() => { const seenWords = new Set<string>(); return verses.data!.map((v, i) => {
               const num = v?.verse_number ?? i + 1;
               const id = verseKey(book, ch, num);
               const isActive = activeVerse === id;
@@ -487,6 +487,7 @@ function ScriptureReader() {
                     if (e) setSheet(entryToSheet(e));
                   }}
                   dictIndex={dictIndex}
+                  seenWords={seenWords}
                   showRef={showRef}
                   onOpenRef={() =>
                     setSheet({
@@ -500,7 +501,7 @@ function ScriptureReader() {
                   }
                 />
               );
-            })}
+            }); })()}
           </article>
         )}
 
@@ -586,6 +587,7 @@ function VerseCard({
   onToggleSave,
   onSelectWord,
   dictIndex,
+  seenWords,
   showRef,
   onOpenRef,
 }: {
@@ -599,6 +601,8 @@ function VerseCard({
   onToggleSave: () => void;
   onSelectWord: (w: string) => void;
   dictIndex: DictionaryIndex;
+  /** Shared per-chapter set of normalized words already highlighted (mutated). */
+  seenWords: Set<string>;
   showRef: boolean;
   onOpenRef: () => void;
 }) {
@@ -624,7 +628,7 @@ function VerseCard({
           {num}
         </span>
         <p className="flex-1 min-w-0">
-          {renderVerse(text, dictIndex, onSelectWord)}
+          {renderVerse(text, dictIndex, seenWords, onSelectWord)}
           {showRef && <ReferenceIndicator count={2} onClick={(e?: any) => { e?.stopPropagation?.(); onOpenRef(); }} />}
         </p>
         <button
@@ -958,18 +962,18 @@ function SliderRow({
 function renderVerse(
   text: string,
   dictIndex: DictionaryIndex,
+  seenWords: Set<string>,
   onSelect: (w: string) => void,
 ): React.ReactNode {
   if (!text) return null;
   if (!dictIndex.map.size) return text;
-  // Split into Arabic-letter runs (group 1) and the surrounding glue (group 0/even indices).
   const parts = text.split(/([\u0600-\u06FF\u0750-\u077F]+)/g);
   return parts.map((p, i) => {
     if (!p) return null;
     if (i % 2 === 1) {
-      // Arabic word run
       const key = normalizeAr(p);
-      if (key && dictIndex.map.has(key)) {
+      if (key && dictIndex.map.has(key) && !seenWords.has(key)) {
+        seenWords.add(key);
         return (
           <HighlightedWord key={i} onSelect={() => onSelect(p)}>
             {p}
