@@ -42,9 +42,12 @@ function ChapterReader() {
         </h1>
       </header>
 
-      {verses.isLoading && <p className="text-center text-muted-foreground">جارٍ التحميل…</p>}
+      {verses.isLoading && <p className="text-center text-muted-foreground">جارٍ تحميل الآيات…</p>}
       {verses.error && (
         <p className="text-center text-destructive">تعذّر التحميل: {(verses.error as Error).message}</p>
+      )}
+      {!verses.isLoading && !verses.error && verses.data && verses.data.length === 0 && (
+        <p className="text-center text-muted-foreground">لا توجد آيات لهذا الإصحاح.</p>
       )}
 
       {verses.data && (

@@ -13,11 +13,13 @@ export const Route = createFileRoute("/diagnostics")({
 function Diagnostics() {
   const [status, setStatus] = useState<"checking" | "ok" | "error">("checking");
   const [booksCount, setBooksCount] = useState<number | null>(null);
+  const [chaptersCount, setChaptersCount] = useState<number | null>(null);
   const [versesCount, setVersesCount] = useState<number | null>(null);
   const [selectedBook, setSelectedBook] = useState<string | null>(null);
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
   const [sampleVerse, setSampleVerse] = useState<BibleVerse | null>(null);
   const [lastError, setLastError] = useState<string | null>(null);
+  const [lastQueryResult, setLastQueryResult] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -41,6 +43,15 @@ function Diagnostics() {
         setSelectedBook(firstBook);
 
         if (firstBook) {
+          const { data: chData, error: cErr } = await supabase
+            .from("bible_verses")
+            .select("chapter_number")
+            .eq("book_name", firstBook);
+          if (cErr) throw cErr;
+          const chSet = new Set<number>();
+          for (const r of chData ?? []) chSet.add((r as { chapter_number: number }).chapter_number);
+          setChaptersCount(chSet.size);
+
           const { data: vData, error: sErr } = await supabase
             .from("bible_verses")
             .select("ID, book_name, chapter_number, verse_number, verse_text")
@@ -52,6 +63,7 @@ function Diagnostics() {
           const first = (vData?.[0] ?? null) as BibleVerse | null;
           setSampleVerse(first);
           setSelectedChapter(first?.chapter_number ?? null);
+          setLastQueryResult(`${vData?.length ?? 0} row(s) from bible_verses where book_name = "${firstBook}"`);
         }
 
         setStatus("ok");
@@ -77,9 +89,11 @@ function Diagnostics() {
         <Row k="Supabase URL" v={SUPABASE_URL} />
         <Row k="Connection status" v={status} />
         <Row k="Total books" v={booksCount} />
+        <Row k="Total chapters (selected book)" v={chaptersCount} />
         <Row k="Total verses" v={versesCount} />
         <Row k="Selected book" v={selectedBook} />
         <Row k="Selected chapter" v={selectedChapter} />
+        <Row k="Last query result" v={lastQueryResult} />
         <Row k="Last fetch error" v={lastError} />
         <Row
           k="Sample first verse"

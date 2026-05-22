@@ -29,8 +29,11 @@ function ChaptersPage() {
       </div>
       <h1 className="mb-8 font-serif text-4xl text-foreground">{book}</h1>
 
-      {isLoading && <p className="text-muted-foreground">جارٍ التحميل…</p>}
+      {isLoading && <p className="text-muted-foreground">جارٍ تحميل الإصحاحات…</p>}
       {error && <p className="text-destructive">تعذّر التحميل: {(error as Error).message}</p>}
+      {!isLoading && !error && chapters && chapters.length === 0 && (
+        <p className="text-muted-foreground">لا توجد إصحاحات لهذا السفر.</p>
+      )}
 
       {chapters && (
         <ul className="grid grid-cols-5 gap-2 sm:grid-cols-8 md:grid-cols-10">
