@@ -104,6 +104,7 @@ function ScriptureReader() {
   const [sheet, setSheet] = useState<MeaningSheetData | null>(null);
   const [progress, setProgress] = useState(0);
   const [typeOpen, setTypeOpen] = useState(false);
+  const [activeVerse, setActiveVerse] = useState<string | null>(null);
 
   // Typography controls
   const [fontSize, setFontSize] = useState(19); // px
@@ -139,14 +140,15 @@ function ScriptureReader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [book, chapter]);
 
+  // Deep-navy cinematic dark palette; warm gold glow; subtle purple accents.
   const bgClass = spiritualMode
-    ? "bg-[#1a1410] text-[#f3e6c4]"
+    ? "bg-[#070d1a] text-[#e8e2cf]"
     : "bg-[#f8efdc] text-[#3a2a18]";
   const surfaceClass = spiritualMode
-    ? "bg-white/[0.04] border-white/10"
+    ? "bg-[#0e1a2e]/55 border-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_8px_22px_-16px_rgba(0,0,0,0.7)]"
     : "bg-white/70 border-[#efe2c4]";
   const subSurfaceClass = spiritualMode
-    ? "bg-white/[0.025] border-white/[0.06]"
+    ? "bg-[#0c1828]/45 border-white/[0.05] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
     : "bg-white/40 border-[#efe2c4]/60";
 
   const totalVerses = verses.data?.length ?? 0;
