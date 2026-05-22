@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Menu, Bell, Search, Sparkles, Share2, Bookmark, ChevronLeft, SkipBack, SkipForward, Play, Pause } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Menu, Bell, Search, Sparkles, Share2, Bookmark, ChevronLeft, SkipBack, SkipForward, Play, Pause, Home as HomeIcon, HandHeart, Users, User as UserIcon, BookMarked } from "lucide-react";
 
 import heroImg from "@/assets/home/hero.png";
 import iconBible from "@/assets/home/icon-bible.png";
@@ -14,11 +14,6 @@ import playerImg from "@/assets/home/player.png";
 import churchChalice from "@/assets/home/church-chalice.png";
 import churchPeople from "@/assets/home/church-people.png";
 import churchBell from "@/assets/home/church-bell.png";
-import navProfile from "@/assets/home/nav-profile.png";
-import navCommunity from "@/assets/home/nav-community.png";
-import navBible from "@/assets/home/nav-bible.png";
-import navPrayer from "@/assets/home/nav-prayer.png";
-import navHome from "@/assets/home/nav-home.png";
 
 export const Route = createFileRoute("/home")({
   ssr: false,
@@ -63,6 +58,25 @@ function GlassChip({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
+function useHideOnScroll() {
+  const [visible, setVisible] = useState(true);
+  const lastY = useRef(0);
+  useEffect(() => {
+    lastY.current = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const dy = y - lastY.current;
+      if (y < 40) setVisible(true);
+      else if (dy > 6) setVisible(false);
+      else if (dy < -6) setVisible(true);
+      lastY.current = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return visible;
+}
+
 // ===== screen =====
 function HomeScreen() {
   const greeting = useGreeting();
@@ -70,6 +84,7 @@ function HomeScreen() {
   const [saved, setSaved] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [notifCount] = useState(1);
+  const dockVisible = useHideOnScroll();
 
   const quickCards = [
     { key: "bible", icon: iconBible, title: "اكمل القراءة", sub: "تابع حيث توقفت\nفي الكتاب المقدس", to: "/books" },
@@ -241,19 +256,26 @@ function HomeScreen() {
         </section>
       </div>
 
-      {/* Bottom dock — uses cropped dock asset for pixel-perfect reference, with interactive hit areas */}
+      {/* Bottom dock — premium iOS-style glass dock with smart hide/show */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-50"
-        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 6px)" }}
+        aria-label="التنقل السفلي"
+        className="fixed inset-x-0 bottom-0 z-50 transition-all duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
+        style={{
+          paddingBottom: "max(env(safe-area-inset-bottom), 8px)",
+          transform: dockVisible ? "translateY(0)" : "translateY(120%)",
+          opacity: dockVisible ? 1 : 0,
+          pointerEvents: dockVisible ? "auto" : "none",
+        }}
       >
         <div className="mx-auto w-full max-w-[440px] px-3">
-          <div className="relative rounded-[28px] bg-[#fbf3e1] border border-[#efe2c4] shadow-[0_-8px_30px_-12px_rgba(120,80,30,0.30),inset_0_1px_0_rgba(255,255,255,0.7)] backdrop-blur-xl">
-            <div className="grid grid-cols-5 items-end pt-2 pb-2">
-              <DockItem img={navProfile} label="الملف الشخصي" />
-              <DockItem img={navCommunity} label="المجتمع" />
-              <DockItem img={navBible} label="الكتاب المقدس" raised to="/books" />
-              <DockItem img={navPrayer} label="الصلاة" />
-              <DockItem img={navHome} label="الرئيسية" active to="/home" />
+          <div className="relative rounded-[28px] bg-[#fbf3e1]/85 border border-white/70 shadow-[0_-10px_30px_-12px_rgba(120,80,30,0.30),inset_0_1px_0_rgba(255,255,255,0.8)] backdrop-blur-2xl">
+            <div className="grid grid-cols-5 items-end px-2 pt-2.5 pb-2">
+              {/* RTL order: الرئيسية (right) ... الملف الشخصي (left) */}
+              <DockItem icon={HomeIcon} label="الرئيسية" active to="/home" color="#d96b2a" />
+              <DockItem icon={HandHeart} label="الصلاة" color="#3a6fb5" />
+              <DockItem icon={BookMarked} label="الكتاب المقدس" raised to="/books" />
+              <DockItem icon={Users} label="المجتمع" color="#6a4ab5" />
+              <DockItem icon={UserIcon} label="الملف الشخصي" color="#6a4ab5" />
             </div>
           </div>
         </div>
@@ -263,23 +285,30 @@ function HomeScreen() {
 }
 
 function DockItem({
-  img, label, active, raised, to,
-}: { img: string; label: string; active?: boolean; raised?: boolean; to?: string }) {
+  icon: Icon, label, active, raised, to, color,
+}: { icon: any; label: string; active?: boolean; raised?: boolean; to?: string; color?: string }) {
   const inner = (
-    <div className="flex flex-col items-center gap-1 px-1">
-      <div className={raised ? "-mt-7" : ""}>
-        <img
-          src={img}
-          alt=""
-          draggable={false}
-          className={raised ? "h-14 w-14 object-contain drop-shadow-[0_10px_14px_rgba(120,80,20,0.35)]"
-                            : "h-7 w-7 object-contain"}
+    <div className="flex w-full flex-col items-center justify-end gap-1">
+      {raised ? (
+        <div className="-mt-7 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-[#e7c97a] to-[#a8782a] text-white shadow-[0_10px_24px_-4px_rgba(200,140,40,0.65),0_0_0_4px_rgba(255,234,190,0.8)]">
+          <Icon className="h-7 w-7" strokeWidth={2.2} />
+        </div>
+      ) : (
+        <Icon
+          className="h-6 w-6"
+          strokeWidth={2.2}
+          style={{ color: active ? "#d96b2a" : (color || "#3a2a18") }}
         />
-      </div>
-      <span className={"text-[10px] font-bold " + (active ? "text-[#d96b2a]" : "text-[#3a2a18]/85")}>{label}</span>
+      )}
+      <span
+        className="text-[10px] font-bold leading-none whitespace-nowrap [word-break:keep-all]"
+        style={{ color: active ? "#d96b2a" : "#3a2a18" }}
+      >
+        {label}
+      </span>
     </div>
   );
-  const cls = "py-1 active:scale-95 transition-transform";
+  const cls = "flex items-end justify-center py-1 active:scale-95 transition-transform";
   if (to) return <Link to={to as any} className={cls}>{inner}</Link>;
   return <button type="button" className={cls}>{inner}</button>;
 }
