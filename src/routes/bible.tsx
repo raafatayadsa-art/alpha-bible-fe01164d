@@ -1,16 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BookHeart, Bookmark, NotebookPen, Sparkles } from "lucide-react";
+import { BookHeart, Bookmark, NotebookPen, Sparkles, BookOpen, ChevronLeft } from "lucide-react";
 import { booksQueryOptions } from "@/lib/bible";
-import { groupBooks } from "@/lib/bible-books";
+import { groupBooks, displayName } from "@/lib/bible-books";
+import { useCurrentSession } from "@/lib/reading-state";
 import {
   BackButton,
   BottomDock,
   ContinueReadingCard,
   QuickAccessCard,
+  RecentJourney,
   SectionHeader,
   TestamentCard,
+  IconBadge,
+  Pressable,
+  ProgressBar,
 } from "@/components/bible";
+
 
 export const Route = createFileRoute("/bible")({
   ssr: false,
