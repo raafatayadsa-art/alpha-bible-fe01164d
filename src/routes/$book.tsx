@@ -19,9 +19,14 @@ function ChaptersPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12" dir="rtl">
-      <nav className="mb-6 text-sm text-muted-foreground">
-        <Link to="/" className="hover:text-foreground">← كل الأسفار</Link>
-      </nav>
+      <div className="mb-6">
+        <Link
+          to="/"
+          className="inline-flex items-center rounded-md border border-border bg-card px-4 py-2 text-sm text-card-foreground hover:bg-accent hover:text-accent-foreground"
+        >
+          → رجوع إلى الأسفار
+        </Link>
+      </div>
       <h1 className="mb-8 font-serif text-4xl text-foreground">{book}</h1>
 
       {isLoading && <p className="text-muted-foreground">جارٍ التحميل…</p>}
