@@ -16,6 +16,7 @@ export const Route = createFileRoute("/$book/$chapter")({
 function ChapterReader() {
   const { book, chapter } = Route.useParams();
   const ch = Number(chapter);
+  console.log("[verses screen]", { selectedBook: book, selectedChapter: ch });
   const verses = useQuery(versesQueryOptions(book, ch));
   const chapters = useQuery(chaptersQueryOptions(book));
 
