@@ -457,7 +457,7 @@ function ScriptureReader() {
             )}
             style={{ fontSize: `${fontSize}px`, lineHeight, wordSpacing: "0.06em" }}
           >
-            {verses.data!.map((v, i) => {
+            {(() => { const seenWords = new Set<string>(); return verses.data!.map((v, i) => {
               const num = v?.verse_number ?? i + 1;
               const id = verseKey(book, ch, num);
               const isActive = activeVerse === id;
