@@ -177,32 +177,53 @@ function ScriptureReader() {
     };
   }, [book, chapter]);
 
-  // Track currently visible verse and auto-highlight it (immersive auto-scroll focus).
+  // Active verse = the verse sitting inside the reading focus zone (25%–40% from top of viewport).
+  // Picks the second clearly visible verse from the top, never the one entering from the bottom.
   useEffect(() => {
     if (!verses.data?.length) return;
-    const els = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-verse-num]"),
-    );
-    if (!els.length) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-        if (visible) {
-          const n = Number((visible.target as HTMLElement).dataset.verseNum);
-          if (n) {
-            visibleVerseRef.current = n;
-            const id = verseKey(book, ch, n);
-            setActiveVerse((cur) => (cur === id ? cur : id));
-          }
-        }
-      },
-      { rootMargin: "-30% 0px -55% 0px", threshold: 0.01 },
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    let rafId: number | null = null;
+    const compute = () => {
+      rafId = null;
+      const vh = window.innerHeight;
+      const zoneTop = vh * 0.25;
+      const zoneBottom = vh * 0.45;
+      const els = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-verse-num]"),
+      );
+      if (!els.length) return;
+      // verses fully or mostly visible from the top (not still entering from bottom)
+      const visible = els
+        .map((el) => {
+          const r = el.getBoundingClientRect();
+          return { el, top: r.top, bottom: r.bottom };
+        })
+        .filter((x) => x.bottom > 0 && x.top < vh)
+        .sort((a, b) => a.top - b.top);
+      if (!visible.length) return;
+      // Prefer a verse whose top is inside the focus zone.
+      let pick = visible.find((x) => x.top >= zoneTop && x.top <= zoneBottom);
+      // Otherwise: the second visible verse from the top (skip the one partially clipped at top).
+      if (!pick) pick = visible[1] ?? visible[0];
+      const n = Number(pick.el.dataset.verseNum);
+      if (n) {
+        visibleVerseRef.current = n;
+        const id = verseKey(book, ch, n);
+        setActiveVerse((cur) => (cur === id ? cur : id));
+      }
+    };
+    const schedule = () => {
+      if (rafId == null) rafId = requestAnimationFrame(compute);
+    };
+    compute();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (rafId != null) cancelAnimationFrame(rafId);
+    };
   }, [verses.data, book, ch]);
+
 
   // Persist reading session (throttled) + restore scroll on first load.
   const restoredRef = useRef(false);
