@@ -131,6 +131,13 @@ function ScriptureReader() {
   const [typeOpen, setTypeOpen] = useState(false);
   const [activeVerse, setActiveVerse] = useState<string | null>(null);
 
+  // Dictionary words from Supabase (dictionary_entries) — drives highlight + meaning sheet.
+  const dict = useDictionary();
+  const dictIndex = useMemo<DictionaryIndex>(
+    () => buildDictionaryIndex(dict.data ?? []),
+    [dict.data],
+  );
+
   // Persistent typography prefs
   const { prefs, setPrefs, reset: resetPrefs } = useTypographyPrefs();
   const { fontSize, lineHeight, readingWidth } = prefs;
