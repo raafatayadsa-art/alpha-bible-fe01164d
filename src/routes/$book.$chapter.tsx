@@ -291,8 +291,29 @@ function ScriptureReader() {
 
   const totalVerses = verses.data?.length ?? 0;
 
-  // Keep the bottom dock always visible for stable navigation.
-  const chromeHidden = false;
+  // Synchronized chrome (auto-scroll pill + bottom dock): both appear together on touch
+  // and hide together after 5s of inactivity.
+  const [chromeVisible, setChromeVisible] = useState(true);
+  const chromeTimer = useRef<number | null>(null);
+  useEffect(() => {
+    const show = () => {
+      setChromeVisible(true);
+      if (chromeTimer.current) window.clearTimeout(chromeTimer.current);
+      chromeTimer.current = window.setTimeout(() => setChromeVisible(false), 5000);
+    };
+    show();
+    window.addEventListener("pointerdown", show, { passive: true });
+    window.addEventListener("touchstart", show, { passive: true });
+    window.addEventListener("keydown", show);
+    return () => {
+      window.removeEventListener("pointerdown", show);
+      window.removeEventListener("touchstart", show);
+      window.removeEventListener("keydown", show);
+      if (chromeTimer.current) window.clearTimeout(chromeTimer.current);
+    };
+  }, []);
+  const chromeHidden = !chromeVisible;
+
 
 
   return (
