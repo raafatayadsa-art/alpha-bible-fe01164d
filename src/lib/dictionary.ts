@@ -44,7 +44,8 @@ export function normalizeAr(s: string): string {
   if (!s) return "";
   return s
     .replace(/[\u064B-\u0652\u0670\u0640]/g, "") // tashkeel + tatweel
-    .replace(/[أإآٱ]/g, "ا") // alef variants only
+    .replace(/[أإآٱ]/g, "ا") // alef variants
+    .replace(/ى/g, "ي") // yaa maksura → yaa
     .replace(/[^\u0600-\u06FF\s]/g, "") // strip punctuation
     .trim();
 }
