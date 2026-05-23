@@ -34,6 +34,8 @@ import {
   useDictionary,
   buildDictionaryIndex,
   normalizeAr,
+  stemAr,
+  classifyEntry,
   type DictionaryEntry,
   type DictionaryIndex,
 } from "@/lib/dictionary";
