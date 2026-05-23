@@ -137,6 +137,9 @@ async function fetchDictionary(): Promise<DictionaryEntry[]> {
       } as DictionaryEntry;
     })
     .filter((e) => e.word && e.word.trim().length > 1);
+  // eslint-disable-next-line no-console
+  console.log("[dictionary] loaded entries:", (data ?? []).length, "valid terms:", rows.length);
+  return rows;
 }
 
 export function useDictionary() {
