@@ -118,6 +118,17 @@ const STOPWORDS = new Set(
   ].map(normalizeAr),
 );
 
+/**
+ * Generic-word blacklist — common biblical vocabulary that should never trigger
+ * a highlight even if a dictionary row exists for it. Per user spec.
+ */
+const GENERIC_BLACKLIST = new Set(
+  [
+    "خلق","راي","رأى","صباح","مساء","نور","ماء","ارض","سماء","يوم","ليل","نهار",
+    "قال","رجل","امراه","امرأة","ابن","ابنه","ابنة","اب","ام","بيت","يد","قلب","عين","فم",
+  ].map(normalizeAr),
+);
+
 async function fetchDictionary(): Promise<DictionaryEntry[]> {
   const { data, error } = await supabase
     .from("dictionary_entries")
@@ -125,23 +136,34 @@ async function fetchDictionary(): Promise<DictionaryEntry[]> {
   if (error) throw error;
   const rows = (data ?? [])
     .map((row: any) => {
-      // Highlight source: ONLY المصطلح or title_normalized.
-      // keywords / description / related verses are content-only — never matched.
-      const term =
-        ((row["المصطلح"] ?? "") as string).toString().trim() ||
-        ((row.title_normalized ?? "") as string).toString().trim();
+      // Display title comes ONLY from المصطلح. If missing, leave empty.
+      const word = ((row["المصطلح"] ?? "") as string).toString().trim();
+      const titleNormalized = ((row.title_normalized ?? "") as string)
+        .toString()
+        .trim();
       return {
         id: row.id,
-        word: term,
+        word,
+        titleNormalized: titleNormalized || undefined,
         category: row["التصنيف"] ?? row.category,
         meaning: row["المعنى والأصل"] ?? row.meaning,
         description: row["الوصف والتفاصيل"] ?? row.description,
         relatedVersesRaw: row["الشواهد الكتابية"] ?? row.related_verses,
       } as DictionaryEntry;
     })
-    .filter((e) => e.word && e.word.trim().length > 1);
+    // Keep the row if EITHER source has a usable term (>1 char).
+    .filter(
+      (e) =>
+        (e.word && e.word.trim().length > 1) ||
+        (e.titleNormalized && e.titleNormalized.trim().length > 1),
+    );
   // eslint-disable-next-line no-console
-  console.log("[dictionary] loaded entries:", (data ?? []).length, "valid terms:", rows.length);
+  console.log(
+    "[dictionary] loaded entries:",
+    (data ?? []).length,
+    "valid terms:",
+    rows.length,
+  );
   return rows;
 }
 
