@@ -40,6 +40,17 @@ import {
   type DictionaryIndex,
 } from "@/lib/dictionary";
 
+/**
+ * HMR_EPOCH — bumps on every hot-module reload of this file (and indirectly
+ * any time the dev editor evaluates a change). Used as a memo dependency so
+ * the dictionary index + highlighted verses rebuild live in the editor
+ * without needing to open Preview or reload the page.
+ */
+const HMR_EPOCH: number = Date.now();
+if (import.meta.hot) {
+  import.meta.hot.accept();
+}
+
 function parseRelatedVerses(raw?: string): { reference: string; text: string }[] {
   if (!raw) return [];
   // Accept newline / "،" / "," / ";" / "؛" separated refs (text optional after " - ").
