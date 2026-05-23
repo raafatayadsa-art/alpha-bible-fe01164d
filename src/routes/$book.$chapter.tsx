@@ -618,7 +618,7 @@ function ScriptureReader() {
       />
 
       {/* Persistent global navigation */}
-      <BottomDock hidden={chromeHidden} />
+      <BottomDock hidden={chromeHidden} spiritualMode={spiritualMode} />
 
       <MeaningSheet data={sheet} onClose={() => setSheet(null)} />
     </main>
