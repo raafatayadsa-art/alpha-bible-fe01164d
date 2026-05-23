@@ -484,11 +484,7 @@ function ScriptureReader() {
                       text: v?.verse_text ?? "",
                     })
                   }
-                  onSelectWord={(w) => {
-                    const key = normalizeAr(w);
-                    const e = dictIndex.phrases.get(key) ?? dictIndex.map.get(key);
-                    if (e) setSheet(entryToSheet(e));
-                  }}
+                  onSelectWord={(entry) => setSheet(entryToSheet(entry))}
                   dictIndex={dictIndex}
                   seenWords={seenWords}
                   showRef={showRef}
