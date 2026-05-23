@@ -120,7 +120,7 @@ async function fetchDictionary(): Promise<DictionaryEntry[]> {
     .from("dictionary_entries")
     .select("*");
   if (error) throw error;
-  return (data ?? [])
+  const rows = (data ?? [])
     .map((row: any) => {
       // Highlight source: ONLY المصطلح or title_normalized.
       // keywords / description / related verses are content-only — never matched.
