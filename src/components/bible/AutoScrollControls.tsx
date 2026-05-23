@@ -2,8 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import { Play, Pause, Minus, Plus, Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5] as const;
+const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] as const;
 type Speed = (typeof SPEEDS)[number];
+
+const SPEED_STORAGE_KEY = "ab.autoscroll.speedIdx";
+const DEFAULT_SPEED_IDX = 0; // 0.5x
+
+function loadInitialSpeedIdx(): number {
+  if (typeof window === "undefined") return DEFAULT_SPEED_IDX;
+  try {
+    const raw = window.localStorage.getItem(SPEED_STORAGE_KEY);
+    if (raw == null) return DEFAULT_SPEED_IDX;
+    const n = Number(raw);
+    if (Number.isFinite(n) && n >= 0 && n < SPEEDS.length) return n;
+  } catch { /* ignore */ }
+  return DEFAULT_SPEED_IDX;
+}
 
 /**
  * Floating glass auto-scroll controller.
