@@ -40,17 +40,49 @@ import {
   type DictionaryIndex,
 } from "@/lib/dictionary";
 
+function parseRelatedVerses(raw?: string): { reference: string; text: string }[] {
+  if (!raw) return [];
+  // Accept newline / "،" / "," / ";" / "؛" separated refs (text optional after " - ").
+  return raw
+    .split(/\r?\n|،|;|؛|,/g)
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((s) => {
+      const [refRaw, ...rest] = s.split(/\s[-–—:]\s/);
+      return { reference: refRaw.trim(), text: rest.join(" - ").trim() };
+    });
+}
+
 function entryToSheet(e: DictionaryEntry): MeaningSheetData {
-  const overview = (e.meaning || e.description || "").trim();
-  const short = overview.length > 220 ? overview.slice(0, 220).trim() + "…" : overview;
-  return {
+  const kind = classifyEntry(e.category);
+  const meaning = (e.meaning || "").trim();
+  const desc = (e.description || "").trim();
+  const verses = parseRelatedVerses(e.relatedVersesRaw);
+
+  const base: MeaningSheetData = {
     word: e.word,
     kind: e.category,
-    meaning: short,
-    spiritualRole: e.description && e.description !== short ? e.description : undefined,
-    origin: e.meaning && e.meaning !== short ? e.meaning : undefined,
+    meaning: meaning || desc || undefined,
+    relatedVerses: verses.length ? verses : undefined,
   };
+
+  if (kind === "person") {
+    return {
+      ...base,
+      spiritualRole: desc && desc !== meaning ? desc : undefined,
+      relatedPeople: [{ name: e.word, role: e.category }],
+    };
+  }
+  if (kind === "place") {
+    return { ...base, mapLabel: e.word, origin: desc && desc !== meaning ? desc : undefined };
+  }
+  if (kind === "symbol") {
+    return { ...base, spiritualRole: desc && desc !== meaning ? desc : undefined };
+  }
+  // word / other
+  return { ...base, origin: desc && desc !== meaning ? desc : undefined };
 }
+
 
 export const Route = createFileRoute("/$book/$chapter")({
   ssr: false,
