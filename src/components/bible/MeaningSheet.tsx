@@ -73,7 +73,7 @@ export function MeaningSheet({
         onClick={onClose}
         aria-hidden
         className={cn(
-          "fixed inset-0 z-[60] bg-black/20 backdrop-blur-[3px] transition-opacity duration-300",
+          "fixed inset-0 z-[60] bg-[#06251c]/25 backdrop-blur-[5px] transition-opacity duration-300",
           open ? "opacity-100" : "opacity-0 pointer-events-none",
         )}
       />
@@ -91,10 +91,10 @@ export function MeaningSheet({
       >
         <div
           className={cn(
-            "mx-2 overflow-hidden rounded-t-[28px] border backdrop-blur-[40px] backdrop-saturate-150",
-            // Lighter airy emerald glass — high blur, low opacity
-            "bg-gradient-to-b from-[#1f5a44]/30 to-[#0f3a2c]/35 border-[#7af0b8]/25 text-[#eaf6ec]",
-            "shadow-[0_-24px_60px_-20px_rgba(0,0,0,0.45),0_0_28px_-10px_rgba(122,240,184,0.35),inset_0_1px_0_rgba(255,255,255,0.12)]",
+            "mx-2 overflow-hidden rounded-t-[28px] border backdrop-blur-[22px] backdrop-saturate-150",
+            // Balanced emerald glass — richer tint, medium blur, layered depth
+            "bg-gradient-to-b from-[#0f3d2e]/72 via-[#0c3326]/70 to-[#07261c]/78 border-[#7af0b8]/35 text-[#eaf6ec]",
+            "shadow-[0_-28px_70px_-18px_rgba(0,0,0,0.6),0_0_36px_-12px_rgba(122,240,184,0.45),inset_0_1px_0_rgba(255,255,255,0.14),inset_0_0_40px_-20px_rgba(122,240,184,0.18)]",
             "transition-[max-height] duration-300",
           )}
           style={{ maxHeight: expanded ? "92vh" : "70vh" }}
