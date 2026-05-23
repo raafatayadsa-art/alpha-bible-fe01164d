@@ -228,24 +228,27 @@ export function buildDictionaryIndex(entries: DictionaryEntry[]): DictionaryInde
   const phraseStems = new Map<string, DictionaryEntry>();
   let maxPhraseTokens = 1;
 
-  for (const e of entries) {
-    if (!isHighlightable(e)) continue;
-
-    const toks = tokenizeAr(e.word);
-    if (toks.length === 0) continue;
-
+  const registerSurface = (surface: string, e: DictionaryEntry) => {
+    const toks = tokenizeAr(surface);
+    if (toks.length === 0) return;
     if (toks.length === 1) {
       const t = toks[0];
-      if (STOPWORDS.has(t.norm)) continue;
-      if (t.norm.length < 2) continue;
+      if (STOPWORDS.has(t.norm)) return;
+      if (GENERIC_BLACKLIST.has(t.norm)) return;
+      if (t.norm.length < 2) return;
       if (!map.has(t.norm)) map.set(t.norm, e);
-      // Stem matching INTENTIONALLY DISABLED — exact normalized match only.
     } else {
       const normKey = toks.map((t) => t.norm).join(" ");
       if (!phrases.has(normKey)) phrases.set(normKey, e);
-      // Phrase-stem matching INTENTIONALLY DISABLED — exact phrase only.
       if (toks.length > maxPhraseTokens) maxPhraseTokens = toks.length;
     }
+  };
+
+  for (const e of entries) {
+    if (!isHighlightable(e)) continue;
+    // Register BOTH exact sources: المصطلح (word) and title_normalized.
+    if (e.word) registerSurface(e.word, e);
+    if (e.titleNormalized) registerSurface(e.titleNormalized, e);
   }
   return { map, stems, phrases, phraseStems, maxPhraseTokens };
 }
