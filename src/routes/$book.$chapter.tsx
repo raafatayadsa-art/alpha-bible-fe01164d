@@ -310,7 +310,7 @@ function ScriptureReader() {
 
   // Palette
   const bgClass = spiritualMode
-    ? "bg-[#0b1830] text-[#e8e2cf]"
+    ? "bg-[#08131f] text-[#f3ead0]"
     : "bg-[#f8efdc] text-[#3a2a18]";
   const surfaceClass = spiritualMode
     ? "bg-[#11223a]/60 border-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_8px_22px_-16px_rgba(0,0,0,0.7)]"
