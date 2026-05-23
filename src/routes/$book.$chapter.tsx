@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Bookmark,
@@ -675,7 +675,13 @@ function VerseCard({
           {num}
         </span>
         <p className="flex-1 min-w-0">
-          {renderVerse(text, dictIndex, seenWords, onSelectWord)}
+          <VerseHighlighted
+            text={text}
+            dictIndex={dictIndex}
+            seenWords={seenWords}
+            onSelectWord={onSelectWord}
+            spiritualMode={spiritualMode}
+          />
           {showRef && <ReferenceIndicator count={2} onClick={(e?: any) => { e?.stopPropagation?.(); onOpenRef(); }} />}
         </p>
         <button
@@ -702,6 +708,33 @@ function VerseCard({
     </div>
   );
 }
+
+/**
+ * Memoized highlight layer. Re-renders only when the inputs that actually
+ * affect the highlighted output change: verse text, dictionary index identity,
+ * theme (spiritualMode), or the module HMR epoch. `seenWords` is a mutable
+ * per-chapter set used for de-duplication and is intentionally excluded from
+ * the dep list — the parent rebuilds it whenever the chapter or dict changes.
+ */
+const VerseHighlighted = memo(function VerseHighlighted({
+  text,
+  dictIndex,
+  seenWords,
+  onSelectWord,
+  spiritualMode,
+}: {
+  text: string;
+  dictIndex: DictionaryIndex;
+  seenWords: Set<string>;
+  onSelectWord: (entry: DictionaryEntry) => void;
+  spiritualMode: boolean;
+}) {
+  return useMemo(
+    () => renderVerse(text, dictIndex, seenWords, onSelectWord),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [text, dictIndex, spiritualMode, HMR_EPOCH, onSelectWord],
+  );
+});
 
 /* ---------------- Toolbar button ---------------- */
 
