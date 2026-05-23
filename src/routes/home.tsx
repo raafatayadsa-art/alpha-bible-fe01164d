@@ -185,116 +185,109 @@ function HomeScreen() {
         </header>
 
 
-        {/* Hero verse card — text left, church right (matches reference) */}
+        {/* Hero verse card — heavenly cinematic, text-first, church emerges from below */}
         <section className="mt-4">
           <div
-            className="relative overflow-hidden rounded-[28px] border border-white/70 bg-gradient-to-br from-[#fff9ec] via-[#fbecc8] to-[#efd29a] shadow-[0_24px_50px_-22px_rgba(120,80,30,0.55),inset_0_1px_0_rgba(255,255,255,0.85)]"
+            className="relative overflow-hidden rounded-[28px] border border-white/70 bg-gradient-to-b from-[#fff8e8] via-[#fbeed1] to-[#f1d9a3] shadow-[0_24px_50px_-22px_rgba(120,80,30,0.55),inset_0_1px_0_rgba(255,255,255,0.85)]"
           >
-            {/* warm ambient light */}
+            {/* warm light rays from top-right */}
             <div
               aria-hidden
               className="pointer-events-none absolute inset-0"
               style={{
                 background:
-                  "radial-gradient(90% 80% at 100% 100%, rgba(255,210,130,0.55), transparent 60%)," +
-                  "radial-gradient(70% 60% at 0% 0%, rgba(255,248,225,0.70), transparent 70%)",
+                  "radial-gradient(120% 60% at 85% -10%, rgba(255,232,170,0.85), transparent 60%)," +
+                  "radial-gradient(80% 50% at 15% 0%, rgba(255,245,220,0.55), transparent 70%)," +
+                  "radial-gradient(140% 70% at 50% 110%, rgba(180,120,50,0.18), transparent 60%)",
               }}
             />
 
-            {/* Church — right half, overflowing bottom-right */}
-            <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-[54%]">
-              {/* heavenly halo */}
+            {/* Verse text zone — dedicated, clean, readable */}
+            <div className="relative px-6 pt-7 pb-3 text-center">
+              <div className="mx-auto mb-3 inline-flex items-center gap-1.5 rounded-full border border-[#c79356]/35 bg-white/55 px-3 py-1 backdrop-blur-md">
+                <Sparkles className="h-3 w-3 text-[#b8893a]" />
+                <span className="text-[10px] font-bold tracking-wide text-[#7a4a26]">آية اليوم</span>
+              </div>
+              <p
+                className="mx-auto max-w-[34ch] font-extrabold text-[#2a1c0e] leading-[1.85] text-[15.5px]"
+                style={{ wordBreak: "keep-all" }}
+              >
+                {verse ? `"${verse.text}"` : "لا توجد آية اليوم"}
+              </p>
+              {verse?.reference && (
+                <p className="mt-2.5 text-[11.5px] font-bold tracking-wide text-[#7a4a26]">
+                  {verse.reference}
+                </p>
+              )}
+            </div>
+
+            {/* Artwork stage — church emerges softly from lower part */}
+            <div className="relative mt-1 h-[180px] overflow-hidden">
+              {/* soft horizon mist behind */}
               <div
-                className="absolute inset-0"
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-[60%]"
                 style={{
                   background:
-                    "radial-gradient(closest-side at 55% 45%, rgba(255,215,130,0.55), transparent 72%)",
-                  filter: "blur(8px)",
-                }}
-              />
-              {/* light mist near base */}
-              <div
-                className="absolute inset-x-0 bottom-0 h-16"
-                style={{
-                  background:
-                    "radial-gradient(80% 100% at 50% 100%, rgba(255,246,220,0.95), transparent 78%)",
-                  filter: "blur(4px)",
+                    "radial-gradient(70% 90% at 50% 100%, rgba(255,236,190,0.85), transparent 75%)",
                 }}
               />
               <img
                 src={churchHeavenly}
                 alt=""
                 draggable={false}
-                className="absolute -right-3 -bottom-3 w-[112%] max-w-none select-none object-contain"
+                className="absolute left-1/2 bottom-[-14%] w-[78%] -translate-x-1/2 select-none pointer-events-none object-contain drop-shadow-[0_18px_24px_rgba(120,80,30,0.35)]"
+                style={{ maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)", WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)" }}
+              />
+              {/* warm dome glow */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-2 h-24 w-40 -translate-x-1/2 rounded-full blur-2xl"
+                style={{ background: "radial-gradient(closest-side, rgba(255,210,120,0.55), transparent 70%)" }}
+              />
+              {/* drifting light rays */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 mix-blend-screen opacity-60"
                 style={{
-                  filter:
-                    "drop-shadow(0 16px 22px rgba(120,70,20,0.40)) drop-shadow(0 0 26px rgba(255,205,115,0.45))",
+                  background:
+                    "linear-gradient(200deg, rgba(255,235,180,0.35) 0%, transparent 35%)",
                 }}
               />
             </div>
 
-            {/* Left content column */}
-            <div className="relative z-10 w-[52%] px-4 pt-4 pb-3 text-right">
-              <div className="mb-3 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#c79356]/35 bg-white/70 px-2.5 py-1 backdrop-blur-md shadow-[0_4px_10px_-6px_rgba(120,80,30,0.35)]">
-                <Sparkles className="h-3 w-3 text-[#b8893a]" />
-                <span className="text-[10px] font-bold tracking-wide text-[#7a4a26]">آية اليوم</span>
-              </div>
-
-              <p
-                className="font-extrabold text-[#2a1c0e] leading-[1.95] text-[17px]"
-                style={{ wordBreak: "keep-all" }}
+            {/* Footer controls — luxury glass */}
+            <div className="relative flex items-center justify-between px-4 pb-3.5 pt-1">
+              <button
+                aria-label="حفظ الآية"
+                onClick={() => setSaved((s) => !s)}
+                className={
+                  "grid h-9 w-9 place-items-center rounded-full border backdrop-blur-md transition-all active:scale-[0.94] " +
+                  (saved
+                    ? "border-[#c79356]/60 bg-gradient-to-br from-[#fde3a8] to-[#d9a55a] text-white shadow-[0_8px_18px_-8px_rgba(168,120,42,0.65)]"
+                    : "border-white/70 bg-white/60 text-[#7a4a26] shadow-[0_6px_14px_-8px_rgba(120,80,30,0.45),inset_0_1px_0_rgba(255,255,255,0.9)]")
+                }
               >
-                {verse ? `"${verse.text}"` : "لا توجد آية اليوم"}
-              </p>
+                <Bookmark className={"h-4 w-4 " + (saved ? "fill-white" : "")} />
+              </button>
 
-              {verse?.reference && (
-                <p className="mt-2.5 text-[12px] font-bold tracking-wide text-[#7a4a26]">
-                  {verse.reference}
-                </p>
-              )}
-
-              {/* save + share — bottom-left of column */}
-              <div className="mt-4 flex items-center gap-2.5">
-                <button
-                  aria-label="حفظ الآية"
-                  onClick={() => setSaved((s) => !s)}
-                  className="flex flex-col items-center gap-1 active:scale-[0.94] transition-transform"
-                >
-                  <span
-                    className={
-                      "grid h-10 w-10 place-items-center rounded-full border backdrop-blur-md " +
-                      (saved
-                        ? "border-[#c79356]/60 bg-gradient-to-br from-[#fde3a8] to-[#d9a55a] text-white shadow-[0_8px_18px_-8px_rgba(168,120,42,0.65)]"
-                        : "border-white/70 bg-white/65 text-[#7a4a26] shadow-[0_6px_14px_-8px_rgba(120,80,30,0.45),inset_0_1px_0_rgba(255,255,255,0.9)]")
-                    }
-                  >
-                    <Bookmark className={"h-4 w-4 " + (saved ? "fill-white" : "")} />
-                  </span>
-                  <span className="text-[10px] font-bold text-[#7a4a26]">حفظ</span>
-                </button>
-
-                <button
-                  aria-label="مشاركة"
-                  onClick={() => navigator.share?.({ title: "آية اليوم", text: verse?.text ?? "" }).catch(() => {})}
-                  className="flex flex-col items-center gap-1 active:scale-[0.94] transition-transform"
-                >
-                  <span className="grid h-10 w-10 place-items-center rounded-full border border-white/70 bg-white/65 text-[#7a4a26] backdrop-blur-md shadow-[0_6px_14px_-8px_rgba(120,80,30,0.45),inset_0_1px_0_rgba(255,255,255,0.9)]">
-                    <Share2 className="h-4 w-4" />
-                  </span>
-                  <span className="text-[10px] font-bold text-[#7a4a26]">مشاركة</span>
-                </button>
+              {/* carousel indicators */}
+              <div className="flex items-center gap-1.5" aria-hidden>
+                <span className="h-1.5 w-5 rounded-full bg-gradient-to-r from-[#c79356] to-[#7a4a26] shadow-[0_0_6px_rgba(199,147,86,0.55)]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#c79356]/35" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#c79356]/35" />
               </div>
-            </div>
 
-            {/* carousel indicators — centered at bottom */}
-            <div className="relative z-10 flex items-center justify-center gap-1.5 pb-3" aria-hidden>
-              <span className="h-1.5 w-5 rounded-full bg-gradient-to-r from-[#c79356] to-[#7a4a26] shadow-[0_0_6px_rgba(199,147,86,0.55)]" />
-              <span className="h-1.5 w-1.5 rounded-full bg-[#c79356]/35" />
-              <span className="h-1.5 w-1.5 rounded-full bg-[#c79356]/35" />
+              <button
+                aria-label="مشاركة"
+                onClick={() => navigator.share?.({ title: "آية اليوم", text: verse?.text ?? "" }).catch(() => {})}
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/70 bg-white/60 text-[#7a4a26] backdrop-blur-md shadow-[0_6px_14px_-8px_rgba(120,80,30,0.45),inset_0_1px_0_rgba(255,255,255,0.9)] transition-all active:scale-[0.94]"
+              >
+                <Share2 className="h-4 w-4" />
+              </button>
             </div>
           </div>
         </section>
-
 
         {/* Quick access grid 3x2 */}
         <section className="mt-4 grid grid-cols-3 gap-2.5">
