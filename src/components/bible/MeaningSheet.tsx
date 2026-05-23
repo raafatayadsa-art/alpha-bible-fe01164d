@@ -156,7 +156,7 @@ export function MeaningSheet({
             className="overflow-y-auto px-4 pt-2 pb-6"
             style={{ maxHeight: expanded ? "calc(92vh - 140px)" : "calc(70vh - 140px)" }}
           >
-            {tab === "overview" && <OverviewBlock data={data} />}
+            
             {tab === "meaning" && (
               <TextBlock title="المعنى والأصل">
                 {data?.meaning || data?.origin || "لا توجد تفاصيل بعد."}
