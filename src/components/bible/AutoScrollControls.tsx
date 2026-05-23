@@ -40,7 +40,13 @@ export function AutoScrollControls({
   hidden?: boolean;
 }) {
   const [playing, setPlaying] = useState(false);
-  const [speedIdx, setSpeedIdx] = useState(0);
+  const [speedIdx, setSpeedIdx] = useState<number>(loadInitialSpeedIdx);
+
+  // Persist speed selection across refresh, chapter change, and navigation.
+  useEffect(() => {
+    try { window.localStorage.setItem(SPEED_STORAGE_KEY, String(speedIdx)); }
+    catch { /* ignore */ }
+  }, [speedIdx]);
   const [internalActive, setInternalActive] = useState(true);
   const speed: Speed = SPEEDS[speedIdx];
   const raf = useRef<number | null>(null);
