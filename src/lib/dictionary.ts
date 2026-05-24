@@ -125,12 +125,14 @@ async function fetchDictionary(): Promise<DictionaryEntry[]> {
       const wordNormalized = ((row.word_normalized ?? "") as string).toString().trim();
       // Per spec: short meaning lives in `short_meaning` (fallback `meaning`). No long descriptions.
       const meaning = ((row.short_meaning ?? row.meaning ?? "") as string).toString().trim();
+      const fullMeaning = ((row.full_meaning ?? "") as string).toString().trim();
       return {
         id: row.id,
         term: word,
         normalizedTerm: wordNormalized || undefined,
         category: row.category ?? undefined,
         shortMeaning: meaning || undefined,
+        fullMeaning: fullMeaning || undefined,
         fullDescription: undefined,
         bibleReferencesRaw: row.bible_references ?? row.reference ?? undefined,
         keywords: row.keywords ?? undefined,
