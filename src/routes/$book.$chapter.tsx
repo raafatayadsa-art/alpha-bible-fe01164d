@@ -64,7 +64,7 @@ function parseRelatedVerses(raw?: string): { reference: string; text: string }[]
     });
 }
 
-function entryToSheet(e: DictionaryEntry): MeaningSheetData {
+function entryToSheet(e: DictionaryEntry, displayWord?: string): MeaningSheetData {
   const kind = classifyEntry(e.category);
   const shortMeaning = (e.shortMeaning || "").trim();
   const meaningAlt = (e.meaning || "").trim();
@@ -75,8 +75,12 @@ function entryToSheet(e: DictionaryEntry): MeaningSheetData {
   // Fallback chain per spec: short_meaning -> meaning -> explanation.
   const primaryMeaning = shortMeaning || meaningAlt || explanation || undefined;
 
+  // Title = original tapped word (Arabic, as it appears in the verse).
+  // Never show the normalized form to the user.
+  const title = (displayWord || e.term || "").trim();
+
   const base: MeaningSheetData = {
-    word: (e.term ?? "").trim(),
+    word: title,
     kind: e.category,
     meaning: primaryMeaning,
     origin: fullDesc || undefined,
@@ -84,10 +88,10 @@ function entryToSheet(e: DictionaryEntry): MeaningSheetData {
   };
 
   if (kind === "place") {
-    return { ...base, mapLabel: e.term };
+    return { ...base, mapLabel: title };
   }
   if (kind === "person") {
-    return { ...base, relatedPeople: e.term ? [{ name: e.term, role: e.category }] : undefined };
+    return { ...base, relatedPeople: title ? [{ name: title, role: e.category }] : undefined };
   }
   return base;
 }
