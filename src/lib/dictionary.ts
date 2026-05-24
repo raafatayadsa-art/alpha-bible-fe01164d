@@ -42,6 +42,7 @@ export function normalizeAr(s: string): string {
     .replace(/[\u064B-\u0652\u0670\u0640]/g, "")
     .replace(/[أإآٱ]/g, "ا")
     .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه")
     .replace(/[^\u0600-\u06FF\s]/g, "")
     .trim();
 }
