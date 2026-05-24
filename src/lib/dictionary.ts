@@ -130,6 +130,8 @@ async function fetchDictionary(): Promise<DictionaryEntry[]> {
         normalizedTerm: wordNormalized || undefined,
         category: row.category ?? undefined,
         shortMeaning: row.short_meaning ?? undefined,
+        meaning: row.meaning ?? undefined,
+        explanation: row.explanation ?? undefined,
         fullDescription: row.full_description ?? undefined,
         bibleReferencesRaw: row.bible_references ?? undefined,
         keywords: row.keywords ?? undefined,
