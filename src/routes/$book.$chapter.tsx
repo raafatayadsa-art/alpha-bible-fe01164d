@@ -36,9 +36,11 @@ import {
   normalizeAr,
   stemAr,
   classifyEntry,
+  lookupAllSources,
   type DictionaryEntry,
   type DictionaryIndex,
 } from "@/lib/dictionary";
+import type { Tab as MeaningTab } from "@/components/bible/MeaningSheet";
 
 /**
  * HMR_EPOCH — bumps on every hot-module reload of this file (and indirectly
@@ -64,28 +66,65 @@ function parseRelatedVerses(raw?: string): { reference: string; text: string }[]
     });
 }
 
-function entryToSheet(e: DictionaryEntry): MeaningSheetData {
-  const kind = classifyEntry(e.category);
-  const shortMeaning = (e.shortMeaning || "").trim();
-  const fullDesc = (e.fullDescription || "").trim();
-  const verses = parseRelatedVerses(e.bibleReferencesRaw);
+/**
+ * Compose the meaning-sheet payload by pulling each tab's data from its OWN
+ * source table:
+ *   - المعنى   → alpha_dictionary (then alpha_dictionary_deep as fallback)
+ *   - الأشخاص  → bible_names_dictionary only
+ *   - الآيات   → scripture references from whichever source has them
+ *   - الخريطة  → place-classified entries only
+ * If a name entry exists for the tapped key, the sheet opens on الأشخاص.
+ */
+function composeSheet(
+  dictIndex: DictionaryIndex,
+  key: string,
+  fallback: DictionaryEntry,
+): { data: MeaningSheetData; initialTab: MeaningTab } {
+  const sources = lookupAllSources(dictIndex, key);
+  const nameEntry = sources.name;
+  const alphaEntry = sources.alpha ?? sources.deep;
+  const encyclopediaEntry = sources.encyclopedia;
 
-  const base: MeaningSheetData = {
-    // Overlay title = term. If empty, show nothing — no fallback.
-    word: (e.term ?? "").trim(),
-    kind: e.category,
-    meaning: shortMeaning || undefined,
-    origin: fullDesc || undefined,
+  // Display word: prefer the tapped term from any source.
+  const displayWord = (
+    nameEntry?.term ?? alphaEntry?.term ?? encyclopediaEntry?.term ?? fallback.term ?? ""
+  ).trim();
+
+  // المعنى — alpha only (NOT names). Falls back to deep dictionary.
+  const meaning = (alphaEntry?.shortMeaning ?? "").trim() || undefined;
+  const origin = (alphaEntry?.fullDescription ?? "").trim() || undefined;
+
+  // الآيات — scripture references from any source that has them.
+  const refsRaw =
+    alphaEntry?.bibleReferencesRaw ??
+    encyclopediaEntry?.bibleReferencesRaw ??
+    nameEntry?.bibleReferencesRaw ??
+    fallback.bibleReferencesRaw;
+  const verses = parseRelatedVerses(refsRaw);
+
+  // الأشخاص — names only.
+  const relatedPeople = nameEntry
+    ? [{ name: (nameEntry.term ?? displayWord).trim(), role: nameEntry.shortMeaning ?? nameEntry.category }]
+    : undefined;
+
+  // الخريطة — only entries classified as a place.
+  const placeEntry =
+    [alphaEntry, encyclopediaEntry, nameEntry].find(
+      (e) => e && classifyEntry(e.category) === "place",
+    ) ?? undefined;
+
+  const data: MeaningSheetData = {
+    word: displayWord,
+    kind: nameEntry ? "شخص" : alphaEntry?.category ?? encyclopediaEntry?.category,
+    meaning,
+    origin,
     relatedVerses: verses.length ? verses : undefined,
+    relatedPeople,
+    mapLabel: placeEntry?.term,
   };
 
-  if (kind === "place") {
-    return { ...base, mapLabel: e.term };
-  }
-  if (kind === "person") {
-    return { ...base, relatedPeople: e.term ? [{ name: e.term, role: e.category }] : undefined };
-  }
-  return base;
+  const initialTab: MeaningTab = nameEntry ? "people" : "meaning";
+  return { data, initialTab };
 }
 
 
@@ -111,7 +150,7 @@ function ScriptureReader() {
   const chapters = useQuery(chaptersQueryOptions(book));
 
   const [spiritualMode, setSpiritualMode] = useState(false);
-  const [sheet, setSheet] = useState<MeaningSheetData | null>(null);
+  const [sheet, setSheet] = useState<{ data: MeaningSheetData; initialTab: MeaningTab } | null>(null);
   const [progress, setProgress] = useState(0);
   const [typeOpen, setTypeOpen] = useState(false);
   const [activeVerse, setActiveVerse] = useState<string | null>(null);
@@ -535,18 +574,21 @@ function ScriptureReader() {
                       text: v?.verse_text ?? "",
                     })
                   }
-                  onSelectWord={(entry) => setSheet(entryToSheet(entry))}
+                  onSelectWord={(entry, key) => setSheet(composeSheet(dictIndex, key, entry))}
                   dictIndex={dictIndex}
                   seenWords={seenWords}
                   showRef={showRef}
                   onOpenRef={() =>
                     setSheet({
-                      word: `${bookName} ${ch}:${num}`,
-                      kind: "مراجع متقاطعة",
-                      relatedVerses: [
-                        { reference: "مزمور 23:1", text: "الرب راعيّ فلا يعوزني شيء." },
-                        { reference: "يوحنا 14:6", text: "أنا هو الطريق والحق والحياة." },
-                      ],
+                      data: {
+                        word: `${bookName} ${ch}:${num}`,
+                        kind: "مراجع متقاطعة",
+                        relatedVerses: [
+                          { reference: "مزمور 23:1", text: "الرب راعيّ فلا يعوزني شيء." },
+                          { reference: "يوحنا 14:6", text: "أنا هو الطريق والحق والحياة." },
+                        ],
+                      },
+                      initialTab: "verses",
                     })
                   }
                 />
@@ -619,7 +661,7 @@ function ScriptureReader() {
       {/* Persistent global navigation */}
       <BottomDock hidden={chromeHidden} spiritualMode={spiritualMode} />
 
-      <MeaningSheet data={sheet} onClose={() => setSheet(null)} />
+      <MeaningSheet data={sheet?.data ?? null} initialTab={sheet?.initialTab} onClose={() => setSheet(null)} />
     </main>
   );
 }
@@ -649,7 +691,7 @@ function VerseCard({
   surfaceClass: string;
   onTap: () => void;
   onToggleSave: () => void;
-  onSelectWord: (entry: DictionaryEntry) => void;
+  onSelectWord: (entry: DictionaryEntry, key: string) => void;
   dictIndex: DictionaryIndex;
   /** Shared per-chapter set of normalized words already highlighted (mutated). */
   seenWords: Set<string>;
@@ -729,7 +771,7 @@ const VerseHighlighted = memo(function VerseHighlighted({
   text: string;
   dictIndex: DictionaryIndex;
   seenWords: Set<string>;
-  onSelectWord: (entry: DictionaryEntry) => void;
+  onSelectWord: (entry: DictionaryEntry, key: string) => void;
   spiritualMode: boolean;
 }) {
   return useMemo(
@@ -1046,7 +1088,7 @@ function renderVerse(
   text: string,
   dictIndex: DictionaryIndex,
   seenWords: Set<string>, // de-dup keys: `entry:<id>` so all variants share one slot
-  onSelect: (entry: DictionaryEntry) => void,
+  onSelect: (entry: DictionaryEntry, key: string) => void,
 ): React.ReactNode {
   if (!text) return null;
   if (
@@ -1140,7 +1182,7 @@ function renderVerse(
               sourceField,
               { id: entry.id, surface },
             );
-            onSelect(entry);
+            onSelect(entry, matchedNorm);
           }}
         >
           {surface}
