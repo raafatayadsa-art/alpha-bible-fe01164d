@@ -15,7 +15,7 @@ export type MeaningSheetData = {
   mapLabel?: string;
 };
 
-type Tab = "meaning" | "verses" | "people" | "map" | "timeline";
+export type Tab = "meaning" | "verses" | "people" | "map" | "timeline";
 
 const tabs: { key: Tab; label: string; icon: typeof X }[] = [
   { key: "meaning", label: "المعنى", icon: Sparkles },
