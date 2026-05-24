@@ -55,6 +55,7 @@ export function MeaningSheet({
   const open = !!data;
   const [tab, setTab] = useState<Tab>("meaning");
   const [expanded, setExpanded] = useState(false);
+  const [showFull, setShowFull] = useState(false);
   const dragStart = useRef<number | null>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   const abbrev = useBookAbbreviations();
