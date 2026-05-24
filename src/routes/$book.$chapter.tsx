@@ -32,12 +32,18 @@ import {
 import { cn } from "@/lib/utils";
 import {
   useDictionary,
+  useDeepDictionary,
+  useBookAbbreviations,
   buildDictionaryIndex,
+  buildDeepIndex,
+  buildAbbrevMap,
+  lookupDeep,
   normalizeAr,
   stemAr,
   classifyEntry,
   type DictionaryEntry,
   type DictionaryIndex,
+  type DeepDictionaryIndex,
 } from "@/lib/dictionary";
 
 /**
