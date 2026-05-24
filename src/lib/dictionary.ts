@@ -82,7 +82,7 @@ const GENERIC_BLACKLIST = new Set(
   ].map(normalizeAr),
 );
 
-function mapRow(row: any): DictionaryEntry {
+function mapRow(row: any, defaultCategory?: string): DictionaryEntry {
   const word = ((row.word ?? row.term ?? row.title ?? row.name ?? "") as string).toString().trim();
   const wordNormalized = ((row.word_normalized ?? row.normalized_term ?? row.normalized ?? "") as string)
     .toString()
@@ -91,7 +91,7 @@ function mapRow(row: any): DictionaryEntry {
     id: row.id,
     term: word,
     normalizedTerm: wordNormalized || undefined,
-    category: row.category ?? row.kind ?? undefined,
+    category: row.category ?? row.kind ?? defaultCategory,
     shortMeaning: row.short_meaning ?? row.summary ?? row.meaning ?? undefined,
     fullDescription: row.full_description ?? row.description ?? row.content ?? undefined,
     bibleReferencesRaw: row.bible_references ?? row.references ?? undefined,
@@ -99,7 +99,7 @@ function mapRow(row: any): DictionaryEntry {
   } as DictionaryEntry;
 }
 
-async function fetchTable(table: string): Promise<DictionaryEntry[]> {
+async function fetchTable(table: string, defaultCategory?: string): Promise<DictionaryEntry[]> {
   const { data, error } = await (supabase as any).from(table).select("*");
   if (error) {
     // eslint-disable-next-line no-console
@@ -107,7 +107,7 @@ async function fetchTable(table: string): Promise<DictionaryEntry[]> {
     return [];
   }
   const rows = (data ?? [])
-    .map(mapRow)
+    .map((r: any) => mapRow(r, defaultCategory))
     .filter(
       (e: DictionaryEntry) =>
         (e.term && e.term.trim().length > 1) ||
@@ -119,16 +119,20 @@ async function fetchTable(table: string): Promise<DictionaryEntry[]> {
 }
 
 async function fetchDictionary(): Promise<DictionaryEntry[]> {
-  // Priority order: alpha_dictionary → bible_encyclopedia → alpha_dictionary_deep.
-  // Index registration keeps the first entry for any given normalized key,
-  // so earlier sources win when a word exists in multiple tables.
-  const [primary, encyclopedia, deep] = await Promise.all([
-    fetchTable("alpha_dictionary"),
+  // Priority order (earlier sources win on duplicate normalized keys):
+  //   1. bible_names_dictionary  — biblical names (آدم، موسى، إبراهيم) → person
+  //   2. bible_encyclopedia      — general encyclopedia
+  //   3. alpha_dictionary        — primary dictionary
+  //   4. alpha_dictionary_deep   — deep fallback
+  const [names, encyclopedia, primary, deep] = await Promise.all([
+    fetchTable("bible_names_dictionary", "شخص"),
     fetchTable("bible_encyclopedia"),
+    fetchTable("alpha_dictionary"),
     fetchTable("alpha_dictionary_deep"),
   ]);
-  return [...primary, ...encyclopedia, ...deep];
+  return [...names, ...encyclopedia, ...primary, ...deep];
 }
+
 
 
 export function useDictionary() {
