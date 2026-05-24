@@ -131,15 +131,25 @@ function ScriptureReader() {
   const [typeOpen, setTypeOpen] = useState(false);
   const [activeVerse, setActiveVerse] = useState<string | null>(null);
 
-  // Dictionary words from Supabase (dictionary_entries) — drives highlight + meaning sheet.
+  // Dictionary words from Supabase (alpha_dictionary) — drives highlight + meaning sheet.
   const dict = useDictionary();
-  // HMR epoch — bumps every time this module (or dictionary.ts) hot-reloads
-  // in the dev editor, forcing the index + verse cards to rebuild without
-  // requiring a full page reload or jumping to Preview.
+  // Deep details (alpha_dictionary_deep) — long-form description by normalized title.
+  const deep = useDeepDictionary();
+  // Book abbreviations (bible_book_abbreviations) — book → short label.
+  const abbrev = useBookAbbreviations();
+
   const dictIndex = useMemo<DictionaryIndex>(
     () => buildDictionaryIndex(dict.data ?? []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [dict.data, dict.dataUpdatedAt, HMR_EPOCH],
+  );
+  const deepIndex = useMemo<DeepDictionaryIndex>(
+    () => buildDeepIndex(deep.data ?? []),
+    [deep.data, deep.dataUpdatedAt],
+  );
+  const abbrevMap = useMemo(
+    () => buildAbbrevMap(abbrev.data ?? []),
+    [abbrev.data, abbrev.dataUpdatedAt],
   );
   useEffect(() => {
     // eslint-disable-next-line no-console
@@ -148,8 +158,10 @@ function ScriptureReader() {
       stems: dictIndex.stems.size,
       phrases: dictIndex.phrases.size,
       phraseStems: dictIndex.phraseStems.size,
+      deep: deepIndex.size,
+      abbrev: abbrevMap.size,
     });
-  }, [dictIndex]);
+  }, [dictIndex, deepIndex, abbrevMap]);
 
 
 
