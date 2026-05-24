@@ -66,28 +66,65 @@ function parseRelatedVerses(raw?: string): { reference: string; text: string }[]
     });
 }
 
-function entryToSheet(e: DictionaryEntry): MeaningSheetData {
-  const kind = classifyEntry(e.category);
-  const shortMeaning = (e.shortMeaning || "").trim();
-  const fullDesc = (e.fullDescription || "").trim();
-  const verses = parseRelatedVerses(e.bibleReferencesRaw);
+/**
+ * Compose the meaning-sheet payload by pulling each tab's data from its OWN
+ * source table:
+ *   - المعنى   → alpha_dictionary (then alpha_dictionary_deep as fallback)
+ *   - الأشخاص  → bible_names_dictionary only
+ *   - الآيات   → scripture references from whichever source has them
+ *   - الخريطة  → place-classified entries only
+ * If a name entry exists for the tapped key, the sheet opens on الأشخاص.
+ */
+function composeSheet(
+  dictIndex: DictionaryIndex,
+  key: string,
+  fallback: DictionaryEntry,
+): { data: MeaningSheetData; initialTab: MeaningTab } {
+  const sources = lookupAllSources(dictIndex, key);
+  const nameEntry = sources.name;
+  const alphaEntry = sources.alpha ?? sources.deep;
+  const encyclopediaEntry = sources.encyclopedia;
 
-  const base: MeaningSheetData = {
-    // Overlay title = term. If empty, show nothing — no fallback.
-    word: (e.term ?? "").trim(),
-    kind: e.category,
-    meaning: shortMeaning || undefined,
-    origin: fullDesc || undefined,
+  // Display word: prefer the tapped term from any source.
+  const displayWord = (
+    nameEntry?.term ?? alphaEntry?.term ?? encyclopediaEntry?.term ?? fallback.term ?? ""
+  ).trim();
+
+  // المعنى — alpha only (NOT names). Falls back to deep dictionary.
+  const meaning = (alphaEntry?.shortMeaning ?? "").trim() || undefined;
+  const origin = (alphaEntry?.fullDescription ?? "").trim() || undefined;
+
+  // الآيات — scripture references from any source that has them.
+  const refsRaw =
+    alphaEntry?.bibleReferencesRaw ??
+    encyclopediaEntry?.bibleReferencesRaw ??
+    nameEntry?.bibleReferencesRaw ??
+    fallback.bibleReferencesRaw;
+  const verses = parseRelatedVerses(refsRaw);
+
+  // الأشخاص — names only.
+  const relatedPeople = nameEntry
+    ? [{ name: (nameEntry.term ?? displayWord).trim(), role: nameEntry.shortMeaning ?? nameEntry.category }]
+    : undefined;
+
+  // الخريطة — only entries classified as a place.
+  const placeEntry =
+    [alphaEntry, encyclopediaEntry, nameEntry].find(
+      (e) => e && classifyEntry(e.category) === "place",
+    ) ?? undefined;
+
+  const data: MeaningSheetData = {
+    word: displayWord,
+    kind: nameEntry ? "شخص" : alphaEntry?.category ?? encyclopediaEntry?.category,
+    meaning,
+    origin,
     relatedVerses: verses.length ? verses : undefined,
+    relatedPeople,
+    mapLabel: placeEntry?.term,
   };
 
-  if (kind === "place") {
-    return { ...base, mapLabel: e.term };
-  }
-  if (kind === "person") {
-    return { ...base, relatedPeople: e.term ? [{ name: e.term, role: e.category }] : undefined };
-  }
-  return base;
+  const initialTab: MeaningTab = nameEntry ? "people" : "meaning";
+  return { data, initialTab };
 }
 
 
