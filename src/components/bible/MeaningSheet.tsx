@@ -64,6 +64,7 @@ export function MeaningSheet({
     if (open) {
       setTab(data?.defaultTab ?? "meaning");
       setExpanded(false);
+      setShowFull(false);
     }
   }, [open, data?.word, data?.defaultTab]);
 
