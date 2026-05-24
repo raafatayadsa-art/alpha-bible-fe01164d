@@ -352,11 +352,6 @@ export function buildDictionaryIndex(entries: DictionaryEntry[]): DictionaryInde
 }
 
 export function lookupEntry(idx: DictionaryIndex, key: string): DictionaryEntry | undefined {
-  const direct = idx.phrases.get(key) ?? idx.map.get(key);
-  if (direct) return direct;
-  const stripped = stripArPrefix(key);
-  if (stripped && stripped !== key) {
-    return idx.phrases.get(stripped) ?? idx.map.get(stripped);
-  }
-  return undefined;
+  // Strict exact normalized match only — no prefix stripping, no fallback.
+  return idx.phrases.get(key) ?? idx.map.get(key);
 }
