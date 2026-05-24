@@ -1054,7 +1054,7 @@ function renderVerse(
   text: string,
   dictIndex: DictionaryIndex,
   seenWords: Set<string>, // de-dup keys: `entry:<id>` so all variants share one slot
-  onSelect: (entry: DictionaryEntry) => void,
+  onSelect: (entry: DictionaryEntry, surface: string) => void,
 ): React.ReactNode {
   if (!text) return null;
   if (
