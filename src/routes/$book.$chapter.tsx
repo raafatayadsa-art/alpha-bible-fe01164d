@@ -691,7 +691,7 @@ function VerseCard({
   surfaceClass: string;
   onTap: () => void;
   onToggleSave: () => void;
-  onSelectWord: (entry: DictionaryEntry) => void;
+  onSelectWord: (entry: DictionaryEntry, key: string) => void;
   dictIndex: DictionaryIndex;
   /** Shared per-chapter set of normalized words already highlighted (mutated). */
   seenWords: Set<string>;
