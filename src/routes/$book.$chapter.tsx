@@ -574,18 +574,21 @@ function ScriptureReader() {
                       text: v?.verse_text ?? "",
                     })
                   }
-                  onSelectWord={(entry) => setSheet(entryToSheet(entry))}
+                  onSelectWord={(entry, key) => setSheet(composeSheet(dictIndex, key, entry))}
                   dictIndex={dictIndex}
                   seenWords={seenWords}
                   showRef={showRef}
                   onOpenRef={() =>
                     setSheet({
-                      word: `${bookName} ${ch}:${num}`,
-                      kind: "مراجع متقاطعة",
-                      relatedVerses: [
-                        { reference: "مزمور 23:1", text: "الرب راعيّ فلا يعوزني شيء." },
-                        { reference: "يوحنا 14:6", text: "أنا هو الطريق والحق والحياة." },
-                      ],
+                      data: {
+                        word: `${bookName} ${ch}:${num}`,
+                        kind: "مراجع متقاطعة",
+                        relatedVerses: [
+                          { reference: "مزمور 23:1", text: "الرب راعيّ فلا يعوزني شيء." },
+                          { reference: "يوحنا 14:6", text: "أنا هو الطريق والحق والحياة." },
+                        ],
+                      },
+                      initialTab: "verses",
                     })
                   }
                 />
