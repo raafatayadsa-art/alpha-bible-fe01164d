@@ -33,17 +33,21 @@ import { cn } from "@/lib/utils";
 import {
   useDictionary,
   useDeepDictionary,
+  useEncyclopedia,
   useBookAbbreviations,
   buildDictionaryIndex,
   buildDeepIndex,
+  buildEncyclopediaIndex,
   buildAbbrevMap,
   lookupDeep,
+  lookupEncyclopedia,
   normalizeAr,
   stemAr,
   classifyEntry,
   type DictionaryEntry,
   type DictionaryIndex,
   type DeepDictionaryIndex,
+  type EncyclopediaIndex,
 } from "@/lib/dictionary";
 
 /**
