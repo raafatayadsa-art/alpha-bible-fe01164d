@@ -562,7 +562,7 @@ function ScriptureReader() {
                       text: v?.verse_text ?? "",
                     })
                   }
-                  onSelectWord={(entry, surface) => setSheet(entryToSheet(entry, surface))}
+                  onSelectWord={(entry, surface) => setSheet(entryToSheet(entry, surface, deepIndex))}
                   dictIndex={dictIndex}
                   seenWords={seenWords}
                   showRef={showRef}
