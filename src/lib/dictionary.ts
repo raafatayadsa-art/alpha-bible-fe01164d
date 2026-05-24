@@ -160,24 +160,31 @@ export function useDictionary() {
 }
 
 /* ---------------- Deep dictionary (alpha_dictionary_deep) ----------------
+ * Persons / places / detailed entries.
  * Column mapping:
- *   title    → long-form headword (matched against the tapped word, normalized)
- *   content  → long-form description shown in the meaning sheet's details area
+ *   word       → headword (matched against the tapped word, normalized)
+ *   meaning    → long-form details shown in persons/places tab
+ *   reference  → related Bible references (raw text, parsed for verses tab)
  */
-export type DeepEntry = { title: string; content: string };
+export type DeepEntry = {
+  word: string;
+  meaning: string;
+  reference?: string;
+};
 export type DeepDictionaryIndex = Map<string, DeepEntry>;
 
 async function fetchDeepDictionary(): Promise<DeepEntry[]> {
   const { data, error } = await (supabase as any)
     .from("alpha_dictionary_deep")
-    .select("title, content");
+    .select("word, meaning, reference");
   if (error) throw error;
   return (data ?? [])
     .map((row: any) => ({
-      title: ((row.title ?? "") as string).toString().trim(),
-      content: ((row.content ?? "") as string).toString().trim(),
+      word: ((row.word ?? "") as string).toString().trim(),
+      meaning: ((row.meaning ?? "") as string).toString().trim(),
+      reference: ((row.reference ?? "") as string).toString().trim() || undefined,
     }))
-    .filter((e: DeepEntry) => e.title && e.content);
+    .filter((e: DeepEntry) => e.word && e.meaning);
 }
 
 export function useDeepDictionary() {
@@ -193,13 +200,78 @@ export function useDeepDictionary() {
 export function buildDeepIndex(entries: DeepEntry[]): DeepDictionaryIndex {
   const m = new Map<string, DeepEntry>();
   for (const e of entries) {
-    const key = normalizeAr(e.title);
+    const key = normalizeAr(e.word);
     if (key && !m.has(key)) m.set(key, e);
   }
   return m;
 }
 
 export function lookupDeep(idx: DeepDictionaryIndex, word: string): DeepEntry | undefined {
+  return idx.get(normalizeAr(word));
+}
+
+/* ---------------- Bible encyclopedia (bible_encyclopedia) -----------------
+ * Long-form encyclopedia entries.
+ * Column mapping:
+ *   title                → headword (matched against the tapped word, normalized)
+ *   content              → encyclopedic details
+ *   scripture_references → related Bible references (raw text)
+ *   keywords             → extra search aliases (normalized, search-only)
+ */
+export type EncyclopediaEntry = {
+  title: string;
+  content: string;
+  scriptureReferences?: string;
+  keywords?: string;
+};
+export type EncyclopediaIndex = Map<string, EncyclopediaEntry>;
+
+async function fetchEncyclopedia(): Promise<EncyclopediaEntry[]> {
+  const { data, error } = await (supabase as any)
+    .from("bible_encyclopedia")
+    .select("title, content, scripture_references, keywords");
+  if (error) throw error;
+  return (data ?? [])
+    .map((row: any) => ({
+      title: ((row.title ?? "") as string).toString().trim(),
+      content: ((row.content ?? "") as string).toString().trim(),
+      scriptureReferences:
+        ((row.scripture_references ?? "") as string).toString().trim() || undefined,
+      keywords: ((row.keywords ?? "") as string).toString().trim() || undefined,
+    }))
+    .filter((e: EncyclopediaEntry) => e.title && e.content);
+}
+
+export function useEncyclopedia() {
+  return useQuery({
+    queryKey: ["bible_encyclopedia"],
+    queryFn: fetchEncyclopedia,
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    retry: 2,
+  });
+}
+
+export function buildEncyclopediaIndex(entries: EncyclopediaEntry[]): EncyclopediaIndex {
+  const m = new Map<string, EncyclopediaEntry>();
+  for (const e of entries) {
+    const titleKey = normalizeAr(e.title);
+    if (titleKey && !m.has(titleKey)) m.set(titleKey, e);
+    // keywords are search-only aliases (never displayed)
+    if (e.keywords) {
+      for (const kw of e.keywords.split(/[،,;؛\n]/g)) {
+        const k = normalizeAr(kw);
+        if (k && !m.has(k)) m.set(k, e);
+      }
+    }
+  }
+  return m;
+}
+
+export function lookupEncyclopedia(
+  idx: EncyclopediaIndex,
+  word: string,
+): EncyclopediaEntry | undefined {
   return idx.get(normalizeAr(word));
 }
 
