@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { DictionaryDebugBadge } from "@/components/DictionaryDebugBadge";
 
 function NotFoundComponent() {
   return (
