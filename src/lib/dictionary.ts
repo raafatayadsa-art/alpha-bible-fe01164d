@@ -102,7 +102,7 @@ async function fetchDictionary(): Promise<DictionaryEntry[]> {
       } as DictionaryEntry;
     })
     .filter(
-      (e) =>
+      (e: DictionaryEntry) =>
         (e.term && e.term.trim().length > 1) ||
         (e.normalizedTerm && e.normalizedTerm.trim().length > 1),
     );
