@@ -83,16 +83,17 @@ const GENERIC_BLACKLIST = new Set(
 );
 
 async function fetchDictionary(): Promise<DictionaryEntry[]> {
-  const { data, error } = await supabase.from("dictionary_entries").select("*");
+  // Data source: alpha_dictionary. Exact-match lookup uses `word_normalized`.
+  const { data, error } = await (supabase as any).from("alpha_dictionary").select("*");
   if (error) throw error;
   const rows = (data ?? [])
     .map((row: any) => {
-      const term = ((row.term ?? "") as string).toString().trim();
-      const normalizedTerm = ((row.normalized_term ?? "") as string).toString().trim();
+      const word = ((row.word ?? row.term ?? "") as string).toString().trim();
+      const wordNormalized = ((row.word_normalized ?? "") as string).toString().trim();
       return {
         id: row.id,
-        term,
-        normalizedTerm: normalizedTerm || undefined,
+        term: word,
+        normalizedTerm: wordNormalized || undefined,
         category: row.category ?? undefined,
         shortMeaning: row.short_meaning ?? undefined,
         fullDescription: row.full_description ?? undefined,
@@ -101,12 +102,12 @@ async function fetchDictionary(): Promise<DictionaryEntry[]> {
       } as DictionaryEntry;
     })
     .filter(
-      (e) =>
+      (e: DictionaryEntry) =>
         (e.term && e.term.trim().length > 1) ||
         (e.normalizedTerm && e.normalizedTerm.trim().length > 1),
     );
   // eslint-disable-next-line no-console
-  console.log("[dictionary] loaded entries:", (data ?? []).length, "valid terms:", rows.length);
+  console.log("[alpha_dictionary] loaded entries:", (data ?? []).length, "valid terms:", rows.length);
   return rows;
 }
 
