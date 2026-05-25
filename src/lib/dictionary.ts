@@ -188,7 +188,7 @@ async function fetchDictionary(): Promise<DictionaryEntry[]> {
   // eslint-disable-next-line no-console
   console.log(
     "[alpha_dictionary] loaded entries:",
-    (data ?? []).length,
+    all.length,
     "valid terms:",
     rows.length,
     "from",
