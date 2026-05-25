@@ -362,7 +362,14 @@ export type DictionaryIndex = {
   maxPhraseTokens: number;
 };
 
+let __indexCache: { entries: DictionaryEntry[]; index: DictionaryIndex } | null = null;
 export function buildDictionaryIndex(entries: DictionaryEntry[]): DictionaryIndex {
+  if (__indexCache && __indexCache.entries === entries) return __indexCache.index;
+  const index = _buildDictionaryIndex(entries);
+  __indexCache = { entries, index };
+  return index;
+}
+function _buildDictionaryIndex(entries: DictionaryEntry[]): DictionaryIndex {
   const map = new Map<string, DictionaryEntry>();
   const phrases = new Map<string, DictionaryEntry>();
   let maxPhraseTokens = 1;
