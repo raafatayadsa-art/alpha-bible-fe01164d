@@ -1281,13 +1281,8 @@ function renderVerseTokens(
     if (!p) continue;
     if (i % 2 === 1) {
       const norm = normalizeAr(p);
-      const stripped = stripArPrefix(norm);
-      const matchKey =
-        norm && matchedSet.has(norm)
-          ? norm
-          : stripped && stripped.length >= 3 && matchedSet.has(stripped)
-            ? stripped
-            : null;
+      const matchKey = norm && matchedSet.has(norm) ? norm : null;
+
       if (matchKey && !seenChapterWords.has(matchKey)) {
         seenChapterWords.add(matchKey);
         hlCount++;
