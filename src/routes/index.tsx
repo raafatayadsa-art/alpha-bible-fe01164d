@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import splashPhase1 from "@/assets/splash-phase1.png";
+import alphaLogo from "@/assets/alpha-logo.png";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -14,21 +15,30 @@ export const Route = createFileRoute("/")({
 });
 
 function SplashScreen() {
-  // Phase 1: Opening Atmosphere — black screen → cinematic fade-in of image.
-  // No logo, no app name, no slogan, no CTA, no text.
+  // Phase 1: black → cinematic background reveal
+  // Phase 2: holy logo reveal from the light above the church
   const [revealed, setRevealed] = useState(false);
+  const [logoIn, setLogoIn] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setRevealed(true), 350);
-    return () => clearTimeout(t);
+    const t1 = setTimeout(() => setRevealed(true), 350);
+    // Start logo reveal near the end of Phase 1 background reveal
+    const t2 = setTimeout(() => setLogoIn(true), 1600);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
   return (
     <div
       dir="rtl"
       className="relative h-[100dvh] w-screen overflow-hidden bg-black"
+      style={{
+        paddingTop: "env(safe-area-inset-top)",
+      }}
     >
-      {/* Background image — cinematic reveal from darkness */}
+      {/* Phase 1 — Background image cinematic reveal */}
       <img
         src={splashPhase1}
         alt=""
@@ -36,18 +46,16 @@ function SplashScreen() {
         draggable={false}
         className={[
           "absolute inset-0 h-full w-full object-cover object-center select-none",
-          "transition-opacity ease-out",
-          "[transition-duration:1800ms]",
+          "transition-opacity ease-out [transition-duration:1800ms]",
           revealed ? "opacity-100" : "opacity-0",
         ].join(" ")}
       />
 
-      {/* Soft light bloom — appears gently with the image */}
+      {/* Phase 1 — Soft golden bloom synced with background */}
       <div
         aria-hidden
         className={[
-          "pointer-events-none absolute inset-0 transition-opacity ease-out",
-          "[transition-duration:2000ms]",
+          "pointer-events-none absolute inset-0 transition-opacity ease-out [transition-duration:2000ms]",
           revealed ? "opacity-100" : "opacity-0",
         ].join(" ")}
         style={{
@@ -56,6 +64,54 @@ function SplashScreen() {
           mixBlendMode: "screen",
         }}
       />
+
+      {/* Phase 2 — Holy logo reveal */}
+      <div
+        aria-hidden={!logoIn}
+        className="pointer-events-none absolute inset-x-0 flex justify-center"
+        style={{
+          // Sits in the upper third, clear of Dynamic Island and the church
+          top: "calc(env(safe-area-inset-top) + 7%)",
+        }}
+      >
+        <div className="relative">
+          {/* Soft divine glow behind the logo — only blooms during reveal, then settles */}
+          <div
+            className={[
+              "pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full",
+              "transition-opacity ease-out [transition-duration:1400ms]",
+              logoIn ? "opacity-100" : "opacity-0",
+            ].join(" ")}
+            style={{
+              width: "230px",
+              height: "230px",
+              background:
+                "radial-gradient(closest-side, rgba(255, 214, 140, 0.45), rgba(255, 200, 120, 0.18) 45%, transparent 75%)",
+              filter: "blur(8px)",
+              mixBlendMode: "screen",
+            }}
+          />
+
+          <img
+            src={alphaLogo}
+            alt=""
+            draggable={false}
+            className={[
+              "relative block w-[150px] h-auto select-none",
+              "transition-all ease-out [transition-duration:1200ms]",
+              logoIn
+                ? "opacity-100 scale-100 blur-0"
+                : "opacity-0 scale-[0.92] blur-[6px]",
+            ].join(" ")}
+            style={{
+              filter: logoIn
+                ? "drop-shadow(0 2px 18px rgba(255, 200, 110, 0.35))"
+                : "drop-shadow(0 0 0 rgba(0,0,0,0))",
+              transitionProperty: "opacity, transform, filter",
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 }
