@@ -19,16 +19,22 @@ function SplashScreen() {
   // Phase 2: holy logo reveal from the light above the church
   const [revealed, setRevealed] = useState(false);
   const [logoIn, setLogoIn] = useState(false);
+  const [copticIn, setCopticIn] = useState(false);
+  const [sloganIn, setSloganIn] = useState(false);
 
   useEffect(() => {
     const t1 = setTimeout(() => setRevealed(true), 350);
-    // Start logo reveal near the end of Phase 1 background reveal
     const t2 = setTimeout(() => setLogoIn(true), 1600);
+    const t3 = setTimeout(() => setCopticIn(true), 2900);
+    const t4 = setTimeout(() => setSloganIn(true), 3700);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
     };
   }, []);
+
 
   return (
     <div
