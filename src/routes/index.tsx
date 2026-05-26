@@ -1,7 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import splashImage from "@/assets/splash.png";
-
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import splashPhase1 from "@/assets/splash-phase1.png";
 
 export const Route = createFileRoute("/")({
   ssr: false,
@@ -15,84 +14,47 @@ export const Route = createFileRoute("/")({
 });
 
 function SplashScreen() {
-  const navigate = useNavigate();
-  const [leaving, setLeaving] = useState(false);
+  // Phase 1: Opening Atmosphere — black screen → cinematic fade-in of image.
+  // No logo, no app name, no slogan, no CTA, no text.
+  const [revealed, setRevealed] = useState(false);
 
-  const [pressed, setPressed] = useState(false);
-
-  const enter = () => {
-    if (leaving) return;
-    setLeaving(true);
-    setTimeout(() => navigate({ to: "/onboarding" }), 550);
-  };
-
+  useEffect(() => {
+    const t = setTimeout(() => setRevealed(true), 350);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div
       dir="rtl"
-      className="relative h-[100dvh] w-screen overflow-hidden bg-[#f4ead8] grid place-items-center"
+      className="relative h-[100dvh] w-screen overflow-hidden bg-black"
     >
-      {/* Aspect-locked stage — keeps the full artwork visible on any device
-          without zooming/cropping. 853×1844 = source image aspect. */}
-      <div
-        className="relative h-full max-h-[100dvh] w-auto max-w-full"
-        style={{ aspectRatio: "853 / 1844" }}
-      >
-        {/* Background artwork — full image, no cropping */}
-        <img
-          src={splashImage}
-          alt="Alpha — The Coptic Orthodox Digital Home"
-          className={[
-            "absolute inset-0 h-full w-full object-contain object-center select-none",
-            "transition-opacity duration-[1600ms] ease-out",
-            "splash-parallax",
-            leaving ? "opacity-0" : "opacity-100 animate-splash-fade",
-          ].join(" ")}
-          draggable={false}
-        />
+      {/* Background image — cinematic reveal from darkness */}
+      <img
+        src={splashPhase1}
+        alt=""
+        aria-hidden
+        draggable={false}
+        className={[
+          "absolute inset-0 h-full w-full object-cover object-center select-none",
+          "transition-opacity ease-out",
+          "[transition-duration:1800ms]",
+          revealed ? "opacity-100" : "opacity-0",
+        ].join(" ")}
+      />
 
-        {/* Soft warm glow overlay (does not alter artwork colors) */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 splash-glow"
-        />
-
-        {/* Transient press-only glow pulse (invisible at rest) */}
-        <div
-          aria-hidden
-          className={[
-            "pointer-events-none absolute left-1/2 -translate-x-1/2 rounded-full",
-            pressed ? "splash-btn-pulse" : "opacity-0",
-          ].join(" ")}
-          style={{ bottom: "5.5%", width: "70%", height: "6.5%" }}
-        />
-
-        {/* Invisible interactive tap target aligned with the button in the artwork */}
-        <button
-          type="button"
-          onClick={enter}
-          onPointerDown={() => setPressed(true)}
-          onPointerUp={() => setPressed(false)}
-          onPointerLeave={() => setPressed(false)}
-          onPointerCancel={() => setPressed(false)}
-          aria-label="ابدأ رحلتك الروحية"
-          className={[
-            "absolute left-1/2 -translate-x-1/2 rounded-full bg-transparent",
-            "focus:outline-none",
-            "transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-            pressed ? "scale-[0.96]" : "scale-100",
-          ].join(" ")}
-          style={{ bottom: "5.5%", width: "70%", height: "6.5%" }}
-        />
-      </div>
-
-      {/* Fade-to-home veil */}
+      {/* Soft light bloom — appears gently with the image */}
       <div
         aria-hidden
         className={[
-          "pointer-events-none absolute inset-0 bg-[#f4ead8] transition-opacity duration-500",
-          leaving ? "opacity-100" : "opacity-0",
+          "pointer-events-none absolute inset-0 transition-opacity ease-out",
+          "[transition-duration:2000ms]",
+          revealed ? "opacity-100" : "opacity-0",
         ].join(" ")}
+        style={{
+          background:
+            "radial-gradient(60% 40% at 50% 38%, rgba(255, 224, 160, 0.18), transparent 70%)",
+          mixBlendMode: "screen",
+        }}
       />
     </div>
   );
