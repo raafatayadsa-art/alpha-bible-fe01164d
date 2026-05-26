@@ -37,7 +37,7 @@ import {
   useDictionary,
   buildDictionaryIndex,
   normalizeAr,
-  stripArPrefix,
+  
   classifyEntry,
   fetchDeepByNormalized,
   lookupDictionary,
@@ -176,14 +176,10 @@ function ScriptureReader() {
   // single entry directly. Fall back to the local dictionary entry sheet,
   // and if nothing exists show a small toast.
   const openWordLookup = async (term: string, entry?: DictionaryEntry) => {
-    let rows = await lookupDictionary(term);
-    if (rows.length === 0) {
-      // Retry with prefix-stripped form so "والأرض" still resolves to "ارض".
-      const stripped = stripArPrefix(normalizeAr(term));
-      if (stripped && stripped.length >= 3) {
-        rows = await lookupDictionary(stripped);
-      }
-    }
+    const targetNorm = normalizeAr(term);
+    const all = await lookupDictionary(term);
+    // Exact-match filter: only rows whose `word` normalizes to the same form.
+    const rows = all.filter((r) => normalizeAr(r.word ?? "") === targetNorm);
     if (rows.length === 1) {
       setLookupRow(rows[0]);
       return;
@@ -203,6 +199,7 @@ function ScriptureReader() {
     setToast("لا يوجد معنى متاح لهذه الكلمة");
     window.setTimeout(() => setToast(null), 1800);
   };
+
 
   // Dictionary words from Supabase (dictionary_entries) — drives highlight + meaning sheet.
   const dict = useDictionary();
@@ -230,7 +227,7 @@ function ScriptureReader() {
    * and expose the result as `matchedSet`. VerseCard renders any token
    * whose normalized form is in this set as a highlighted button.
    * ---------------------------------------------------------------- */
-  const matchedSSKey = `ab:dict:matched:v5:${book}:${ch}`;
+  const matchedSSKey = `ab:dict:matched:v6:${book}:${ch}`;
   const readMatchedFromSession = (): Set<string> | null => {
     if (typeof window === "undefined") return null;
     try {
@@ -1284,13 +1281,8 @@ function renderVerseTokens(
     if (!p) continue;
     if (i % 2 === 1) {
       const norm = normalizeAr(p);
-      const stripped = stripArPrefix(norm);
-      const matchKey =
-        norm && matchedSet.has(norm)
-          ? norm
-          : stripped && stripped.length >= 3 && matchedSet.has(stripped)
-            ? stripped
-            : null;
+      const matchKey = norm && matchedSet.has(norm) ? norm : null;
+
       if (matchKey && !seenChapterWords.has(matchKey)) {
         seenChapterWords.add(matchKey);
         hlCount++;
