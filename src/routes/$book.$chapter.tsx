@@ -227,6 +227,8 @@ function ScriptureReader() {
    * and expose the result as `matchedSet`. VerseCard renders any token
    * whose normalized form is in this set as a highlighted button.
    * ---------------------------------------------------------------- */
+  // Temporarily disabled — manual dictionary search still works.
+  const enableSmartDictionaryHighlight = false;
   const matchedSSKey = `ab:dict:matched:v6:${book}:${ch}`;
   const readMatchedFromSession = (): Set<string> | null => {
     if (typeof window === "undefined") return null;
@@ -241,6 +243,7 @@ function ScriptureReader() {
     }
   };
   const [matchedSet, setMatchedSet] = useState<Set<string>>(() => {
+    if (!enableSmartDictionaryHighlight) return new Set();
     const cached = readMatchedFromSession();
     if (cached && cached.size > 0) {
       setChapterDictState({ count: cached.size, status: "ready" });
@@ -248,12 +251,18 @@ function ScriptureReader() {
     }
     return new Set();
   });
+
   useEffect(() => {
+    if (!enableSmartDictionaryHighlight) {
+      setChapterDictState({ count: 0, status: "idle" });
+      return;
+    }
     if (!verses.data?.length) {
       setMatchedSet(new Set());
       setChapterDictState({ count: 0, status: "idle" });
       return;
     }
+
     // Hydrate from sessionStorage only if a non-empty set is cached.
     const cached = readMatchedFromSession();
     if (cached && cached.size > 0) {
