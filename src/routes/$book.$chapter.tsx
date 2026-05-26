@@ -1184,128 +1184,54 @@ function SliderRow({
 /* ---------------- Verse renderer ---------------- */
 
 /**
- * Splits a verse into Arabic-letter runs vs the rest, then wraps each run that
- * normalizes to a word in the dictionary index in a `HighlightedWord` button.
- * Tashkeel and alef variants are normalized so matches survive Arabic spelling.
+ * Token-level renderer driven by a pre-computed `matchedSet` (normalized words
+ * that exist in `lookup_dictionary`). Each Arabic-letter run is rendered in
+ * its own span; runs whose normalized form is in `matchedSet` AND haven't
+ * been highlighted yet in this chapter are wrapped in `HighlightedWord`.
  */
-function renderVerse(
+function renderVerseTokens(
   text: string,
-  dictIndex: DictionaryIndex,
-  seenWords: Map<number, number>, // chapter-wide entry-id -> highlight count
-  onSelect: (entry: DictionaryEntry) => void,
+  matchedSet: Set<string>,
+  seenChapterWords: Set<string>,
+  onSelect: (word: string) => void,
 ): React.ReactNode {
   if (!text) return null;
-  if (
-    !dictIndex.map.size &&
-    !dictIndex.stems.size &&
-    !dictIndex.phrases.size &&
-    !dictIndex.phraseStems.size
-  )
-    return text;
-
-  // Chapter-wide rule: each dictionary entry highlights only ONCE per chapter.
-  // First occurrence wins; later occurrences render as plain text.
-  const MAX_PER_CHAPTER = 1;
-
   const parts = text.split(/([\u0600-\u06FF\u0750-\u077F]+)/g);
-
-  const wordIdx: number[] = [];
-  for (let i = 0; i < parts.length; i++) if (i % 2 === 1 && parts[i]) wordIdx.push(i);
-
-  const norms: string[] = [];
-  const stems: string[] = [];
-  for (const i of wordIdx) {
-    norms.push(normalizeAr(parts[i]));
-    stems.push(stemAr(parts[i]));
+  if (matchedSet.size === 0) {
+    return parts.map((p, i) => <span key={i}>{p}</span>);
   }
-
-  const consumed = new Array<number>(parts.length).fill(0);
-  const matchedEntry = new Array<DictionaryEntry | null>(parts.length).fill(null);
-
-  // Per-verse dedup: each entry highlights at most once inside a single verse.
-  const seenThisVerse = new Set<number>();
-
-  const maxSpan = Math.max(1, dictIndex.maxPhraseTokens || 1);
-  let w = 0;
-  while (w < wordIdx.length) {
-    const startPartI = wordIdx[w];
-    let bestSpan = 0;
-    let bestEntry: DictionaryEntry | null = null;
-
-    const upper = Math.min(maxSpan, wordIdx.length - w);
-    for (let span = upper; span >= 2; span--) {
-      const normKey = norms.slice(w, w + span).join(" ");
-      const e = lookupEntry(dictIndex, normKey);
-      if (e) { bestSpan = span; bestEntry = e; break; }
-    }
-    if (!bestSpan) {
-      const n = norms[w];
-      const e = n ? lookupEntry(dictIndex, n) : undefined;
-      if (e) { bestSpan = 1; bestEntry = e; }
-    }
-
-    if (bestSpan && bestEntry) {
-      const id = bestEntry.id;
-      const chapterCount = seenWords.get(id) ?? 0;
-      const allowed = !seenThisVerse.has(id) && chapterCount < MAX_PER_CHAPTER;
-      if (allowed) {
-        seenThisVerse.add(id);
-        seenWords.set(id, chapterCount + 1);
-        consumed[startPartI] = bestSpan;
-        matchedEntry[startPartI] = bestEntry;
-      }
-      w += bestSpan;
-    } else {
-      w += 1;
-    }
-  }
-
   const out: React.ReactNode[] = [];
-  let i = 0;
-  while (i < parts.length) {
+  for (let i = 0; i < parts.length; i++) {
     const p = parts[i];
-    if (!p) { i++; continue; }
-    if (i % 2 === 1 && consumed[i] > 0) {
-      const span = consumed[i];
-      const wPos = wordIdx.indexOf(i);
-      const lastPartI = wordIdx[wPos + span - 1];
-      let surface = "";
-      for (let k = i; k <= lastPartI; k++) surface += parts[k] ?? "";
-      const entry = matchedEntry[i]!;
-      const matchedNorm = normalizeAr(surface);
-      const wordNorm = normalizeAr(entry.term ?? "");
-      const titleNorm = normalizeAr(entry.normalizedTerm ?? "");
-      const sourceField =
-        matchedNorm && matchedNorm === wordNorm
-          ? "term"
-          : matchedNorm && matchedNorm === titleNorm
-            ? "normalized_term"
-            : "phrase";
-      out.push(
-        <HighlightedWord
-          key={i}
-          onSelect={() => {
-            // eslint-disable-next-line no-console
-            console.log(
-              "Matched dictionary term:",
-              entry.term || entry.normalizedTerm || "",
-              "From:",
-              sourceField,
-              { id: entry.id, surface },
-            );
-            onSelect(entry);
-          }}
-        >
-          {surface}
-        </HighlightedWord>,
-      );
-      i = lastPartI + 1;
-    } else {
-      out.push(<span key={i}>{p}</span>);
-      i++;
+    if (!p) continue;
+    if (i % 2 === 1) {
+      const norm = normalizeAr(p);
+      if (
+        norm &&
+        norm.length >= 2 &&
+        matchedSet.has(norm) &&
+        !seenChapterWords.has(norm)
+      ) {
+        seenChapterWords.add(norm);
+        out.push(
+          <HighlightedWord
+            key={i}
+            onSelect={() => {
+              // eslint-disable-next-line no-console
+              console.log("[chapter-highlight] tap:", { surface: p, norm });
+              onSelect(p);
+            }}
+          >
+            {p}
+          </HighlightedWord>,
+        );
+        continue;
+      }
     }
+    out.push(<span key={i}>{p}</span>);
   }
   return out;
 }
+
 
 
