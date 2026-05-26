@@ -177,14 +177,8 @@ function ScriptureReader() {
   // single entry directly. Fall back to the local dictionary entry sheet,
   // and if nothing exists show a small toast.
   const openWordLookup = async (term: string, entry?: DictionaryEntry) => {
-    let rows = await lookupDictionary(term);
-    if (rows.length === 0) {
-      // Retry with prefix-stripped form so "والأرض" still resolves to "ارض".
-      const stripped = stripArPrefix(normalizeAr(term));
-      if (stripped && stripped.length >= 3) {
-        rows = await lookupDictionary(stripped);
-      }
-    }
+    // STRICT: only exact-normalized matches are shown for tapped verse words.
+    const rows = await lookupHighlightWord(term);
     if (rows.length === 1) {
       setLookupRow(rows[0]);
       return;
