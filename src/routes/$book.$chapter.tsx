@@ -537,7 +537,7 @@ function ScriptureReader() {
           </div>
 
           <div className="flex items-center gap-1">
-            <ToolbarBtn label="بحث" surfaceClass={surfaceClass}>
+            <ToolbarBtn label="بحث" surfaceClass={surfaceClass} onClick={() => setSearchOpen(true)}>
               <Search className="h-4 w-4" />
             </ToolbarBtn>
             <ToolbarBtn
