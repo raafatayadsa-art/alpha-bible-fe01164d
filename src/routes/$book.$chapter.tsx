@@ -696,6 +696,24 @@ function ScriptureReader() {
       <BottomDock hidden={chromeHidden} spiritualMode={spiritualMode} />
 
       <MeaningSheet data={sheet} onClose={() => setSheet(null)} />
+      <DictionaryLookupSheet row={lookupRow} onClose={() => setLookupRow(null)} />
+      <DictionarySearchDialog
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        onSelect={(row) => {
+          setLookupRow(row);
+          setSearchOpen(false);
+        }}
+      />
+      {toast && (
+        <div
+          role="status"
+          dir="rtl"
+          className="fixed left-1/2 -translate-x-1/2 bottom-[120px] z-[80] rounded-full border border-[#7af0b8]/40 bg-[#0a2a20]/85 px-4 py-2 text-[12px] font-bold text-[#eaf6ec] backdrop-blur-md shadow-[0_8px_24px_-12px_rgba(0,0,0,0.5)] animate-in fade-in slide-in-from-bottom-2 duration-200"
+        >
+          {toast}
+        </div>
+      )}
     </main>
   );
 }
