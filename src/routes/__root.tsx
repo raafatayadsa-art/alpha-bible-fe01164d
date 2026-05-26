@@ -120,7 +120,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
-      <DictionaryDebugBadge />
+      {/* <DictionaryDebugBadge /> — disabled with smart highlight */}
     </QueryClientProvider>
   );
 }
