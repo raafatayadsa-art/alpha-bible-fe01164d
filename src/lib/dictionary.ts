@@ -511,3 +511,57 @@ export async function lookupDictionary(term: string): Promise<LookupDictionaryRo
   return rows as LookupDictionaryRow[];
 }
 
+
+/* ------------------------------------------------------------------
+ * Bulk chapter highlight: takes a list of unique normalized words and
+ * returns the subset that has at least one row in lookup_dictionary.
+ * Uses a session-wide cache so already-checked words are free, and
+ * caps RPC concurrency at 5.
+ * ------------------------------------------------------------------ */
+
+const __lookupHitCache = new Map<string, boolean>();
+
+export async function bulkLookupMatched(
+  normalizedWords: string[],
+  onProgress?: (matched: Set<string>) => void,
+): Promise<Set<string>> {
+  const matched = new Set<string>();
+  const seen = new Set<string>();
+  const todo: string[] = [];
+  for (const w of normalizedWords) {
+    if (!w || w.length < 2) continue;
+    if (seen.has(w)) continue;
+    seen.add(w);
+    if (__lookupHitCache.has(w)) {
+      if (__lookupHitCache.get(w)) matched.add(w);
+    } else {
+      todo.push(w);
+    }
+  }
+  onProgress?.(matched);
+  const CONCURRENCY = 5;
+  let idx = 0;
+  const worker = async () => {
+    while (idx < todo.length) {
+      const my = idx++;
+      const w = todo[my];
+      try {
+        const rows = await lookupDictionary(w);
+        const hit = rows.length > 0;
+        __lookupHitCache.set(w, hit);
+        if (hit) {
+          matched.add(w);
+          onProgress?.(matched);
+        }
+      } catch {
+        __lookupHitCache.set(w, false);
+      }
+    }
+  };
+  const workers = Array.from(
+    { length: Math.min(CONCURRENCY, todo.length) },
+    () => worker(),
+  );
+  await Promise.all(workers);
+  return matched;
+}
