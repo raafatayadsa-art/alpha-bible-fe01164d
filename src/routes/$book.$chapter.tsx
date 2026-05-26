@@ -176,14 +176,10 @@ function ScriptureReader() {
   // single entry directly. Fall back to the local dictionary entry sheet,
   // and if nothing exists show a small toast.
   const openWordLookup = async (term: string, entry?: DictionaryEntry) => {
-    let rows = await lookupDictionary(term);
-    if (rows.length === 0) {
-      // Retry with prefix-stripped form so "والأرض" still resolves to "ارض".
-      const stripped = stripArPrefix(normalizeAr(term));
-      if (stripped && stripped.length >= 3) {
-        rows = await lookupDictionary(stripped);
-      }
-    }
+    const targetNorm = normalizeAr(term);
+    const all = await lookupDictionary(term);
+    // Exact-match filter: only rows whose `word` normalizes to the same form.
+    const rows = all.filter((r) => normalizeAr(r.word ?? "") === targetNorm);
     if (rows.length === 1) {
       setLookupRow(rows[0]);
       return;
@@ -203,6 +199,7 @@ function ScriptureReader() {
     setToast("لا يوجد معنى متاح لهذه الكلمة");
     window.setTimeout(() => setToast(null), 1800);
   };
+
 
   // Dictionary words from Supabase (dictionary_entries) — drives highlight + meaning sheet.
   const dict = useDictionary();
