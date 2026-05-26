@@ -556,75 +556,47 @@ export function isStrongDictHit(word: string, rows: LookupDictionaryRow[]): bool
   return false;
 }
 
-const __lookupHitCache = new Map<string, boolean>();
-
+/**
+ * Build the set of chapter words that highlight. Strict rule:
+ *   highlight a word ONLY if its normalized form exactly equals
+ *   alpha_dictionary.word_normalized for some row.
+ *
+ * No RPC calls, no prefix stripping, no contains/fuzzy match, no fallback
+ * to arabic_content. Uses the in-memory dictionary cache (loadDictionaryOnce).
+ */
 export async function bulkLookupMatched(
   normalizedWords: string[],
   onProgress?: (matched: Set<string>) => void,
 ): Promise<Set<string>> {
   const matched = new Set<string>();
+  let entries: DictionaryEntry[];
+  try {
+    entries = await loadDictionaryOnce();
+  } catch {
+    onProgress?.(matched);
+    return matched;
+  }
+  // Build a Set of normalized terms present in alpha_dictionary.
+  const known = new Set<string>();
+  for (const e of entries) {
+    const k = (e.normalizedTerm ?? "").trim() || normalizeAr(e.term ?? "");
+    if (!k) continue;
+    if (k.length < 3) continue;
+    if (HIGHLIGHT_STOPWORDS.has(k)) continue;
+    known.add(k);
+  }
   const seen = new Set<string>();
-  // word -> [candidate forms to try against lookup_dictionary]
-  const candidates = new Map<string, string[]>();
-  const todoLookups = new Set<string>();
   for (const w of normalizedWords) {
-    if (!w) continue;
+    if (!w || seen.has(w)) continue;
+    seen.add(w);
     if (w.length < 3) continue;
     if (HIGHLIGHT_STOPWORDS.has(w)) continue;
     if (/^\d+$/.test(w)) continue;
-    if (seen.has(w)) continue;
-    seen.add(w);
-    const forms = [w];
-    const stripped = stripArPrefix(w);
-    if (stripped && stripped !== w && stripped.length >= 3) forms.push(stripped);
-    candidates.set(w, forms);
-    let resolved = true;
-    let anyHit = false;
-    for (const f of forms) {
-      if (__lookupHitCache.has(f)) {
-        if (__lookupHitCache.get(f)) anyHit = true;
-      } else {
-        resolved = false;
-        todoLookups.add(f);
-      }
-    }
-    if (resolved && anyHit) matched.add(w);
-  }
-  onProgress?.(matched);
-  const todo = Array.from(todoLookups);
-  const CONCURRENCY = 5;
-  let idx = 0;
-  const worker = async () => {
-    while (idx < todo.length) {
-      const my = idx++;
-      const f = todo[my];
-      try {
-        const rows = await lookupDictionary(f);
-        const hit = isStrongDictHit(f, rows);
-        __lookupHitCache.set(f, hit);
-      } catch {
-        __lookupHitCache.set(f, false);
-      }
-    }
-  };
-  const workers = Array.from(
-    { length: Math.min(CONCURRENCY, todo.length) },
-    () => worker(),
-  );
-  await Promise.all(workers);
-
-  // Second pass — resolve every chapter word using cached candidate results.
-  for (const [w, forms] of candidates) {
-    if (matched.has(w)) continue;
-    for (const f of forms) {
-      if (__lookupHitCache.get(f)) {
-        matched.add(w);
-        break;
-      }
-    }
+    if (known.has(w)) matched.add(w);
   }
   onProgress?.(matched);
   return matched;
 }
+
 
 
