@@ -783,8 +783,8 @@ function VerseCard({
   onTap,
   onToggleSave,
   onSelectWord,
-  dictIndex,
-  seenWords,
+  matchedSet,
+  seenChapterWords,
   showRef,
   onOpenRef,
 }: {
@@ -796,10 +796,11 @@ function VerseCard({
   surfaceClass: string;
   onTap: () => void;
   onToggleSave: () => void;
-  onSelectWord: (entry: DictionaryEntry) => void;
-  dictIndex: DictionaryIndex;
-  /** Shared per-chapter set of normalized words already highlighted (mutated). */
-  seenWords: Map<number, number>;
+  onSelectWord: (word: string) => void;
+  /** Normalized words known to have a dictionary entry. */
+  matchedSet: Set<string>;
+  /** Chapter-wide set of normalized words already highlighted (mutated). */
+  seenChapterWords: Set<string>;
   showRef: boolean;
   onOpenRef: () => void;
 }) {
@@ -827,8 +828,8 @@ function VerseCard({
         <p className="flex-1 min-w-0">
           <VerseHighlighted
             text={text}
-            dictIndex={dictIndex}
-            seenWords={seenWords}
+            matchedSet={matchedSet}
+            seenChapterWords={seenChapterWords}
             onSelectWord={onSelectWord}
             spiritualMode={spiritualMode}
           />
@@ -860,29 +861,27 @@ function VerseCard({
 }
 
 /**
- * Memoized highlight layer. Re-renders only when the inputs that actually
- * affect the highlighted output change: verse text, dictionary index identity,
- * theme (spiritualMode), or the module HMR epoch. `seenWords` is a mutable
- * per-chapter set used for de-duplication and is intentionally excluded from
- * the dep list — the parent rebuilds it whenever the chapter or dict changes.
+ * Memoized highlight layer. Re-renders when matchedSet identity, text, or
+ * theme changes. `seenChapterWords` is a mutable per-chapter Set used for
+ * first-occurrence-only dedup; it's intentionally excluded from deps.
  */
 const VerseHighlighted = memo(function VerseHighlighted({
   text,
-  dictIndex,
-  seenWords,
+  matchedSet,
+  seenChapterWords,
   onSelectWord,
   spiritualMode,
 }: {
   text: string;
-  dictIndex: DictionaryIndex;
-  seenWords: Map<number, number>;
-  onSelectWord: (entry: DictionaryEntry) => void;
+  matchedSet: Set<string>;
+  seenChapterWords: Set<string>;
+  onSelectWord: (word: string) => void;
   spiritualMode: boolean;
 }) {
   return useMemo(
-    () => renderVerse(text, dictIndex, seenWords, onSelectWord),
+    () => renderVerseTokens(text, matchedSet, seenChapterWords, onSelectWord),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [text, dictIndex, spiritualMode, HMR_EPOCH, onSelectWord],
+    [text, matchedSet, spiritualMode, HMR_EPOCH, onSelectWord],
   );
 });
 
