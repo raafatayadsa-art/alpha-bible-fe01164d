@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, X, BookOpen, Sparkles, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { manualSearchDictionary, type LookupDictionaryRow } from "@/lib/dictionary";
+import { lookupDictionary, type LookupDictionaryRow } from "@/lib/dictionary";
 
 /**
  * Premium glass search dialog. Calls `public.lookup_dictionary` and
@@ -43,7 +43,7 @@ export function DictionarySearchDialog({
     }
     setLoading(true);
     const handle = setTimeout(async () => {
-      const rows = await manualSearchDictionary(q);
+      const rows = await lookupDictionary(q);
       // Drop stale responses — only the latest request wins.
       if (myId !== reqIdRef.current) return;
       setResults(rows);

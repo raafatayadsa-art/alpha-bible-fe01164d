@@ -40,7 +40,7 @@ import {
   stripArPrefix,
   classifyEntry,
   fetchDeepByNormalized,
-  lookupHighlightWord,
+  lookupDictionary,
   bulkLookupMatched,
   type DictionaryEntry,
   type DictionaryIndex,
@@ -176,8 +176,14 @@ function ScriptureReader() {
   // single entry directly. Fall back to the local dictionary entry sheet,
   // and if nothing exists show a small toast.
   const openWordLookup = async (term: string, entry?: DictionaryEntry) => {
-    // STRICT: only exact-normalized matches are shown for tapped verse words.
-    const rows = await lookupHighlightWord(term);
+    let rows = await lookupDictionary(term);
+    if (rows.length === 0) {
+      // Retry with prefix-stripped form so "والأرض" still resolves to "ارض".
+      const stripped = stripArPrefix(normalizeAr(term));
+      if (stripped && stripped.length >= 3) {
+        rows = await lookupDictionary(stripped);
+      }
+    }
     if (rows.length === 1) {
       setLookupRow(rows[0]);
       return;
@@ -224,7 +230,7 @@ function ScriptureReader() {
    * and expose the result as `matchedSet`. VerseCard renders any token
    * whose normalized form is in this set as a highlighted button.
    * ---------------------------------------------------------------- */
-  const matchedSSKey = `ab:dict:matched:v4:${book}:${ch}`;
+  const matchedSSKey = `ab:dict:matched:v3:${book}:${ch}`;
   const readMatchedFromSession = (): Set<string> | null => {
     if (typeof window === "undefined") return null;
     try {
