@@ -43,7 +43,7 @@ export function DictionarySearchDialog({
     }
     setLoading(true);
     const handle = setTimeout(async () => {
-      const rows = await lookupDictionary(q);
+      const rows = await manualSearchDictionary(q);
       // Drop stale responses — only the latest request wins.
       if (myId !== reqIdRef.current) return;
       setResults(rows);
