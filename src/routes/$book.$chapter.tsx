@@ -230,14 +230,14 @@ function ScriptureReader() {
    * and expose the result as `matchedSet`. VerseCard renders any token
    * whose normalized form is in this set as a highlighted button.
    * ---------------------------------------------------------------- */
-  const matchedSSKey = `ab:dict:matched:v3:${book}:${ch}`;
+  const matchedSSKey = `ab:dict:matched:v5:${book}:${ch}`;
   const readMatchedFromSession = (): Set<string> | null => {
     if (typeof window === "undefined") return null;
     try {
       const raw = window.sessionStorage.getItem(matchedSSKey);
       if (!raw) return null;
       const arr = JSON.parse(raw);
-      if (!Array.isArray(arr)) return null;
+      if (!Array.isArray(arr) || arr.length === 0) return null;
       return new Set(arr as string[]);
     } catch {
       return null;
@@ -245,8 +245,7 @@ function ScriptureReader() {
   };
   const [matchedSet, setMatchedSet] = useState<Set<string>>(() => {
     const cached = readMatchedFromSession();
-    if (cached) {
-      // Reflect cached count immediately so the badge doesn't flash 0.
+    if (cached && cached.size > 0) {
       setChapterDictState({ count: cached.size, status: "ready" });
       return cached;
     }
@@ -258,16 +257,16 @@ function ScriptureReader() {
       setChapterDictState({ count: 0, status: "idle" });
       return;
     }
-    // Hydrate from sessionStorage — skip the bulk RPC entirely if we already
-    // computed the matched set for this exact book+chapter in this tab.
+    // Hydrate from sessionStorage only if a non-empty set is cached.
     const cached = readMatchedFromSession();
-    if (cached) {
+    if (cached && cached.size > 0) {
       setMatchedSet(cached);
       setChapterDictState({ count: cached.size, status: "ready" });
       // eslint-disable-next-line no-console
       console.log("[chapter-highlight] hydrated from sessionStorage:", cached.size);
       return;
     }
+
     let cancelled = false;
     const allWords: string[] = [];
     for (const v of verses.data) {
@@ -292,14 +291,17 @@ function ScriptureReader() {
         if (cancelled) return;
         setMatchedSet(new Set(matched));
         setChapterDictState({ count: matched.size, status: "ready" });
-        try {
-          window.sessionStorage.setItem(
-            matchedSSKey,
-            JSON.stringify(Array.from(matched)),
-          );
-        } catch {
-          /* quota / serialization — non-fatal */
+        if (matched.size > 0) {
+          try {
+            window.sessionStorage.setItem(
+              matchedSSKey,
+              JSON.stringify(Array.from(matched)),
+            );
+          } catch {
+            /* quota / serialization — non-fatal */
+          }
         }
+
         const sample = Array.from(matched).slice(0, 12);
         // eslint-disable-next-line no-console
         console.log("[chapter-highlight] matched:", matched.size, "sample:", sample);
