@@ -41,6 +41,7 @@ import {
   classifyEntry,
   fetchDeepByNormalized,
   lookupDictionary,
+  lookupHighlightWord,
   bulkLookupMatched,
   type DictionaryEntry,
   type DictionaryIndex,
