@@ -1258,28 +1258,46 @@ function renderVerseTokens(
 ): React.ReactNode {
   if (!text) return null;
   const parts = text.split(/([\u0600-\u06FF\u0750-\u077F]+)/g);
+  // eslint-disable-next-line no-console
+  if ((window as any).__hlDebugOnce !== text) {
+    (window as any).__hlDebugOnce = text;
+    const wordParts = parts.filter((_, i) => i % 2 === 1);
+    const normSample = wordParts.slice(0, 8).map((p) => normalizeAr(p));
+    // eslint-disable-next-line no-console
+    console.log("[verse-render]", {
+      sample: text.slice(0, 60),
+      tokens: wordParts.length,
+      normSample,
+      matchedSetSize: matchedSet.size,
+      first20Matched: Array.from(matchedSet).slice(0, 20),
+    });
+  }
   if (matchedSet.size === 0) {
     return parts.map((p, i) => <span key={i}>{p}</span>);
   }
   const out: React.ReactNode[] = [];
+  let hlCount = 0;
   for (let i = 0; i < parts.length; i++) {
     const p = parts[i];
     if (!p) continue;
     if (i % 2 === 1) {
       const norm = normalizeAr(p);
-      if (
-        norm &&
-        norm.length >= 2 &&
-        matchedSet.has(norm) &&
-        !seenChapterWords.has(norm)
-      ) {
-        seenChapterWords.add(norm);
+      const stripped = stripArPrefix(norm);
+      const matchKey =
+        norm && matchedSet.has(norm)
+          ? norm
+          : stripped && stripped.length >= 3 && matchedSet.has(stripped)
+            ? stripped
+            : null;
+      if (matchKey && !seenChapterWords.has(matchKey)) {
+        seenChapterWords.add(matchKey);
+        hlCount++;
         out.push(
           <HighlightedWord
             key={i}
             onSelect={() => {
               // eslint-disable-next-line no-console
-              console.log("[chapter-highlight] tap:", { surface: p, norm });
+              console.log("[chapter-highlight] tap:", { surface: p, norm, matchKey });
               onSelect(p);
             }}
           >
@@ -1291,8 +1309,13 @@ function renderVerseTokens(
     }
     out.push(<span key={i}>{p}</span>);
   }
+  if (hlCount > 0) {
+    // eslint-disable-next-line no-console
+    console.log("[verse-render] highlighted in verse:", hlCount);
+  }
   return out;
 }
+
 
 
 
