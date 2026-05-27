@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Bookmark,
@@ -12,6 +12,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { chaptersQueryOptions, versesQueryOptions } from "@/lib/bible";
+import type { BibleVerse } from "@/integrations/supabase/client";
 import { displayName } from "@/lib/bible-books";
 import {
   AutoScrollControls,
@@ -26,18 +27,12 @@ import {
   DictionarySearchDialog,
   type MeaningSheetData,
 } from "@/components/bible";
-import {
-  updateSession,
-  useSavedVerses,
-  useTypographyPrefs,
-  verseKey,
-} from "@/lib/reading-state";
+import { updateSession, useSavedVerses, useTypographyPrefs, verseKey } from "@/lib/reading-state";
 import { cn } from "@/lib/utils";
 import {
   useDictionary,
   buildDictionaryIndex,
   normalizeAr,
-  
   classifyEntry,
   fetchDeepByNormalized,
   lookupDictionary,
@@ -139,7 +134,6 @@ async function buildSheetForEntry(e: DictionaryEntry): Promise<MeaningSheetData>
   };
 }
 
-
 export const Route = createFileRoute("/$book/$chapter")({
   ssr: false,
   head: ({ params }) => ({
@@ -167,7 +161,6 @@ function ScriptureReader() {
   const [lookupChoices, setLookupChoices] = useState<LookupDictionaryRow[] | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
   const [typeOpen, setTypeOpen] = useState(false);
   const [activeVerse, setActiveVerse] = useState<string | null>(null);
 
@@ -193,13 +186,14 @@ function ScriptureReader() {
       setSheet(base);
       buildSheetForEntry(entry)
         .then((upgraded) => setSheet(upgraded))
-        .catch(() => {/* keep base */});
+        .catch(() => {
+          /* keep base */
+        });
       return;
     }
     setToast("لا يوجد معنى متاح لهذه الكلمة");
     window.setTimeout(() => setToast(null), 1800);
   };
-
 
   // Dictionary words from Supabase (dictionary_entries) — drives highlight + meaning sheet.
   const dict = useDictionary();
@@ -299,10 +293,7 @@ function ScriptureReader() {
         setChapterDictState({ count: matched.size, status: "ready" });
         if (matched.size > 0) {
           try {
-            window.sessionStorage.setItem(
-              matchedSSKey,
-              JSON.stringify(Array.from(matched)),
-            );
+            window.sessionStorage.setItem(matchedSSKey, JSON.stringify(Array.from(matched)));
           } catch {
             /* quota / serialization — non-fatal */
           }
@@ -324,8 +315,6 @@ function ScriptureReader() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [verses.data, book, ch]);
 
-
-
   // Persistent typography prefs
   const { prefs, setPrefs, reset: resetPrefs } = useTypographyPrefs();
   const { fontSize, lineHeight, readingWidth } = prefs;
@@ -337,11 +326,30 @@ function ScriptureReader() {
   const { isSaved, toggle: toggleSaved } = useSavedVerses();
 
   const articleRef = useRef<HTMLElement>(null);
-  const rafRef = useRef<number | null>(null);
   const targetProgress = useRef(0);
-  const currentProgress = useRef(0);
+  const verseElementsRef = useRef<Map<number, HTMLElement>>(new Map());
   const visibleVerseRef = useRef<number | undefined>(undefined);
   const lastSavedAt = useRef(0);
+
+  const openWordLookupRef = useRef(openWordLookup);
+  openWordLookupRef.current = openWordLookup;
+
+  const registerVerseElement = useCallback((num: number, el: HTMLElement | null) => {
+    if (el) verseElementsRef.current.set(num, el);
+    else verseElementsRef.current.delete(num);
+  }, []);
+
+  const onVerseActive = useCallback((id: string) => {
+    setActiveVerse(id);
+  }, []);
+
+  const onSelectWordStable = useCallback((word: string) => {
+    void openWordLookupRef.current(word);
+  }, []);
+
+  useEffect(() => {
+    verseElementsRef.current.clear();
+  }, [book, ch]);
 
   const list = chapters.data ?? [];
   const idx = list.indexOf(ch);
@@ -350,49 +358,55 @@ function ScriptureReader() {
 
   const bookName = displayName(book);
 
+  const onOpenCrossRef = useCallback(
+    (num: number) => {
+      setSheet({
+        word: `${bookName} ${ch}:${num}`,
+        kind: "مراجع متقاطعة",
+        relatedVerses: [
+          { reference: "مزمور 23:1", text: "الرب راعيّ فلا يعوزني شيء." },
+          { reference: "يوحنا 14:6", text: "أنا هو الطريق والحق والحياة." },
+        ],
+      });
+    },
+    [bookName, ch],
+  );
+
+  const onToggleSaveVerse = useCallback(
+    (v: Parameters<typeof toggleSaved>[0]) => {
+      toggleSaved(v);
+    },
+    [toggleSaved],
+  );
+
   const isNT = useMemo(() => {
     return [
-      "متى", "مرقس", "لوقا", "يوحنا", "أعمال", "رؤيا", "رومية", "كورنثوس", "غلاطية", "أفسس",
-      "فيلبي", "كولوسي", "تسالونيكي", "تيموثاوس", "تيطس", "فليمون", "العبرانيين", "يعقوب",
-      "بطرس", "يهوذا", "رسالة", "إنجيل",
+      "متى",
+      "مرقس",
+      "لوقا",
+      "يوحنا",
+      "أعمال",
+      "رؤيا",
+      "رومية",
+      "كورنثوس",
+      "غلاطية",
+      "أفسس",
+      "فيلبي",
+      "كولوسي",
+      "تسالونيكي",
+      "تيموثاوس",
+      "تيطس",
+      "فليمون",
+      "العبرانيين",
+      "يعقوب",
+      "بطرس",
+      "يهوذا",
+      "رسالة",
+      "إنجيل",
     ].some((k) => bookName.includes(k));
   }, [bookName]);
 
-  // Smooth scroll-driven progress: rAF + EMA easing toward target.
-  useEffect(() => {
-    const onScroll = () => {
-      const doc = document.documentElement;
-      const max = doc.scrollHeight - window.innerHeight;
-      const pct = max > 0 ? Math.max(0, Math.min(100, (window.scrollY / max) * 100)) : 0;
-      targetProgress.current = pct;
-      if (rafRef.current == null) {
-        const tick = () => {
-          const diff = targetProgress.current - currentProgress.current;
-          currentProgress.current += diff * 0.18; // smooth easing
-          const done = Math.abs(diff) < 0.05;
-          if (done) {
-            currentProgress.current = targetProgress.current;
-            setProgress(currentProgress.current);
-            rafRef.current = null;
-            return;
-          }
-          setProgress(currentProgress.current);
-          rafRef.current = requestAnimationFrame(tick);
-        };
-        rafRef.current = requestAnimationFrame(tick);
-      }
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [book, chapter]);
-
-  // Active verse = the verse sitting inside the reading focus zone (25%–40% from top of viewport).
-  // Picks the second clearly visible verse from the top, never the one entering from the bottom.
+  // Active verse: cached verse elements (no document-wide query on every scroll tick).
   useEffect(() => {
     if (!verses.data?.length) return;
     let rafId: number | null = null;
@@ -401,11 +415,11 @@ function ScriptureReader() {
       const vh = window.innerHeight;
       const zoneTop = vh * 0.25;
       const zoneBottom = vh * 0.45;
-      const els = Array.from(
-        document.querySelectorAll<HTMLElement>("[data-verse-num]"),
-      );
+      let els = Array.from(verseElementsRef.current.values());
+      if (!els.length && articleRef.current) {
+        els = Array.from(articleRef.current.querySelectorAll<HTMLElement>("[data-verse-num]"));
+      }
       if (!els.length) return;
-      // verses fully or mostly visible from the top (not still entering from bottom)
       const visible = els
         .map((el) => {
           const r = el.getBoundingClientRect();
@@ -414,9 +428,7 @@ function ScriptureReader() {
         .filter((x) => x.bottom > 0 && x.top < vh)
         .sort((a, b) => a.top - b.top);
       if (!visible.length) return;
-      // Prefer a verse whose top is inside the focus zone.
       let pick = visible.find((x) => x.top >= zoneTop && x.top <= zoneBottom);
-      // Otherwise: the second visible verse from the top (skip the one partially clipped at top).
       if (!pick) pick = visible[1] ?? visible[0];
       const n = Number(pick.el.dataset.verseNum);
       if (n) {
@@ -438,6 +450,7 @@ function ScriptureReader() {
     };
   }, [verses.data, book, ch]);
 
+  const dictRenderKey = `${matchedSet.size}:${HMR_EPOCH}:${book}:${ch}`;
 
   // Persist reading session (throttled) + restore scroll on first load.
   const restoredRef = useRef(false);
@@ -497,9 +510,7 @@ function ScriptureReader() {
   }, [verses.data, book, bookName, ch]);
 
   // Palette
-  const bgClass = spiritualMode
-    ? "bg-[#08131f] text-[#f3ead0]"
-    : "bg-[#f8efdc] text-[#3a2a18]";
+  const bgClass = spiritualMode ? "bg-[#08131f] text-[#f3ead0]" : "bg-[#f8efdc] text-[#3a2a18]";
   const surfaceClass = spiritualMode
     ? "bg-[#11223a]/60 border-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_8px_22px_-16px_rgba(0,0,0,0.7)]"
     : "bg-white/70 border-[#efe2c4]";
@@ -531,8 +542,6 @@ function ScriptureReader() {
     };
   }, []);
   const chromeHidden = !chromeVisible;
-
-
 
   return (
     <main
@@ -586,31 +595,14 @@ function ScriptureReader() {
         </>
       )}
 
-      {/* Top thin progress */}
-      <div
-        className="fixed inset-x-0 top-0 z-40 h-[2px]"
-        style={{ paddingTop: "max(env(safe-area-inset-top), 0px)" }}
-      >
-        <div className="mx-auto h-full w-full max-w-[640px]">
-          <div
-            className={cn(
-              "h-full rounded-r-full bg-gradient-to-l from-[#3e8a6e] via-[#2f7359] to-[#1f5e4a]",
-              spiritualMode && "shadow-[0_0_10px_rgba(62,138,110,0.55)]",
-            )}
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </div>
-
-      {/* LEFT — elegant vertical reading rail */}
-      <VerticalProgress
-        progress={progress}
+      <ReadingProgressChrome
+        book={book}
+        chapter={chapter}
+        spiritualMode={spiritualMode}
         chapters={list}
         current={ch}
-        book={book}
-        spiritualMode={spiritualMode}
+        targetProgressRef={targetProgress}
       />
-
 
       <div
         className="relative mx-auto w-full px-4 pt-[max(env(safe-area-inset-top),12px)] pb-44 transition-[max-width] duration-300"
@@ -698,50 +690,23 @@ function ScriptureReader() {
             )}
             style={{ fontSize: `${fontSize}px`, lineHeight, wordSpacing: "0.06em" }}
           >
-            {(() => { const _dictKey = `${matchedSet.size}:${HMR_EPOCH}:${book}:${ch}`; const seenChapterWords = new Set<string>(); return verses.data!.map((v, i) => {
-              const num = v?.verse_number ?? i + 1;
-              const id = verseKey(book, ch, num);
-              const isActive = activeVerse === id;
-              const saved = isSaved(id);
-              const showRef = i > 0 && i % 7 === 3;
-              return (
-                <VerseCard
-                  key={`${id}::${_dictKey}`}
-                  num={num}
-                  text={v?.verse_text ?? ""}
-                  isActive={isActive}
-                  saved={saved}
-                  spiritualMode={spiritualMode}
-                  surfaceClass={verseCardClass}
-                  onTap={() => setActiveVerse(id)}
-                  onToggleSave={() =>
-                    toggleSaved({
-                      book,
-                      bookName,
-                      chapter: ch,
-                      verse: num,
-                      text: v?.verse_text ?? "",
-                    })
-                  }
-                  onSelectWord={(word) => {
-                    void openWordLookup(word);
-                  }}
-                  matchedSet={matchedSet}
-                  seenChapterWords={seenChapterWords}
-                  showRef={showRef}
-                  onOpenRef={() =>
-                    setSheet({
-                      word: `${bookName} ${ch}:${num}`,
-                      kind: "مراجع متقاطعة",
-                      relatedVerses: [
-                        { reference: "مزمور 23:1", text: "الرب راعيّ فلا يعوزني شيء." },
-                        { reference: "يوحنا 14:6", text: "أنا هو الطريق والحق والحياة." },
-                      ],
-                    })
-                  }
-                />
-              );
-            }); })()}
+            <ChapterVerseList
+              verses={verses.data!}
+              book={book}
+              ch={ch}
+              bookName={bookName}
+              activeVerse={activeVerse}
+              spiritualMode={spiritualMode}
+              verseCardClass={verseCardClass}
+              matchedSet={matchedSet}
+              dictRenderKey={dictRenderKey}
+              isSaved={isSaved}
+              registerVerseElement={registerVerseElement}
+              onVerseActive={onVerseActive}
+              onToggleSaveVerse={onToggleSaveVerse}
+              onSelectWord={onSelectWordStable}
+              onOpenCrossRef={onOpenCrossRef}
+            />
           </article>
         )}
 
@@ -840,49 +805,261 @@ function ScriptureReader() {
   );
 }
 
+/* ---------------- Scroll progress (DOM-only updates, no parent rerender) ---------------- */
+
+function applyProgressToDom(
+  pct: number,
+  topFill: HTMLDivElement | null,
+  verticalFill: HTMLDivElement | null,
+  verticalDot: HTMLDivElement | null,
+) {
+  const clamped = Math.max(0, Math.min(100, pct));
+  if (topFill) topFill.style.width = `${clamped}%`;
+  if (verticalFill) verticalFill.style.height = `${clamped}%`;
+  if (verticalDot) verticalDot.style.top = `${clamped}%`;
+}
+
+function ReadingProgressChrome({
+  book,
+  chapter,
+  spiritualMode,
+  chapters,
+  current,
+  targetProgressRef,
+}: {
+  book: string;
+  chapter: string;
+  spiritualMode: boolean;
+  chapters: number[];
+  current: number;
+  targetProgressRef: React.MutableRefObject<number>;
+}) {
+  const topFillRef = useRef<HTMLDivElement>(null);
+  const verticalFillRef = useRef<HTMLDivElement>(null);
+  const verticalDotRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const currentProgress = useRef(0);
+
+  useEffect(() => {
+    const paint = (pct: number) => {
+      applyProgressToDom(pct, topFillRef.current, verticalFillRef.current, verticalDotRef.current);
+    };
+
+    const onScroll = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? Math.max(0, Math.min(100, (window.scrollY / max) * 100)) : 0;
+      targetProgressRef.current = pct;
+      if (rafRef.current == null) {
+        const tick = () => {
+          const diff = targetProgressRef.current - currentProgress.current;
+          currentProgress.current += diff * 0.18;
+          const done = Math.abs(diff) < 0.05;
+          if (done) {
+            currentProgress.current = targetProgressRef.current;
+            paint(currentProgress.current);
+            rafRef.current = null;
+            return;
+          }
+          paint(currentProgress.current);
+          rafRef.current = requestAnimationFrame(tick);
+        };
+        rafRef.current = requestAnimationFrame(tick);
+      }
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    };
+  }, [book, chapter, targetProgressRef]);
+
+  return (
+    <>
+      <div
+        className="fixed inset-x-0 top-0 z-40 h-[2px]"
+        style={{ paddingTop: "max(env(safe-area-inset-top), 0px)" }}
+      >
+        <div className="mx-auto h-full w-full max-w-[640px]">
+          <div
+            ref={topFillRef}
+            className={cn(
+              "h-full rounded-r-full bg-gradient-to-l from-[#3e8a6e] via-[#2f7359] to-[#1f5e4a]",
+              spiritualMode && "shadow-[0_0_10px_rgba(62,138,110,0.55)]",
+            )}
+            style={{ width: "0%" }}
+          />
+        </div>
+      </div>
+      <VerticalProgress
+        fillRef={verticalFillRef}
+        dotRef={verticalDotRef}
+        chapters={chapters}
+        current={current}
+        book={book}
+        spiritualMode={spiritualMode}
+      />
+    </>
+  );
+}
+
+/* ---------------- Chapter verse list ---------------- */
+
+type ChapterVerseListProps = {
+  verses: BibleVerse[];
+  book: string;
+  ch: number;
+  bookName: string;
+  activeVerse: string | null;
+  spiritualMode: boolean;
+  verseCardClass: string;
+  matchedSet: Set<string>;
+  dictRenderKey: string;
+  isSaved: (id: string) => boolean;
+  registerVerseElement: (num: number, el: HTMLElement | null) => void;
+  onVerseActive: (id: string) => void;
+  onToggleSaveVerse: (v: Parameters<ReturnType<typeof useSavedVerses>["toggle"]>[0]) => void;
+  onSelectWord: (word: string) => void;
+  onOpenCrossRef: (num: number) => void;
+};
+
+const ChapterVerseList = memo(function ChapterVerseList({
+  verses,
+  book,
+  ch,
+  bookName,
+  activeVerse,
+  spiritualMode,
+  verseCardClass,
+  matchedSet,
+  dictRenderKey,
+  isSaved,
+  registerVerseElement,
+  onVerseActive,
+  onToggleSaveVerse,
+  onSelectWord,
+  onOpenCrossRef,
+}: ChapterVerseListProps) {
+  const seenChapterWordsRef = useRef(new Set<string>());
+
+  useEffect(() => {
+    seenChapterWordsRef.current = new Set();
+  }, [dictRenderKey]);
+
+  return (
+    <>
+      {verses.map((v, i) => {
+        const num = v?.verse_number ?? i + 1;
+        const id = verseKey(book, ch, num);
+        const showRef = i > 0 && i % 7 === 3;
+        return (
+          <VerseCard
+            key={`${id}::${dictRenderKey}`}
+            verseId={id}
+            verseNum={num}
+            book={book}
+            bookName={bookName}
+            chapter={ch}
+            text={v?.verse_text ?? ""}
+            isActive={activeVerse === id}
+            saved={isSaved(id)}
+            spiritualMode={spiritualMode}
+            surfaceClass={verseCardClass}
+            registerVerseElement={registerVerseElement}
+            onVerseActive={onVerseActive}
+            onToggleSaveVerse={onToggleSaveVerse}
+            onSelectWord={onSelectWord}
+            matchedSet={matchedSet}
+            seenChapterWords={seenChapterWordsRef.current}
+            showRef={showRef}
+            onOpenCrossRef={onOpenCrossRef}
+          />
+        );
+      })}
+    </>
+  );
+});
+
 /* ---------------- Verse Card ---------------- */
 
-function VerseCard({
-  num,
+const VerseCard = memo(function VerseCard({
+  verseId,
+  verseNum,
+  book,
+  bookName,
+  chapter,
   text,
   isActive,
   saved,
   spiritualMode,
   surfaceClass,
-  onTap,
-  onToggleSave,
+  registerVerseElement,
+  onVerseActive,
+  onToggleSaveVerse,
   onSelectWord,
   matchedSet,
   seenChapterWords,
   showRef,
-  onOpenRef,
+  onOpenCrossRef,
 }: {
-  num: number;
+  verseId: string;
+  verseNum: number;
+  book: string;
+  bookName: string;
+  chapter: number;
   text: string;
   isActive: boolean;
   saved: boolean;
   spiritualMode: boolean;
   surfaceClass: string;
-  onTap: () => void;
-  onToggleSave: () => void;
+  registerVerseElement: (num: number, el: HTMLElement | null) => void;
+  onVerseActive: (id: string) => void;
+  onToggleSaveVerse: (v: Parameters<ReturnType<typeof useSavedVerses>["toggle"]>[0]) => void;
   onSelectWord: (word: string) => void;
-  /** Normalized words known to have a dictionary entry. */
   matchedSet: Set<string>;
-  /** Chapter-wide set of normalized words already highlighted (mutated). */
   seenChapterWords: Set<string>;
   showRef: boolean;
-  onOpenRef: () => void;
+  onOpenCrossRef: (num: number) => void;
 }) {
+  const verseRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      registerVerseElement(verseNum, el);
+    },
+    [verseNum, registerVerseElement],
+  );
+
+  const onTap = useCallback(() => {
+    onVerseActive(verseId);
+  }, [onVerseActive, verseId]);
+
+  const onToggleSave = useCallback(() => {
+    onToggleSaveVerse({
+      book,
+      bookName,
+      chapter,
+      verse: verseNum,
+      text,
+    });
+  }, [onToggleSaveVerse, book, bookName, chapter, verseNum, text]);
+
+  const onOpenRef = useCallback(() => {
+    onOpenCrossRef(verseNum);
+  }, [onOpenCrossRef, verseNum]);
+
   return (
     <div
-      data-verse-num={num}
+      ref={verseRef}
+      data-verse-num={verseNum}
       onClick={onTap}
       className={cn(
         "group relative cursor-pointer rounded-2xl border px-3.5 py-3 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
         surfaceClass,
-        isActive && (spiritualMode
-          ? "scale-[1.015] border-[#7af0b8]/35 ring-1 ring-[#7af0b8]/30 shadow-[0_0_28px_-4px_rgba(122,240,184,0.40),0_0_60px_-20px_rgba(62,180,130,0.45)]"
-          : "scale-[1.012] ring-1 ring-[#3eb482]/45 shadow-[0_10px_24px_-14px_rgba(31,110,84,0.45)]"),
+        isActive &&
+          (spiritualMode
+            ? "scale-[1.015] border-[#7af0b8]/35 ring-1 ring-[#7af0b8]/30 shadow-[0_0_28px_-4px_rgba(122,240,184,0.40),0_0_60px_-20px_rgba(62,180,130,0.45)]"
+            : "scale-[1.012] ring-1 ring-[#3eb482]/45 shadow-[0_10px_24px_-14px_rgba(31,110,84,0.45)]"),
       )}
     >
       <div className="flex items-start gap-2.5">
@@ -892,7 +1069,7 @@ function VerseCard({
             spiritualMode ? "text-[#f0d78c]" : "text-[#a87a35]",
           )}
         >
-          {num}
+          {verseNum}
         </span>
         <p className="flex-1 min-w-0">
           <VerseHighlighted
@@ -902,7 +1079,15 @@ function VerseCard({
             onSelectWord={onSelectWord}
             spiritualMode={spiritualMode}
           />
-          {showRef && <ReferenceIndicator count={2} onClick={(e?: any) => { e?.stopPropagation?.(); onOpenRef(); }} />}
+          {showRef && (
+            <ReferenceIndicator
+              count={2}
+              onClick={(e?: any) => {
+                e?.stopPropagation?.();
+                onOpenRef();
+              }}
+            />
+          )}
         </p>
         <button
           type="button"
@@ -927,7 +1112,7 @@ function VerseCard({
       </div>
     </div>
   );
-}
+});
 
 /**
  * Memoized highlight layer. Re-renders when matchedSet identity, text, or
@@ -985,13 +1170,15 @@ function ToolbarBtn({
 /* ---------------- Vertical reading progress ---------------- */
 
 function VerticalProgress({
-  progress,
+  fillRef,
+  dotRef,
   chapters,
   current,
   book,
   spiritualMode,
 }: {
-  progress: number;
+  fillRef: React.RefObject<HTMLDivElement | null>;
+  dotRef: React.RefObject<HTMLDivElement | null>;
   chapters: number[];
   current: number;
   book: string;
@@ -1028,13 +1215,14 @@ function VerticalProgress({
         >
           {/* neon green filled progress */}
           <div
+            ref={fillRef}
             className={cn(
               "absolute inset-x-0 top-0 rounded-full transition-[height] duration-200 ease-out",
               spiritualMode
                 ? "bg-gradient-to-b from-[#7af0b8] via-[#3eb482] to-[#1f8a64] shadow-[0_0_8px_rgba(62,180,130,0.7)]"
                 : "bg-gradient-to-b from-[#3eb482] to-[#1f6e54]",
             )}
-            style={{ height: `${Math.max(0, Math.min(100, progress))}%` }}
+            style={{ height: "0%" }}
           />
 
           {/* sparse markers */}
@@ -1064,8 +1252,9 @@ function VerticalProgress({
 
           {/* active reading position — neon green dot */}
           <div
+            ref={dotRef}
             className="absolute -translate-x-1/2 left-1/2 transition-[top] duration-200 ease-out"
-            style={{ top: `${Math.max(0, Math.min(100, progress))}%` }}
+            style={{ top: "0%" }}
           >
             <span
               className={cn(
@@ -1201,9 +1390,7 @@ function SliderRow({
     <div
       className={cn(
         "mb-2 rounded-2xl border px-2.5 py-1.5",
-        spiritualMode
-          ? "bg-white/[0.04] border-white/[0.08]"
-          : "bg-white/55 border-[#efe2c4]",
+        spiritualMode ? "bg-white/[0.04] border-white/[0.08]" : "bg-white/55 border-[#efe2c4]",
       )}
     >
       <div className="flex items-center justify-between mb-1">
@@ -1215,7 +1402,9 @@ function SliderRow({
             onClick={() => onChange(Math.max(min, +(value - step).toFixed(2)))}
             className={cn(
               "grid h-5 w-5 place-items-center rounded-full border active:scale-90 transition-transform",
-              spiritualMode ? "bg-white/10 border-white/15 text-[#f3e6c4]" : "bg-white/80 border-[#efe2c4] text-[#3a2a18]",
+              spiritualMode
+                ? "bg-white/10 border-white/15 text-[#f3e6c4]"
+                : "bg-white/80 border-[#efe2c4] text-[#3a2a18]",
             )}
           >
             <ChevronDown className="h-2.5 w-2.5" />
@@ -1229,7 +1418,9 @@ function SliderRow({
             onClick={() => onChange(Math.min(max, +(value + step).toFixed(2)))}
             className={cn(
               "grid h-5 w-5 place-items-center rounded-full border active:scale-90 transition-transform",
-              spiritualMode ? "bg-white/10 border-white/15 text-[#f3e6c4]" : "bg-white/80 border-[#efe2c4] text-[#3a2a18]",
+              spiritualMode
+                ? "bg-white/10 border-white/15 text-[#f3e6c4]"
+                : "bg-white/80 border-[#efe2c4] text-[#3a2a18]",
             )}
           >
             <ChevronUp className="h-2.5 w-2.5" />
@@ -1318,7 +1509,3 @@ function renderVerseTokens(
   }
   return out;
 }
-
-
-
-
