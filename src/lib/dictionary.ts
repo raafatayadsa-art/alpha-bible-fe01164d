@@ -569,7 +569,7 @@ export async function bulkLookupMatched(
     onProgress?.(matched);
     return matched;
   }
-  // Build a Set of normalized terms present in alpha_dictionary.
+  // Build a Set of normalized terms present in dictionary_index.
   const known = new Set<string>();
   for (const e of entries) {
     const k = (e.normalizedTerm ?? "").trim() || normalizeAr(e.term ?? "");
@@ -578,6 +578,10 @@ export async function bulkLookupMatched(
     if (HIGHLIGHT_STOPWORDS.has(k)) continue;
     known.add(k);
   }
+  // eslint-disable-next-line no-console
+  console.log("[dictionary-debug] known size:", known.size);
+  // eslint-disable-next-line no-console
+  console.log("[dictionary-debug] first 20 known terms:", Array.from(known).slice(0, 20));
   const seen = new Set<string>();
   for (const w of normalizedWords) {
     if (!w || seen.has(w)) continue;
@@ -587,6 +591,8 @@ export async function bulkLookupMatched(
     if (/^\d+$/.test(w)) continue;
     if (known.has(w)) matched.add(w);
   }
+  // eslint-disable-next-line no-console
+  console.log("[chapter-highlight] matched size:", matched.size);
   onProgress?.(matched);
   return matched;
 }
