@@ -154,12 +154,12 @@ function FeastsHome() {
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    "linear-gradient(to left, rgba(255,255,255,0) 0%, rgba(255,253,247,0.15) 30%, rgba(255,251,240,0.7) 48%, #fffaee 62%, #ffffff 78%)",
+                    "linear-gradient(to left, rgba(255,255,255,0) 30%, rgba(255,251,240,0.35) 50%, rgba(255,250,238,0.85) 60%, #ffffff 70%)",
                 }}
               />
-              {/* Soft top/bottom polish */}
-              <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-white/70 to-transparent pointer-events-none" />
-              <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/80 to-transparent pointer-events-none" />
+              {/* Soft top/bottom polish — minimal */}
+              <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-white/40 to-transparent pointer-events-none" />
+              <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-white/40 to-transparent pointer-events-none" />
 
               <div className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur px-2.5 py-1 text-[11px] font-bold text-[#3a2a18] border border-[#ead9b1] shadow-[0_4px_10px_-8px_rgba(120,80,30,0.5)]">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#6a4ab5]" />
@@ -178,9 +178,16 @@ function FeastsHome() {
                 {today.scriptureRef && (
                   <p className="text-[11px] font-bold text-[#b8893a] mt-1.5 text-right">{today.scriptureRef}</p>
                 )}
-                <span className="mt-4 self-end inline-flex items-center gap-2 rounded-full bg-white border border-[#ead9b1] px-3.5 h-9 text-[11.5px] font-bold text-[#3a2a18] shadow-[0_10px_18px_-12px_rgba(120,80,30,0.55)]">
-                  <BookOpen className="h-3.5 w-3.5 text-[#6a4ab5]" />
-                  تعرف على المناسبة
+                <span
+                  className="group/cta mt-4 self-end relative inline-flex items-center gap-2 rounded-full px-4 h-8 text-[11.5px] font-extrabold text-white overflow-hidden border border-white/40 backdrop-blur-md shadow-[0_8px_18px_-8px_rgba(106,74,181,0.55),inset_0_1px_0_rgba(255,255,255,0.5)] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-[0_12px_24px_-8px_rgba(106,74,181,0.7),inset_0_1px_0_rgba(255,255,255,0.6)] hover:-translate-y-0.5 active:scale-[0.96] active:translate-y-0"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #6a4ab5 0%, #8c6fd1 55%, #b8893a 130%)",
+                  }}
+                >
+                  <span className="absolute inset-0 opacity-0 group-hover/cta:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover/cta:translate-x-full" style={{ transitionProperty: "transform, opacity", transitionDuration: "700ms" }} />
+                  <BookOpen className="relative h-3.5 w-3.5" />
+                  <span className="relative">تعرف على المناسبة</span>
                 </span>
               </div>
             </div>
