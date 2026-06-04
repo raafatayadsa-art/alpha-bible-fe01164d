@@ -1187,7 +1187,7 @@ function ShareSheetHost() {
 function DockItem({
   icon: Icon, label, active, raised, to,
 }: { icon?: any; label: string; active?: boolean; raised?: boolean; to?: string }) {
-  const color = active ? "#f0d78c" : "#e8e2cf";
+  const color = active ? "#7a4a26" : "#6a543a";
   const inner = (
     <div className="flex w-full flex-col items-center justify-end gap-1.5">
       {raised ? (
