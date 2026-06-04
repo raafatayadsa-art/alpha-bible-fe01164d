@@ -29,9 +29,10 @@ const MEMBER = {
   verified: true,
 };
 
-const QR_URL = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&bgcolor=fbf3e1&color=3a2a18&data=${encodeURIComponent(
+const QR_URL = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&bgcolor=fbf3e1&color=3a2a18&data=${encodeURIComponent(
   `alpha://member/${MEMBER.membershipNo}`,
 )}`;
+
 
 // ===== Reusable premium glass card =====
 function GlassCard({
