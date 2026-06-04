@@ -45,7 +45,7 @@ export function BottomDock({
       const y = window.scrollY;
       const prev = lastYRef.current;
       lastYRef.current = y;
-      // Scrolling up (or near top) → reveal. Scrolling down → keep current state but reset idle timer.
+      // Scroll up (or near top) → reveal. Scroll down → just re-arm idle timer.
       if (y < prev - 2 || y < 8) {
         reveal();
       } else {
@@ -55,22 +55,24 @@ export function BottomDock({
 
     const onActivity = () => reveal();
 
-    // Start the idle timer immediately on mount.
+    // Initial idle timer.
     armTimer();
 
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("wheel", onScroll, { passive: true });
     window.addEventListener("touchstart", onActivity, { passive: true });
     window.addEventListener("pointerdown", onActivity, { passive: true });
+    window.addEventListener("click", onActivity, { passive: true });
     window.addEventListener("keydown", onActivity);
-    window.addEventListener("wheel", onScroll, { passive: true });
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("wheel", onScroll);
       window.removeEventListener("touchstart", onActivity);
       window.removeEventListener("pointerdown", onActivity);
+      window.removeEventListener("click", onActivity);
       window.removeEventListener("keydown", onActivity);
-      window.removeEventListener("wheel", onScroll);
     };
   }, []);
 
@@ -89,12 +91,21 @@ export function BottomDock({
       aria-label="التنقل السفلي"
       aria-hidden={isHidden}
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        isHidden ? "translate-y-[140%] opacity-0 pointer-events-none" : "translate-y-0 opacity-100 pointer-events-none",
+        "fixed inset-x-0 bottom-0 z-50",
         className,
       )}
-      style={{ paddingBottom: "max(env(safe-area-inset-bottom), 8px)" }}
+      style={{
+        paddingBottom: "max(env(safe-area-inset-bottom), 8px)",
+        transform: isHidden ? "translateY(100%)" : "translateY(0)",
+        visibility: isHidden ? "hidden" : "visible",
+        pointerEvents: isHidden ? "none" : "auto",
+        transition: isHidden
+          ? "transform 400ms cubic-bezier(0.22,1,0.36,1), visibility 0s linear 400ms"
+          : "transform 400ms cubic-bezier(0.22,1,0.36,1), visibility 0s linear 0s",
+        willChange: "transform",
+      }}
     >
+
 
       <div className="mx-auto w-full max-w-[420px] px-3 pointer-events-auto">
         <div
