@@ -17,7 +17,7 @@ const ROOT_SCREENS_NO_BACK = ["/home", "/synaxarium", "/feasts"];
 const DETAIL_SCREENS = [
   { name: "Synaxarium saint", path: "/synaxarium/antony" },
   { name: "Feasts detail", path: "/feasts/covenant" },
-  { name: "Agpeya reader", path: "/agpeya/morning" },
+  { name: "Agpeya reader", path: "/agpeya/baker" },
   { name: "Agpeya saved", path: "/agpeya/saved" },
   { name: "Katameros home", path: "/katameros" },
   { name: "Books list", path: "/books" },
