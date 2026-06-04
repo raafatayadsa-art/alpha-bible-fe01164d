@@ -1,10 +1,17 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Bell, Search, BookOpen, ChevronLeft, Crown, Mountain, Flame, Sparkles, Users } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { SAINTS, getTodaySaint, type Saint } from "@/features/synaxarium";
 import { BottomDock } from "@/components/bible/BottomDock";
 import { GlassSurface } from "@/components/bible/primitives";
 import { CopticCross, CopticWatermark, CopticSeparator } from "@/components/coptic";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerClose,
+} from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/synaxarium/")({
@@ -51,9 +58,37 @@ function SynaxariumHome() {
   const list: Saint[] =
     active === "all" ? SAINTS : SAINTS.filter((s) => SAINT_CATEGORY[s.id] === active);
   const upcoming = list.filter((s) => s.id !== today.id);
+  const navigate = useNavigate();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const topRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (searchOpen) {
+      const t = setTimeout(() => searchInputRef.current?.focus(), 80);
+      return () => clearTimeout(t);
+    }
+  }, [searchOpen]);
+
+  const handleMartyrs = () => {
+    setActive("martyrs");
+    topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const searchResults = SAINTS.filter((s) => {
+    if (!query.trim()) return true;
+    const q = query.trim();
+    return (
+      s.name.includes(q) ||
+      s.title.includes(q) ||
+      s.summary.includes(q) ||
+      s.copticDate.includes(q)
+    );
+  });
 
   return (
-    <div dir="rtl" className="relative min-h-dvh bg-[#faf3e3]">
+    <div ref={topRef} dir="rtl" className="relative min-h-dvh bg-[#faf3e3]">
       <CopticWatermark />
 
       {/* Header */}
@@ -72,7 +107,12 @@ function SynaxariumHome() {
           </h1>
           <p className="text-[10.5px] text-[#6a543a] -mt-0.5">سير القديسين وقراءات اليوم</p>
         </div>
-        <button className="grid h-10 w-10 place-items-center rounded-full bg-white border border-[#ead9b1] text-[#3a2a18] active:scale-90 transition-transform shadow-[0_4px_10px_-8px_rgba(120,80,30,0.5)]">
+        <button
+          type="button"
+          aria-label="البحث في السنكسار"
+          onClick={() => setSearchOpen(true)}
+          className="grid h-10 w-10 place-items-center rounded-full bg-white border border-[#ead9b1] text-[#3a2a18] active:scale-90 transition-transform shadow-[0_4px_10px_-8px_rgba(120,80,30,0.5)]"
+        >
           <Search className="h-4 w-4" />
         </button>
       </header>
@@ -264,24 +304,29 @@ function SynaxariumHome() {
             icon={<CopticCross size={14} />}
             label="قديس اليوم"
             sub={today.name.replace("القديس ", "").slice(0, 18)}
+            to="/synaxarium/$saintId"
+            params={{ saintId: today.id }}
           />
           <QuickTile
             tone="#b8423a"
             icon={<Flame className="h-3.5 w-3.5" />}
             label="شهداء اليوم"
             sub="تذكار الشهداء"
+            onClick={handleMartyrs}
           />
           <QuickTile
             tone="#3e7a55"
             icon={<Crown className="h-3.5 w-3.5" />}
             label="أحداث الكنيسة"
             sub="من تاريخ اليوم"
+            to="/feasts"
           />
           <QuickTile
             tone="#3a6a9b"
             icon={<Search className="h-3.5 w-3.5" />}
             label="البحث في السنكسار"
             sub="ابحث عن قديس"
+            onClick={() => setSearchOpen(true)}
           />
         </div>
 
@@ -296,6 +341,74 @@ function SynaxariumHome() {
       </main>
 
       <BottomDock />
+
+      {/* Search Drawer */}
+      <Drawer open={searchOpen} onOpenChange={setSearchOpen}>
+        <DrawerContent className="bg-white border-[#ead9b1]" dir="rtl">
+          <DrawerHeader className="text-right">
+            <DrawerTitle className="font-arabic-serif text-[17px] text-[#3a2a18]">
+              البحث في السنكسار
+            </DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4">
+            <div className="relative">
+              <Search className="pointer-events-none absolute top-1/2 -translate-y-1/2 right-3 h-4 w-4 text-[#b8893a]" />
+              <input
+                ref={searchInputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="ابحث باسم القديس أو التاريخ القبطي"
+                className="w-full h-11 rounded-2xl bg-[#faf3e3] border border-[#ead9b1] pr-9 pl-3 text-[13px] text-[#3a2a18] placeholder:text-[#b08a55] focus:outline-none focus:border-[#6a4ab5]"
+              />
+            </div>
+          </div>
+          <div className="px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+12px)] max-h-[55vh] overflow-y-auto space-y-2">
+            {searchResults.length === 0 && (
+              <p className="text-center text-[12px] text-[#6a543a] py-6">
+                لا توجد نتائج
+              </p>
+            )}
+            {searchResults.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => {
+                  setSearchOpen(false);
+                  navigate({
+                    to: "/synaxarium/$saintId",
+                    params: { saintId: s.id },
+                  });
+                }}
+                className="w-full text-right flex items-center gap-3 rounded-2xl bg-[#faf3e3] border border-[#ead9b1] p-2.5 active:scale-[0.98] transition-transform"
+              >
+                <img
+                  src={s.image}
+                  alt=""
+                  className="h-12 w-12 rounded-xl object-cover"
+                  draggable={false}
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13px] font-extrabold text-[#3a2a18] leading-tight line-clamp-1">
+                    {s.name}
+                  </div>
+                  <div className="text-[11px] text-[#6a543a] mt-0.5 line-clamp-1">
+                    {s.copticDate} · {s.title}
+                  </div>
+                </div>
+                <ChevronLeft className="h-4 w-4 text-[#b8893a]" />
+              </button>
+            ))}
+            <DrawerClose asChild>
+              <button
+                type="button"
+                className="mt-2 h-11 w-full rounded-2xl bg-white border border-[#ead9b1] text-[13px] font-bold text-[#3a2a18] active:scale-[0.98] transition-transform"
+              >
+                إغلاق
+              </button>
+            </DrawerClose>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }
@@ -305,14 +418,20 @@ function QuickTile({
   label,
   sub,
   tone,
+  onClick,
+  to,
+  params,
 }: {
   icon: ReactNode;
   label: string;
   sub: string;
   tone: string;
+  onClick?: () => void;
+  to?: string;
+  params?: Record<string, string>;
 }) {
-  return (
-    <button className="text-right rounded-2xl bg-white border border-[#ead9b1] p-3 flex items-center gap-2.5 shadow-[0_8px_18px_-12px_rgba(120,80,30,0.5)] active:scale-[0.98] transition-transform">
+  const inner = (
+    <>
       <span
         className="grid h-9 w-9 shrink-0 place-items-center rounded-xl"
         style={{ background: `${tone}14`, color: tone }}
@@ -328,6 +447,20 @@ function QuickTile({
         </span>
       </span>
       <ChevronLeft className="h-3.5 w-3.5 text-[#b8893a]" />
+    </>
+  );
+  const className =
+    "text-right rounded-2xl bg-white border border-[#ead9b1] p-3 flex items-center gap-2.5 shadow-[0_8px_18px_-12px_rgba(120,80,30,0.5)] active:scale-[0.98] transition-transform";
+  if (to) {
+    return (
+      <Link to={to as any} params={params as any} className={className}>
+        {inner}
+      </Link>
+    );
+  }
+  return (
+    <button type="button" onClick={onClick} className={className}>
+      {inner}
     </button>
   );
 }
