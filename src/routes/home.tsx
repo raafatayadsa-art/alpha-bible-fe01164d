@@ -990,7 +990,6 @@ function PrimaryArtCardFull({ title, sub, image, accent, glyph }: { title: strin
 function MiniPlayer({ dockVisible }: { dockVisible: boolean }) {
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(28);
-  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     if (!playing) return;
