@@ -313,12 +313,14 @@ export function PresentationMode({
           </div>
 
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
               aria-label="تصغير الخط"
               onClick={() => setFontScale((s) => Math.max(0.7, s - 0.1))}
-              className={`grid h-9 w-9 place-items-center rounded-lg border active:scale-95 transition-transform ${glassBtn}`}
+              className={`grid h-9 w-9 place-items-center rounded-full border active:scale-95 transition-transform ${
+                dark ? "bg-white/5 border-white/15 text-[#f3e6c4]" : "bg-white/40 border-white/50 text-[#3a2a18] backdrop-blur"
+              }`}
             >
               <Minus className="h-4 w-4" />
             </button>
@@ -332,11 +334,14 @@ export function PresentationMode({
               type="button"
               aria-label="تكبير الخط"
               onClick={() => setFontScale((s) => Math.min(2, s + 0.1))}
-              className={`grid h-9 w-9 place-items-center rounded-lg border active:scale-95 transition-transform ${glassBtn}`}
+              className={`grid h-9 w-9 place-items-center rounded-full border active:scale-95 transition-transform ${
+                dark ? "bg-white/5 border-white/15 text-[#f3e6c4]" : "bg-white/40 border-white/50 text-[#3a2a18] backdrop-blur"
+              }`}
             >
               <Plus className="h-4 w-4" />
             </button>
           </div>
+
         </div>
       </footer>
     </div>
