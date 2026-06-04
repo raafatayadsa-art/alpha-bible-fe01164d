@@ -146,53 +146,68 @@ function KatamerosHome() {
         className="relative z-10 mx-auto w-full max-w-[430px] px-4"
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 110px)" }}
       >
-        {/* TODAY HERO */}
-        <GlassSurface className="mt-3 overflow-hidden p-0 bg-white border-[#ead9b1] shadow-[0_18px_40px_-22px_rgba(120,80,30,0.55)]">
-          <div className="relative p-5">
-            {/* warm glow */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -top-16 -left-16 h-48 w-48 rounded-full opacity-40 blur-3xl"
-              style={{ background: `radial-gradient(closest-side, ${day.accentHex}33, transparent)` }}
-            />
-            <div className="relative flex items-start justify-between gap-3">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-[#fbf3e1] backdrop-blur px-2.5 py-1 text-[10.5px] font-bold text-[#3a2a18] border border-[#ead9b1]">
-                <span className="h-1.5 w-1.5 rounded-full" style={{ background: day.accentHex }} />
-                قراءات اليوم
-              </div>
-              <div className="text-left">
-                <div className="text-[11px] font-bold text-[#b8893a] flex items-center gap-1 justify-end">
-                  <CopticCross size={10} />
-                  <span>{day.copticDate}</span>
-                </div>
-                <div className="text-[10.5px] text-[#6a543a] mt-0.5">{day.gregorianDate}</div>
-              </div>
-            </div>
+        {/* TODAY HERO — image background */}
+        <div
+          className="relative mt-3 overflow-hidden rounded-3xl border border-[#e6d2a6]/70 shadow-[0_22px_44px_-22px_rgba(80,50,15,0.55)] min-h-[280px] flex flex-col justify-between"
+          style={{
+            backgroundImage: `url(${heroImage.url})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center 30%",
+          }}
+        >
+          {/* top gradient where chips live */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-24"
+            style={{ background: "linear-gradient(to bottom, rgba(20,12,4,0.55), rgba(20,12,4,0))" }}
+          />
+          {/* bottom gradient where title + CTA live */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3"
+            style={{ background: "linear-gradient(to top, rgba(15,8,2,0.78) 10%, rgba(15,8,2,0.35) 55%, rgba(15,8,2,0) 100%)" }}
+          />
 
-            <div className="relative mt-3">
-              <div className="text-[11px] text-[#6a543a]">{day.liturgicalDay}</div>
-              <h2 className="font-arabic-serif text-[22px] font-extrabold text-[#3a2a18] leading-tight mt-1">
-                {day.occasion}
-              </h2>
+          <div className="relative p-4 flex items-start justify-between gap-3">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/12 backdrop-blur-md px-2.5 py-1 text-[10.5px] font-bold text-[#fff5dc] border border-[#f0d78c]/40 shadow-[0_4px_12px_-6px_rgba(0,0,0,0.6)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#f0d78c]" />
+              قراءات اليوم
             </div>
+            <div className="text-left">
+              <div className="text-[11px] font-bold text-[#f0d78c] flex items-center gap-1 justify-end" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}>
+                <CopticCross size={10} />
+                <span>{day.copticDate}</span>
+              </div>
+              <div className="text-[10.5px] text-[#f5e7c3]/85 mt-0.5" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}>{day.gregorianDate}</div>
+            </div>
+          </div>
 
-            <div className="relative mt-4 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3 text-[11px] text-[#6a543a]">
+          <div className="relative p-5 pt-10">
+            <div className="text-[11px] text-[#f0d78c]" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.7)" }}>{day.liturgicalDay}</div>
+            <h2
+              className="font-arabic-serif text-[24px] font-extrabold text-[#fff8e3] leading-tight mt-1"
+              style={{ textShadow: "0 2px 10px rgba(0,0,0,0.65)" }}
+            >
+              {day.occasion}
+            </h2>
+
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 text-[11px] text-[#f5e7c3]" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}>
                 <span className="inline-flex items-center gap-1">
-                  <Layers className="h-3.5 w-3.5 text-[#b8893a]" />
+                  <Layers className="h-3.5 w-3.5 text-[#f0d78c]" />
                   {day.readings.length} قراءات
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5 text-[#b8893a]" />
+                  <Clock className="h-3.5 w-3.5 text-[#f0d78c]" />
                   {totalMin} دقائق
                 </span>
               </div>
               <button
                 type="button"
                 onClick={startAll}
-                className="inline-flex items-center gap-2 rounded-full text-white px-4 h-10 text-[12px] font-bold shadow-[0_10px_22px_-10px_rgba(106,74,181,0.65)] active:scale-95 transition-transform"
+                className="inline-flex items-center gap-2 rounded-full px-4 h-10 text-[12px] font-bold text-[#3a2410] active:scale-95 transition-transform border border-[#f0d78c]/70 backdrop-blur-md shadow-[0_10px_22px_-10px_rgba(0,0,0,0.7)]"
                 style={{
-                  background: `linear-gradient(to left, ${day.accentHex}, #8c6fd1)`,
+                  background: "linear-gradient(135deg, rgba(255,243,205,0.95), rgba(217,184,120,0.95))",
                 }}
               >
                 <BookOpen className="h-4 w-4" />
