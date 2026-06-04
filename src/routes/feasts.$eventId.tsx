@@ -222,7 +222,7 @@ function Section({ title, accent, children }: { title: string; accent: string; c
         <span className="h-0.5 w-6 rounded-full" style={{ background: accent }} />
         {title}
       </h3>
-      <GlassSurface className="p-4">{children}</GlassSurface>
+      <GlassSurface className="p-4 bg-white border-[#ead9b1] shadow-[0_18px_40px_-22px_rgba(120,80,30,0.55)]">{children}</GlassSurface>
     </section>
   );
 }
