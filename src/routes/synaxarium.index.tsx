@@ -107,7 +107,12 @@ function SynaxariumHome() {
           </h1>
           <p className="text-[10.5px] text-[#6a543a] -mt-0.5">سير القديسين وقراءات اليوم</p>
         </div>
-        <button className="grid h-10 w-10 place-items-center rounded-full bg-white border border-[#ead9b1] text-[#3a2a18] active:scale-90 transition-transform shadow-[0_4px_10px_-8px_rgba(120,80,30,0.5)]">
+        <button
+          type="button"
+          aria-label="البحث في السنكسار"
+          onClick={() => setSearchOpen(true)}
+          className="grid h-10 w-10 place-items-center rounded-full bg-white border border-[#ead9b1] text-[#3a2a18] active:scale-90 transition-transform shadow-[0_4px_10px_-8px_rgba(120,80,30,0.5)]"
+        >
           <Search className="h-4 w-4" />
         </button>
       </header>
