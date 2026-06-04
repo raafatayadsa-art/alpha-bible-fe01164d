@@ -80,10 +80,11 @@ function FeastsHome() {
                     "inline-flex items-center gap-1.5 rounded-full px-3.5 h-9 text-[12px] font-bold whitespace-nowrap border transition-all active:scale-95",
                     isActive
                       ? "bg-gradient-to-l from-[#6a4ab5] to-[#8c6fd1] text-white border-transparent shadow-[0_6px_14px_-6px_rgba(106,74,181,0.55)]"
-                      : "bg-white/80 text-[#3a2a18] border-[#efe2c4]",
+                      : "bg-white text-[#3a2a18] border-[#ead9b1] shadow-[0_4px_10px_-8px_rgba(120,80,30,0.5)]",
                   )}
                 >
                   {c.label}
+                  {CATEGORY_ICONS[c.id]}
                 </button>
               );
             })}
@@ -92,7 +93,7 @@ function FeastsHome() {
 
         {/* Today hero */}
         <Link to="/feasts/$eventId" params={{ eventId: today.id }} className="block mt-3 active:scale-[0.99] transition-transform">
-          <GlassSurface className="overflow-hidden p-0">
+          <GlassSurface className="overflow-hidden p-0 bg-white border-[#ead9b1] shadow-[0_18px_40px_-22px_rgba(120,80,30,0.55)]">
             <div className="relative h-[200px]">
               <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${today.image})` }} />
               <div className="absolute inset-0 bg-gradient-to-t from-[#fbf3e1] via-[#fbf3e1]/40 to-transparent" />
