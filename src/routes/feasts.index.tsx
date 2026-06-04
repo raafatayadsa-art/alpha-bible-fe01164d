@@ -176,7 +176,7 @@ function FeastsHome() {
         </Link>
 
         {/* List */}
-        <div className="mt-5 space-y-3">
+        <div ref={calendarRef} className="mt-5 space-y-3">
           {list.map((f) => {
             const isToday = f.id === today.id;
             return (
