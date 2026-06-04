@@ -436,6 +436,58 @@ function DetailSheet({ msg, onClose, onToggleSave, onDelete, onMarkRead }: {
             )
           )}
 
+          {/* Contextual actions (shown only when relevant) */}
+          {(msg.category === "طلبات" || msg.category === "عضوية") && (
+            <div className="mt-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="h-px flex-1 bg-gradient-to-l from-[#b8893a]/40 to-transparent" />
+                <span className="text-[10px] font-bold text-[#9a7e5a]">إجراءات</span>
+                <span className="h-px flex-1 bg-gradient-to-r from-[#b8893a]/40 to-transparent" />
+              </div>
+
+              {msg.category === "طلبات" && (
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    onClick={() => onMarkRead(msg.id)}
+                    className="py-2.5 rounded-xl text-[11.5px] font-extrabold text-white"
+                    style={{ background: "linear-gradient(180deg,#3fb37c,#2f9d6e)", boxShadow: "0 8px 18px -10px rgba(47,157,110,0.7)" }}
+                  >
+                    قبول
+                  </button>
+                  <button
+                    onClick={() => onMarkRead(msg.id)}
+                    className="py-2.5 rounded-xl text-[11.5px] font-extrabold text-white"
+                    style={{ background: "linear-gradient(180deg,#d06b6b,#b85a5a)", boxShadow: "0 8px 18px -10px rgba(184,90,90,0.6)" }}
+                  >
+                    رفض
+                  </button>
+                  <button
+                    onClick={() => onMarkRead(msg.id)}
+                    className="py-2.5 rounded-xl text-[11.5px] font-extrabold text-[#3a2a18] bg-white/70 border border-[#efe2c4]"
+                  >
+                    عرض الطلب
+                  </button>
+                </div>
+              )}
+
+              {msg.category === "عضوية" && (
+                <Link
+                  to={"/profile/membership" as any}
+                  className="flex items-center justify-center gap-2 w-full mt-1 py-3 rounded-2xl text-[13px] font-extrabold text-[#f7e7b8]"
+                  style={{
+                    background: "linear-gradient(180deg,#3a8c66,#2f7d5a)",
+                    border: "1px solid rgba(240,215,140,0.4)",
+                    boxShadow: "0 12px 24px -14px rgba(47,125,90,0.7)",
+                  }}
+                >
+                  فتح العضوية
+                  <ChevronLeft className="h-4 w-4" />
+                </Link>
+              )}
+            </div>
+          )}
+
+
           <div className="mt-4 grid grid-cols-3 gap-2">
             <button
               onClick={() => onToggleSave(msg.id)}
