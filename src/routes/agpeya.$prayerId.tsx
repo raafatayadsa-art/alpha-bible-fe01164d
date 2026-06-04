@@ -454,6 +454,10 @@ function PrayerReader() {
     };
   }, [prayerId]);
 
+  // Lock active section during programmatic smooth scroll so the tapped chip
+  // stays highlighted until the scroll settles (prevents flicker on iPhone).
+  const lockUntilRef = useRef<number>(0);
+
   // Scroll-driven active section tracking (more reliable than IO across browsers)
   useEffect(() => {
     const root = scrollerRef.current;
@@ -461,6 +465,7 @@ function PrayerReader() {
     let raf = 0;
     const recompute = () => {
       try {
+        if (Date.now() < lockUntilRef.current) return;
         const els = sections
           .map((s) => ({ id: s.id, el: root.querySelector(`#section-${s.id}`) as HTMLElement | null }))
           .filter((x): x is { id: string; el: HTMLElement } => !!x.el);
@@ -473,7 +478,6 @@ function PrayerReader() {
           if (el.getBoundingClientRect().top - trigger <= 0) currentId = id;
           else break;
         }
-        // near-bottom guard: snap to last section
         // near-bottom guard: snap to last section (only when content actually scrolls)
         const scrollable = root.scrollHeight - root.clientHeight;
         if (scrollable > 8 && root.scrollTop + root.clientHeight >= root.scrollHeight - 4) {
