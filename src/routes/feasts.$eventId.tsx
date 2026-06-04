@@ -257,6 +257,11 @@ function EventDetails() {
         </div>
       </main>
 
+      <PresentationMode
+        open={presentOpen}
+        onOpenChange={setPresentOpen}
+        content={presentationContent}
+      />
       <BottomDock />
     </div>
   );
