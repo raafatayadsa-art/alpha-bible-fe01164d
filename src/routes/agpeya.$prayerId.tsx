@@ -675,12 +675,11 @@ function PrayerReader() {
                   type="button"
                   data-chip={s.id}
                   onClick={() => jumpTo(s.id)}
+                  aria-current={active ? "true" : undefined}
                   className={cn(
-                    "shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[12px] font-bold transition-all active:scale-95",
+                    "shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[12px] font-bold transition-all duration-300 active:scale-95",
                     active
-                      ? dark
-                        ? "border-[#f0d78c] bg-gradient-to-br from-[#f0d78c] to-[#c79356] text-[#1a1208] shadow"
-                        : "border-[#1f4032] bg-gradient-to-br from-[#1f4032] to-[#234a3a] text-white shadow"
+                      ? "border-[#8a6bbf] bg-gradient-to-br from-[#7a5cb0] to-[#5a3d92] text-white shadow-[0_6px_18px_-8px_rgba(122,92,176,0.7)] ring-1 ring-[#b89dd9]/40"
                       : dark
                         ? "border-white/10 bg-white/5 text-white/75"
                         : "border-[#c79356]/30 bg-white/55 text-[#5b3a18]",
@@ -696,7 +695,7 @@ function PrayerReader() {
         {/* Progress bar */}
         <div className={cn("h-[3px] w-full", dark ? "bg-white/5" : "bg-[#c79356]/15")}>
           <div
-            className={cn("h-full transition-[width] duration-150", dark ? "bg-[#f0d78c]" : "bg-[#1f4032]")}
+            className="h-full bg-gradient-to-r from-[#7a5cb0] via-[#9b7fd4] to-[#5a3d92] transition-[width] duration-150"
             style={{ width: `${Math.round(progress * 100)}%` }}
           />
         </div>
