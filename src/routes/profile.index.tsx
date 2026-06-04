@@ -727,6 +727,94 @@ function GridTile({ to, icon: Icon, title, subtitle, accent, glyph }: { to: stri
   );
 }
 
+function ChurchFrame() {
+  // Subtle Orthodox sanctuary architecture behind the cards.
+  // Outer arch border, inner manuscript border, Alpha/Omega corner motifs,
+  // and faint Coptic ornament side strips.
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 select-none">
+      {/* Top sanctuary arch glow */}
+      <div
+        className="absolute -top-6 left-1/2 -translate-x-1/2 w-[120%] h-56"
+        style={{
+          background:
+            "radial-gradient(60% 100% at 50% 100%, rgba(216,168,58,0.18), transparent 70%)",
+        }}
+      />
+
+      {/* Outer arched frame */}
+      <svg
+        viewBox="0 0 440 1600"
+        preserveAspectRatio="none"
+        className="absolute inset-x-1.5 top-1 bottom-24 h-[calc(100%-6rem)] w-[calc(100%-12px)] opacity-[0.55]"
+      >
+        <defs>
+          <linearGradient id="archStroke" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#d8a83a" stopOpacity="0.75" />
+            <stop offset="50%" stopColor="#b8893a" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#8a5a14" stopOpacity="0.6" />
+          </linearGradient>
+          <linearGradient id="archInner" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#e7c97a" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#b8893a" stopOpacity="0.25" />
+          </linearGradient>
+        </defs>
+        {/* Outer arch */}
+        <path
+          d="M14,80 Q14,14 80,14 L360,14 Q426,14 426,80 L426,1586 Q426,1594 418,1594 L22,1594 Q14,1594 14,1586 Z"
+          fill="none"
+          stroke="url(#archStroke)"
+          strokeWidth="1.4"
+        />
+        {/* Inner manuscript border */}
+        <path
+          d="M24,90 Q24,24 90,24 L350,24 Q416,24 416,90 L416,1578 Q416,1584 410,1584 L30,1584 Q24,1584 24,1578 Z"
+          fill="none"
+          stroke="url(#archInner)"
+          strokeWidth="0.8"
+          strokeDasharray="1 4"
+        />
+        {/* Keystone */}
+        <circle cx="220" cy="14" r="5" fill="#d8a83a" opacity="0.55" />
+        <circle cx="220" cy="14" r="2" fill="#fbf3e1" opacity="0.9" />
+      </svg>
+
+      {/* Alpha & Omega corner motifs */}
+      <span className="absolute top-3 right-4 text-[26px] leading-none font-bold text-[#8a5a14]/15">Ⲁ</span>
+      <span className="absolute top-3 left-4 text-[26px] leading-none font-bold text-[#8a5a14]/15">Ⲱ</span>
+
+      {/* Coptic ornament side strips */}
+      <div
+        className="absolute top-32 bottom-32 right-0 w-[12px] opacity-[0.16]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(180deg, transparent 0 14px, #b8893a 14px 15px, transparent 15px 22px, #b8893a 22px 23px, transparent 23px 36px)",
+          maskImage: "linear-gradient(180deg, transparent, black 8%, black 92%, transparent)",
+          WebkitMaskImage: "linear-gradient(180deg, transparent, black 8%, black 92%, transparent)",
+        }}
+      />
+      <div
+        className="absolute top-32 bottom-32 left-0 w-[12px] opacity-[0.16]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(180deg, transparent 0 14px, #b8893a 14px 15px, transparent 15px 22px, #b8893a 22px 23px, transparent 23px 36px)",
+          maskImage: "linear-gradient(180deg, transparent, black 8%, black 92%, transparent)",
+          WebkitMaskImage: "linear-gradient(180deg, transparent, black 8%, black 92%, transparent)",
+        }}
+      />
+
+      {/* Sanctuary base */}
+      <div
+        className="absolute bottom-24 left-3 right-3 h-10 opacity-60"
+        style={{
+          background: "radial-gradient(60% 100% at 50% 0%, rgba(184,137,58,0.22), transparent 70%)",
+        }}
+      />
+      <div className="absolute bottom-[6.25rem] left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#b8893a]/45 to-transparent" />
+    </div>
+  );
+}
+
 function ProfileScreen() {
   return (
     <div dir="rtl" className="relative min-h-screen w-full overflow-x-hidden">
@@ -741,37 +829,51 @@ function ProfileScreen() {
             "linear-gradient(180deg,#f7eed6 0%,#f4ead8 50%,#ecdcb6 100%)",
         }}
       />
+      {/* Architectural depth layer */}
+      <div
+        aria-hidden
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(70% 40% at 50% 10%, rgba(216,168,58,0.10), transparent 70%)," +
+            "radial-gradient(90% 50% at 50% 100%, rgba(120,80,30,0.10), transparent 70%)",
+        }}
+      />
       <CopticWatermark />
 
       <div className="relative mx-auto w-full max-w-[440px] px-4 pb-36 pt-[max(env(safe-area-inset-top),10px)]">
-        <header className="flex items-center justify-between gap-2 pt-1">
-          <Link to={"/home" as any} aria-label="رجوع" className="grid h-9 w-9 place-items-center rounded-full border border-[#efe2c4] bg-white/70 backdrop-blur-xl shadow-[0_4px_12px_-8px_rgba(120,80,30,0.4)] active:scale-95 transition">
-            <ChevronRight className="h-4.5 w-4.5 text-[#3a2a18]" />
-          </Link>
-          <h1 className="text-[14px] font-extrabold text-[#3a2a18]">الملف الشخصي</h1>
-          <div className="h-9 w-9" />
-        </header>
+        <ChurchFrame />
 
-        <ProfileHero />
-        <MembershipCard />
+        <div className="relative z-10">
+          <header className="flex items-center justify-between gap-2 pt-1">
+            <Link to={"/home" as any} aria-label="رجوع" className="grid h-9 w-9 place-items-center rounded-full border border-[#efe2c4] bg-white/70 backdrop-blur-xl shadow-[0_4px_12px_-8px_rgba(120,80,30,0.4)] active:scale-95 transition">
+              <ChevronRight className="h-4.5 w-4.5 text-[#3a2a18]" />
+            </Link>
+            <h1 className="text-[14px] font-extrabold text-[#3a2a18]">الملف الشخصي</h1>
+            <div className="h-9 w-9" />
+          </header>
 
-        <SectionTitle>رسائل الكنيسة</SectionTitle>
-        <MessagesHero />
+          <ProfileHero />
+          <MembershipCard />
 
-        <SectionTitle>بياناتي</SectionTitle>
-        <PersonalFeature />
+          <SectionTitle>رسائل الكنيسة</SectionTitle>
+          <MessagesHero />
 
-        <SectionTitle>إدارة الحساب</SectionTitle>
-        <div className="grid grid-cols-2 gap-3">
-          <GridTile to="/profile/church" icon={Church} title="كنيستي" subtitle={MEMBER.church} accent="#c98a3c" glyph="☩" />
-          <GridTile to="/profile/family" icon={Users} title="العائلة" subtitle="أفراد العائلة" accent="#a07ec4" glyph="✿" />
-          <GridTile to="/profile/appearance" icon={Palette} title="المظهر" subtitle="فاتح · داكن · النظام" accent="#d8a83a" glyph="Ⲁ" />
-          <GridTile to="/profile/security" icon={Shield} title="الخصوصية والأمان" subtitle="كلمة المرور والأجهزة" accent="#3f9d6e" glyph="⛨" />
+          <SectionTitle>بياناتي</SectionTitle>
+          <PersonalFeature />
+
+          <SectionTitle>إدارة الحساب</SectionTitle>
+          <div className="grid grid-cols-2 gap-3">
+            <GridTile to="/profile/church" icon={Church} title="كنيستي" subtitle={MEMBER.church} accent="#c98a3c" glyph="☩" />
+            <GridTile to="/profile/family" icon={Users} title="العائلة" subtitle="أفراد العائلة" accent="#a07ec4" glyph="✿" />
+            <GridTile to="/profile/appearance" icon={Palette} title="المظهر" subtitle="فاتح · داكن · النظام" accent="#d8a83a" glyph="Ⲁ" />
+            <GridTile to="/profile/security" icon={Shield} title="الخصوصية والأمان" subtitle="كلمة المرور والأجهزة" accent="#3f9d6e" glyph="⛨" />
+          </div>
+
+          <p className="mt-8 text-center text-[10px] text-[#9a7e5a]">
+            ⲁⲗⲫⲁ · Alpha Coptic · إصدار 1.0
+          </p>
         </div>
-
-        <p className="mt-8 text-center text-[10px] text-[#9a7e5a]">
-          ⲁⲗⲫⲁ · Alpha Coptic · إصدار 1.0
-        </p>
       </div>
 
       <BottomDock />
