@@ -127,6 +127,7 @@ function EventDetails() {
           >
             <BackButton compact to="/feasts" tone="dark" />
             <div className="flex items-center gap-2">
+              <DisplayButton tone="dark" onClick={() => setPresentOpen(true)} />
               <button
                 onClick={toggleSave}
                 aria-pressed={saved}
