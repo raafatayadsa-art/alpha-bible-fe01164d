@@ -872,6 +872,7 @@ function ProfileScreen() {
           </header>
 
           <ProfileHero />
+
           <MembershipCard />
 
           <SectionTitle>رسائل الكنيسة</SectionTitle>
