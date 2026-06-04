@@ -271,20 +271,33 @@ function ProfileHero() {
             <div aria-hidden className="absolute inset-x-0 top-0 h-1/2" style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.22), transparent)" }} />
           </div>
 
-          {/* Emerald verified badge */}
+          {/* Emerald scalloped verified badge */}
           {MEMBER.verified && (
             <span
-              className="absolute -bottom-1 -right-1 grid h-7 w-7 place-items-center rounded-full border-2 border-[#1e120a]"
-              style={{
-                background: "radial-gradient(120% 90% at 30% 20%, #5ee0a0, #1f9e63 60%, #14704a 100%)",
-                boxShadow:
-                  "inset 0 1px 0 rgba(255,255,255,0.4), 0 0 14px rgba(46,204,113,0.65), 0 6px 14px -6px rgba(20,112,74,0.8)",
-              }}
+              className="absolute -bottom-1.5 -right-1.5 grid h-9 w-9 place-items-center"
               aria-label="عضو موثق"
+              style={{ filter: "drop-shadow(0 0 10px rgba(46,204,113,0.65)) drop-shadow(0 6px 14px rgba(20,112,74,0.7))" }}
             >
-              <BadgeCheck className="h-4 w-4 text-white" strokeWidth={2.8} />
+              <svg viewBox="0 0 40 40" className="absolute inset-0 h-full w-full">
+                <defs>
+                  <radialGradient id="emeraldFill" cx="35%" cy="28%" r="75%">
+                    <stop offset="0%" stopColor="#7df0b8" />
+                    <stop offset="45%" stopColor="#22b478" />
+                    <stop offset="100%" stopColor="#0f6a44" />
+                  </radialGradient>
+                </defs>
+                <path
+                  d="M20 2 L24 4 L28 2.5 L30.5 6 L34.5 6.5 L35.5 10.5 L38.5 13 L37.5 17 L39 21 L36.5 24.5 L37 28.5 L33.5 30.5 L32 34.5 L28 35 L25 38 L20.5 36.5 L16 38 L12 35 L8 34.5 L6.5 30.5 L3 28.5 L3.5 24.5 L1 21 L2.5 17 L1.5 13 L4.5 10.5 L5.5 6.5 L9.5 6 L12 2.5 L16 4 Z"
+                  fill="url(#emeraldFill)"
+                  stroke="#ffffff"
+                  strokeWidth="1.2"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <BadgeCheck className="relative h-4.5 w-4.5 text-white" strokeWidth={3} />
             </span>
           )}
+
         </div>
 
 
