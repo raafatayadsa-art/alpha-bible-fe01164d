@@ -31,6 +31,49 @@ function EventDetails() {
   const accent = ACCENT_COLORS[event.accent];
   const related = FEASTS.filter((f) => f.id !== event.id).slice(0, 4);
 
+  const storageKey = "alpha:saved-feasts";
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    try {
+      const list: string[] = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      setSaved(list.includes(event.id));
+    } catch {}
+  }, [event.id]);
+
+  const toggleSave = () => {
+    try {
+      const list: string[] = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      const next = list.includes(event.id)
+        ? list.filter((x) => x !== event.id)
+        : [...list, event.id];
+      localStorage.setItem(storageKey, JSON.stringify(next));
+      const isSaved = next.includes(event.id);
+      setSaved(isSaved);
+      toast.success(isSaved ? "تم الحفظ في المفضلة" : "تمت الإزالة من المفضلة");
+    } catch {
+      toast.error("تعذر الحفظ");
+    }
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: event.title,
+      text: `${event.title} — ${event.subtitle}`,
+      url: typeof window !== "undefined" ? window.location.href : "",
+    };
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+      await navigator.clipboard.writeText(shareData.url);
+      toast.success("تم نسخ الرابط");
+    } catch (err: any) {
+      if (err?.name !== "AbortError") toast.error("تعذرت المشاركة");
+    }
+  };
+
   return (
     <div dir="rtl" className="relative min-h-dvh bg-[#faf3e3]">
       <CopticWatermark />
@@ -51,13 +94,22 @@ function EventDetails() {
           >
             <BackButton compact to="/feasts" tone="dark" />
             <div className="flex items-center gap-2">
-              <button className="grid h-9 w-9 place-items-center rounded-full bg-black/35 backdrop-blur text-white border border-white/15 active:scale-90 transition-transform">
-                <Bookmark className="h-4 w-4" />
+              <button
+                onClick={toggleSave}
+                aria-pressed={saved}
+                aria-label={saved ? "إزالة من المفضلة" : "حفظ"}
+                className="grid h-9 w-9 place-items-center rounded-full bg-black/35 backdrop-blur text-white border border-white/15 active:scale-90 transition-transform"
+              >
+                {saved ? <BookmarkCheck className="h-4 w-4" style={{ color: accent }} /> : <Bookmark className="h-4 w-4" />}
               </button>
-              <button className="grid h-9 w-9 place-items-center rounded-full bg-black/35 backdrop-blur text-white border border-white/15 active:scale-90 transition-transform">
+              <button
+                onClick={handleShare}
+                aria-label="مشاركة"
+                className="grid h-9 w-9 place-items-center rounded-full bg-black/35 backdrop-blur text-white border border-white/15 active:scale-90 transition-transform"
+              >
                 <Share2 className="h-4 w-4" />
               </button>
-              <button className="grid h-9 w-9 place-items-center rounded-full bg-black/35 backdrop-blur text-white border border-white/15 active:scale-90 transition-transform">
+              <button aria-label="المزيد" className="grid h-9 w-9 place-items-center rounded-full bg-black/35 backdrop-blur text-white border border-white/15 active:scale-90 transition-transform">
                 <MoreVertical className="h-4 w-4" />
               </button>
             </div>
