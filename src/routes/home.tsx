@@ -6,6 +6,7 @@ import {
   Play, Pause, X, Link2, Calendar,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { BottomDock } from "@/components/bible/BottomDock";
 
 // Hero stack art
 import artVerse from "@/assets/home/art-verse.jpg";
