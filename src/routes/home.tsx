@@ -558,7 +558,7 @@ function HeroStack({
   return (
     <section className="mt-5 select-none">
       <div
-        className="relative h-[320px] w-full"
+        className="relative h-[268px] w-full"
         style={{ perspective: 1200 }}
         onTouchStart={onTouchStart as any}
         onTouchMove={onTouchMove as any}
@@ -573,7 +573,7 @@ function HeroStack({
           const c = cards[cardIdx];
           const isFront = rel === 0;
           const scale = 1 - rel * 0.06;
-          const translateY = rel * 14;
+          const translateY = rel * 12;
           const translateX = isFront ? dx : 0;
           const rotate = isFront ? dx * 0.02 : 0;
           const opacity = rel <= 2 ? 1 : 0.4;
@@ -615,66 +615,72 @@ function HeroCardView({
 }) {
   return (
     <article
-      className="relative h-[300px] w-full overflow-hidden rounded-[32px] border border-white/15 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8),0_0_0_1px_rgba(231,201,122,0.15)]"
+      className="relative h-[252px] w-full overflow-hidden rounded-[32px] border border-white/15 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8),0_0_0_1px_rgba(231,201,122,0.15)]"
       style={{
         background: "#0a0612",
       }}
     >
-      <img
-        src={card.image}
-        alt=""
-        draggable={false}
-        className="absolute inset-0 h-full w-full object-cover"
-        style={{ filter: "saturate(1.05)" }}
-      />
-      {/* dark gradient for legibility */}
-      <div
-        aria-hidden
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 35%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.92) 100%)",
-        }}
-      />
-      {/* accent glow border */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-[32px]"
-        style={{
-          boxShadow: `inset 0 0 40px ${card.accent}33, inset 0 1px 0 rgba(255,255,255,0.15)`,
-        }}
-      />
-      {/* coptic glyph */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute top-4 left-4 select-none font-black leading-none"
-        style={{ fontSize: 72, color: "rgba(255,255,255,0.08)" }}
+      <Link
+        to={card.to as any}
+        aria-label={card.title}
+        className="absolute inset-0 z-0"
       >
-        Ⲁ
-      </span>
+        <img
+          src={card.image}
+          alt=""
+          draggable={false}
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ filter: "saturate(1.05)" }}
+        />
+        {/* dark gradient for legibility */}
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.05) 35%, rgba(0,0,0,0.55) 75%, rgba(0,0,0,0.92) 100%)",
+          }}
+        />
+        {/* accent glow border */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-[32px]"
+          style={{
+            boxShadow: `inset 0 0 40px ${card.accent}33, inset 0 1px 0 rgba(255,255,255,0.15)`,
+          }}
+        />
+        {/* coptic glyph */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute top-4 left-4 select-none font-black leading-none"
+          style={{ fontSize: 64, color: "rgba(255,255,255,0.08)" }}
+        >
+          Ⲁ
+        </span>
+      </Link>
 
       {/* badge */}
-      <div className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/35 backdrop-blur-md px-3 py-1.5">
+      <div className="absolute top-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/35 backdrop-blur-md px-3 py-1.5">
         <Sparkles className="h-3 w-3" style={{ color: card.accent }} />
         <span className="text-[11px] font-bold text-white">{card.badge}</span>
       </div>
 
       {/* body */}
-      <div className="absolute inset-x-0 bottom-0 px-5 pb-4 pt-5">
+      <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-3.5 pt-4 pointer-events-none">
         <p
-          className="text-right font-extrabold text-white leading-[1.7] text-[15px]"
+          className="text-right font-extrabold text-white leading-[1.55] text-[14px] line-clamp-3"
           style={{ textShadow: "0 2px 8px rgba(0,0,0,0.7)" }}
         >
           {card.body}
         </p>
         {card.meta && (
-          <p className="mt-1.5 text-right text-[12px] font-bold" style={{ color: card.accent }}>
+          <p className="mt-1 text-right text-[11.5px] font-bold" style={{ color: card.accent }}>
             {card.meta}
           </p>
         )}
 
         {/* actions */}
-        <div className="mt-3 flex items-center justify-between">
+        <div className="mt-2.5 flex items-center justify-between pointer-events-auto">
           <button
             aria-label={saved ? "إزالة الحفظ" : "حفظ"}
             onClick={onToggleSaved}
@@ -699,30 +705,21 @@ function HeroCardView({
             ))}
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <Link
-              to={card.to as any}
-              aria-label="افتح"
-              className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md active:scale-95 transition"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Link>
-            <button
-              aria-label="مشاركة"
-              onClick={() =>
-                openShareSheet({
-                  title: card.title,
-                  body: card.body,
-                  meta: card.meta,
-                  imageSrc: card.image,
-                  accent: card.accent,
-                })
-              }
-              className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md active:scale-95 transition"
-            >
-              <Share2 className="h-4 w-4" />
-            </button>
-          </div>
+          <button
+            aria-label="مشاركة"
+            onClick={() =>
+              openShareSheet({
+                title: card.title,
+                body: card.body,
+                meta: card.meta,
+                imageSrc: card.image,
+                accent: card.accent,
+              })
+            }
+            className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md active:scale-95 transition"
+          >
+            <Share2 className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </article>
@@ -874,82 +871,82 @@ function FeaturedNewsCard({
   );
 }
 
-// ===== Primary Stack — Apple Wallet style layered =====
+// ===== Primary Cover Flow Carousel — center card with peek sides =====
 function PrimaryStack({ cards }: { cards: { key: string; title: string; sub: string; image: string; to: string; accent: string; glyph: "Ⲁ" | "Ⲱ" }[] }) {
-  const total = cards.length;
-  const [index, setIndex] = useState(0);
-  const startX = useRef<number | null>(null);
-  const [dx, setDx] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
 
-  const onStart = (e: React.TouchEvent | React.MouseEvent) => {
-    startX.current = "touches" in e ? e.touches[0].clientX : e.clientX;
-    setDx(0);
-  };
-  const onMove = (e: React.TouchEvent | React.MouseEvent) => {
-    if (startX.current == null) return;
-    const x = "touches" in e ? e.touches[0].clientX : e.clientX;
-    setDx(x - startX.current);
-  };
-  const onEnd = () => {
-    if (Math.abs(dx) > 60) setIndex((i) => i + (dx < 0 ? 1 : -1));
-    startX.current = null;
-    setDx(0);
-  };
-
-  const mod = ((index % total) + total) % total;
-  const visible = Math.min(4, total);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    let raf = 0;
+    const update = () => {
+      const center = el.scrollLeft + el.clientWidth / 2;
+      const items = Array.from(el.querySelectorAll<HTMLElement>("[data-cf-card]"));
+      let best = 0;
+      let bestDist = Infinity;
+      items.forEach((it, i) => {
+        const c = it.offsetLeft + it.offsetWidth / 2;
+        const d = Math.abs(c - center);
+        if (d < bestDist) { bestDist = d; best = i; }
+      });
+      setActive(best);
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    // Initial center on the first card
+    requestAnimationFrame(() => {
+      const first = el.querySelector<HTMLElement>("[data-cf-card]");
+      if (first) {
+        const target = first.offsetLeft + first.offsetWidth / 2 - el.clientWidth / 2;
+        el.scrollTo({ left: target, behavior: "auto" });
+      }
+      update();
+    });
+    return () => { el.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
+  }, [cards.length]);
 
   return (
-    <div
-      className="relative h-[260px] w-full select-none"
-      style={{ perspective: 1200 }}
-      onTouchStart={onStart as any}
-      onTouchMove={onMove as any}
-      onTouchEnd={onEnd}
-      onMouseDown={onStart as any}
-      onMouseMove={(e) => { if (startX.current != null) onMove(e); }}
-      onMouseUp={onEnd}
-      onMouseLeave={() => { if (startX.current != null) onEnd(); }}
-    >
-      {Array.from({ length: visible }).map((_, rel) => {
-        const c = cards[(mod + rel) % total];
-        const isFront = rel === 0;
-        const scale = 1 - rel * 0.05;
-        const translateY = rel * 12;
-        const translateX = isFront ? dx : 0;
-        const rotate = isFront ? dx * 0.015 : 0;
-        const opacity = rel <= 2 ? 1 : 0.5;
-        return (
-          <div
-            key={`${c.key}-${rel}`}
-            className="absolute inset-x-6 top-0"
-            style={{
-              transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale}) rotate(${rotate}deg)`,
-              zIndex: 30 - rel,
-              opacity,
-              transition: startX.current != null && isFront ? "none" : "transform 400ms cubic-bezier(0.22,1,0.36,1), opacity 300ms",
-            }}
-          >
-            {isFront ? (
-              <Link to={c.to as any} aria-label={c.title} className="block active:scale-[0.98] transition-transform">
-                <PrimaryArtCardFull {...c} />
-              </Link>
-            ) : (
-              <div className="pointer-events-none"><PrimaryArtCardFull {...c} /></div>
-            )}
-          </div>
-        );
-      })}
+    <div className="relative -mx-4">
+      <div
+        ref={containerRef}
+        dir="ltr"
+        className="flex items-center gap-3 overflow-x-auto snap-x snap-mandatory px-[18%] pb-6 pt-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        style={{ scrollBehavior: "smooth" }}
+      >
+        {cards.map((c, i) => {
+          const isActive = i === active;
+          return (
+            <Link
+              key={c.key}
+              to={c.to as any}
+              data-cf-card
+              aria-label={c.title}
+              className="snap-center shrink-0 w-[64%] active:scale-[0.98]"
+              style={{
+                transform: isActive ? "scale(1)" : "scale(0.86)",
+                opacity: isActive ? 1 : 0.65,
+                transition: "transform 320ms cubic-bezier(0.22,1,0.36,1), opacity 320ms",
+              }}
+            >
+              <PrimaryArtCardFull {...c} />
+            </Link>
+          );
+        })}
+      </div>
       {/* indicators */}
-      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+      <div className="mt-1 flex items-center justify-center gap-1.5">
         {cards.map((_, i) => (
           <span
             key={i}
             className="h-1.5 rounded-full transition-all"
             style={{
-              width: i === mod ? 20 : 6,
-              background: i === mod ? "#e7c97a" : "rgba(255,255,255,0.25)",
-              boxShadow: i === mod ? "0 0 8px rgba(231,201,122,0.6)" : "none",
+              width: i === active ? 20 : 6,
+              background: i === active ? "#e7c97a" : "rgba(255,255,255,0.25)",
+              boxShadow: i === active ? "0 0 8px rgba(231,201,122,0.6)" : "none",
             }}
           />
         ))}
@@ -961,7 +958,7 @@ function PrimaryStack({ cards }: { cards: { key: string; title: string; sub: str
 function PrimaryArtCardFull({ title, sub, image, accent, glyph }: { title: string; sub: string; image: string; accent: string; glyph: "Ⲁ" | "Ⲱ" }) {
   return (
     <div
-      className="relative h-[240px] w-full overflow-hidden rounded-[28px] border border-white/15"
+      className="relative h-[212px] w-full overflow-hidden rounded-[26px] border border-white/15"
       style={{
         boxShadow: `0 28px 56px -22px rgba(0,0,0,0.85), 0 0 0 1px ${accent}33, inset 0 0 36px ${accent}26, inset 0 1px 0 rgba(255,255,255,0.18)`,
         background: "#0a0612",
@@ -993,7 +990,6 @@ function PrimaryArtCardFull({ title, sub, image, accent, glyph }: { title: strin
 function MiniPlayer({ dockVisible }: { dockVisible: boolean }) {
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(28);
-  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     if (!playing) return;
@@ -1001,7 +997,7 @@ function MiniPlayer({ dockVisible }: { dockVisible: boolean }) {
     return () => clearInterval(id);
   }, [playing]);
 
-  if (dismissed) return null;
+  // Player is always available; no dismiss.
 
   const title = "ترنيمة بي إيك أفنوتي — لحن سنوي";
 
@@ -1058,14 +1054,7 @@ function MiniPlayer({ dockVisible }: { dockVisible: boolean }) {
           >
             {playing ? <Pause className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4 fill-current" />}
           </button>
-          {/* dismiss */}
-          <button
-            aria-label="إغلاق"
-            onClick={() => setDismissed(true)}
-            className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-white/10 bg-white/5 text-white/70 active:scale-95 transition"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
+          {/* dismiss button removed — player is always available */}
         </div>
       </div>
       <style>{`@keyframes alphaMarquee { 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }`}</style>
