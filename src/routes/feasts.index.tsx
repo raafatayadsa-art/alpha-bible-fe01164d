@@ -181,7 +181,7 @@ function FeastsHome() {
 
         {/* Add CTA */}
         <button className="mt-5 w-full active:scale-[0.99] transition-transform">
-          <GlassSurface className="p-3 bg-gradient-to-l from-[#efe7fb] to-[#fbf3e1]">
+          <GlassSurface className="p-3 bg-gradient-to-l from-[#f3eafd] to-white border-[#e7d4f5]">
             <div className="flex items-center gap-3">
               <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-[#6a4ab5] to-[#8c6fd1] text-white shadow-[0_6px_14px_-6px_rgba(106,74,181,0.55)]">
                 <Plus className="h-5 w-5" />
