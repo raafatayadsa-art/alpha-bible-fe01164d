@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bell, Search, BookOpen, Calendar, Moon, BellRing, ChevronLeft, Plus, Star, Cross, Fish, Church } from "lucide-react";
+import { Bell, Search, BookOpen, Calendar, Moon, BellRing, ChevronLeft, Star, Cross, Fish, Church } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { FEASTS, CATEGORIES, getTodayFeast, type FeastCategory } from "@/features/feasts";
+import { getTodaySaint } from "@/features/synaxarium";
 import { BottomDock } from "@/components/bible/BottomDock";
 import { GlassSurface } from "@/components/bible/primitives";
 import { CopticCross, CopticWatermark, CopticSeparator } from "@/components/coptic";
