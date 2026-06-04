@@ -25,7 +25,8 @@ describe("rankAndDedupe — exact → starts-with → contains → description",
       row("موسى النبي"), // starts-with → bucket 1
     ];
 
-    const out = rankAndDedupe(rows, "موسى");
+    const out = rankAndDedupe(rows, "موسى", { strict: false });
+
     const titles = out.map((r) => r.row.word);
 
     expect(titles[0]).toBe("موسى");
