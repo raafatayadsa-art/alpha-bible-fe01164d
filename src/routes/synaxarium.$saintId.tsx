@@ -39,6 +39,11 @@ import {
   DrawerDescription,
   DrawerClose,
 } from "@/components/ui/drawer";
+import {
+  PresentationMode,
+  DisplayButton,
+  type PresentationContent,
+} from "@/components/presentation/PresentationMode";
 
 export const Route = createFileRoute("/synaxarium/$saintId")({
   ssr: false,
