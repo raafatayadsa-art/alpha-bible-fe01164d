@@ -872,10 +872,10 @@ function PrayerReader() {
             onClick={() => setPlaying((p) => !p)}
             className={cn(
               "ms-1 grid h-10 w-10 place-items-center rounded-full text-white transition-all active:scale-95",
-              "bg-gradient-to-br from-[#3eb482] to-[#1f6e54]",
+              "bg-gradient-to-br from-[#7a5cb0] to-[#5a3d92]",
               playing
-                ? "shadow-[0_0_14px_rgba(62,180,130,0.85)] ring-1 ring-[#7af0b8]/40"
-                : "shadow-[0_6px_14px_-6px_rgba(31,94,74,0.6)] ring-1 ring-[#7af0b8]/25",
+                ? "shadow-[0_0_14px_rgba(122,92,176,0.85)] ring-1 ring-[#b89dd9]/40"
+                : "shadow-[0_6px_14px_-6px_rgba(90,61,146,0.6)] ring-1 ring-[#b89dd9]/25",
             )}
             aria-label={playing ? "إيقاف التمرير" : "تشغيل التمرير"}
           >
