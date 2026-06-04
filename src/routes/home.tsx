@@ -570,8 +570,6 @@ function HeroStack({
   };
 
   const currentMod = ((index % total) + total) % total;
-  const visible = Math.min(4, total);
-
   const slots = [-1, 0, 1];
 
   return (
