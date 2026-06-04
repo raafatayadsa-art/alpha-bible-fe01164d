@@ -336,7 +336,7 @@ function GospelCard({
         </p>
       ))}
       {g.conclusion && (
-        <p className={cn("mt-3 text-center text-[12.5px] font-bold", dark ? "text-[#f0d78c]" : "text-[#1f4032]")}>
+        <p className={cn("mt-3 text-center text-[12.5px] font-bold", dark ? "text-[#f0d78c]" : "text-[#5a3d92]")}>
           {g.conclusion}
         </p>
       )}
