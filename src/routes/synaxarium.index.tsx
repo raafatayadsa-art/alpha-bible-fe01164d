@@ -304,24 +304,29 @@ function SynaxariumHome() {
             icon={<CopticCross size={14} />}
             label="قديس اليوم"
             sub={today.name.replace("القديس ", "").slice(0, 18)}
+            to="/synaxarium/$saintId"
+            params={{ saintId: today.id }}
           />
           <QuickTile
             tone="#b8423a"
             icon={<Flame className="h-3.5 w-3.5" />}
             label="شهداء اليوم"
             sub="تذكار الشهداء"
+            onClick={handleMartyrs}
           />
           <QuickTile
             tone="#3e7a55"
             icon={<Crown className="h-3.5 w-3.5" />}
             label="أحداث الكنيسة"
             sub="من تاريخ اليوم"
+            to="/feasts"
           />
           <QuickTile
             tone="#3a6a9b"
             icon={<Search className="h-3.5 w-3.5" />}
             label="البحث في السنكسار"
             sub="ابحث عن قديس"
+            onClick={() => setSearchOpen(true)}
           />
         </div>
 
