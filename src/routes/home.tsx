@@ -347,12 +347,6 @@ function HomeScreen() {
     { key: "cont", title: "أكمل القراءة", sub: "إنجيل يوحنا 3 · 35%", image: artReadings, to: "/books", accent: "#8a6ec1" },
   ];
 
-  type News = { key: string; title: string; sub: string; image: string };
-  const news: News[] = [
-    { key: "ann", title: "إعلان جديد", sub: "تغيير موعد الاجتماع", image: newsCandle },
-    { key: "youth", title: "اجتماع الشباب", sub: "الجمعة 7:00 م", image: newsYouth },
-    { key: "mass", title: "قداس الأحد", sub: "الأحد 8:00 ص", image: newsMass },
-  ];
 
   return (
     <div dir="rtl" className="relative min-h-screen w-full overflow-x-hidden">
