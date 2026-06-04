@@ -138,8 +138,8 @@ function FeastsHome() {
                   style={{ background: ACCENT_COLORS[f.accent], boxShadow: `0 0 0 3px ${ACCENT_COLORS[f.accent]}22` }}
                   aria-hidden
                 />
-                <GlassSurface className="p-2.5 bg-white border-[#ead9b1] shadow-[0_14px_30px_-22px_rgba(120,80,30,0.55)]">
-                  <div className="grid grid-cols-[42px_92px_minmax(0,1fr)_38px] gap-2 items-center">
+                <GlassSurface className="p-2 bg-white border-[#ead9b1] shadow-[0_14px_30px_-22px_rgba(120,80,30,0.55)]">
+                  <div className="grid grid-cols-[42px_110px_minmax(0,1fr)_38px] gap-2 items-center">
                     <div className="text-center">
                       <div className="text-[9.5px] font-bold text-[#b8893a] leading-none">{f.gregorianDate}</div>
                       <div
@@ -150,11 +150,17 @@ function FeastsHome() {
                       </div>
                       <div className="text-[9.5px] text-[#6a543a] mt-1 leading-none">{f.copticYear}</div>
                     </div>
-                    <div
-                      className="h-[72px] w-[92px] rounded-2xl bg-cover bg-center ring-1 ring-[#ead9b1]"
-                      style={{ backgroundImage: `url(${f.image})` }}
-                      aria-hidden
-                    />
+                    <div className="relative h-[82px] w-[110px] overflow-hidden rounded-2xl bg-[#f4ead8]">
+                      <img
+                        src={f.image}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                        className="absolute inset-0 h-full w-full object-cover object-center select-none"
+                      />
+                      <div className="absolute inset-0 ring-1 ring-inset ring-[#ead9b1]/70 rounded-2xl pointer-events-none" />
+                    </div>
                     <div className="min-w-0 text-right">
                       <div className="font-arabic-serif text-[15.5px] font-extrabold text-[#3a2a18] leading-tight line-clamp-1">
                         {f.title}
