@@ -11,6 +11,7 @@ import {
 import appCss from "../styles.css?url";
 import { DictionaryDebugBadge } from "@/components/DictionaryDebugBadge";
 import { Toaster } from "@/components/ui/sonner";
+import { GlobalBackButton } from "@/components/GlobalBackButton";
 
 function NotFoundComponent() {
   return (
