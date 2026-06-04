@@ -193,13 +193,13 @@ function FilterChips({ value, onChange, counts }: {
             <button
               key={f}
               onClick={() => onChange(f)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold transition"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-bold transition"
               style={
                 active
                   ? {
                       background: "linear-gradient(180deg,#4d3c70,#2a1d45)",
                       color: "#f7e7b8",
-                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.18), 0 6px 14px -8px rgba(40,25,75,0.7)",
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.18), 0 4px 10px -6px rgba(40,25,75,0.7)",
                       border: "1px solid rgba(240,215,140,0.35)",
                     }
                   : {
@@ -212,7 +212,7 @@ function FilterChips({ value, onChange, counts }: {
             >
               {f}
               <span
-                className="text-[9.5px] px-1 rounded-full"
+                className="text-[9px] px-1 rounded-full leading-[1.4]"
                 style={{
                   background: active ? "rgba(240,215,140,0.25)" : "rgba(58,42,24,0.08)",
                   color: active ? "#f7e7b8" : "#6a543a",
