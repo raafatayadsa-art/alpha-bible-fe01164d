@@ -60,6 +60,7 @@ function SynaxariumHome() {
   const upcoming = list.filter((s) => s.id !== today.id);
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const [query, setQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const topRef = useRef<HTMLDivElement | null>(null);
@@ -96,7 +97,12 @@ function SynaxariumHome() {
         className="relative z-10 mx-auto w-full max-w-[430px] px-4 flex items-center justify-between"
         style={{ paddingTop: "max(env(safe-area-inset-top), 14px)", paddingBottom: 8 }}
       >
-        <button className="relative grid h-10 w-10 place-items-center rounded-full bg-white border border-[#ead9b1] text-[#3a2a18] active:scale-90 transition-transform shadow-[0_4px_10px_-8px_rgba(120,80,30,0.5)]">
+        <button
+          type="button"
+          onClick={() => setNotifOpen(true)}
+          aria-label="التنبيهات"
+          className="relative grid h-10 w-10 place-items-center rounded-full bg-white border border-[#ead9b1] text-[#3a2a18] active:scale-90 transition-transform shadow-[0_4px_10px_-8px_rgba(120,80,30,0.5)]"
+        >
           <Bell className="h-4 w-4" />
           <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#6a4ab5]" />
         </button>
@@ -402,6 +408,28 @@ function SynaxariumHome() {
               <button
                 type="button"
                 className="mt-2 h-11 w-full rounded-2xl bg-white border border-[#ead9b1] text-[13px] font-bold text-[#3a2a18] active:scale-[0.98] transition-transform"
+              >
+                إغلاق
+              </button>
+            </DrawerClose>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Notifications panel */}
+      <Drawer open={notifOpen} onOpenChange={setNotifOpen}>
+        <DrawerContent className="bg-white border-[#ead9b1]" dir="rtl">
+          <DrawerHeader className="text-right">
+            <DrawerTitle className="font-arabic-serif text-[17px] text-[#3a2a18]">التنبيهات</DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4 pb-[calc(env(safe-area-inset-bottom)+16px)]">
+            <div className="rounded-2xl bg-[#faf3e3] border border-[#ead9b1] p-6 text-center text-[13px] text-[#6a543a]">
+              لا توجد تنبيهات حالياً
+            </div>
+            <DrawerClose asChild>
+              <button
+                type="button"
+                className="mt-3 h-11 w-full rounded-2xl bg-white border border-[#ead9b1] text-[13px] font-bold text-[#3a2a18] active:scale-[0.98] transition-transform"
               >
                 إغلاق
               </button>
