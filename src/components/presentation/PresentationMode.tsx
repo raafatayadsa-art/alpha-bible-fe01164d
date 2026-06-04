@@ -152,8 +152,14 @@ export function PresentationMode({
     : "bg-[#fbf3e1] text-[#3a2a18]";
   const accent = dark ? "#f0d78c" : "#b8893a";
   const glassBtn = dark
-    ? "bg-white/10 border-white/15 text-[#f3e6c4]"
-    : "bg-white/85 border-[#efe2c4] text-[#3a2a18]";
+    ? "bg-white/[0.06] border-[#c9a96b]/20 text-[#f0e3bd] backdrop-blur"
+    : "bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18] backdrop-blur";
+
+  const chromeOpacity = chromeVisible
+    ? "opacity-100"
+    : playing
+      ? "opacity-[0.12]"
+      : "opacity-25";
 
   const titleSize = 30 * fontScale;
   const bodySize = 22 * fontScale;

@@ -1,51 +1,46 @@
+## Fix: Presentation Mode Control Bar Polish
 
-# Presentation Mode Control Bar — Premium Polish
+Scope: only the footer control bar in `src/components/presentation/PresentationMode.tsx`. No screen redesign, no content/route/background/typography changes.
 
-Scope: **only** `src/components/presentation/PresentationMode.tsx` footer. No functional changes, no button reordering, no header changes, no reader changes.
+### 1. Soft champagne glass colors
+Replace harsh white/blue surfaces with warm beige/champagne glass:
 
-## 1. Glass surface
-Replace footer container classes with Apple-style frosted glass:
-- `backdrop-blur-2xl` + `bg-white/55` (light) / `bg-white/10` (dark)
-- `border border-white/40` (light) / `border-white/15` (dark)
-- `shadow-[0_20px_60px_-20px_rgba(60,40,15,0.45)]`
-- Rounded `rounded-[28px]`, inner padding tightened
-- Keep current max width and horizontal centering
+- Footer container (light): `bg-[#f6ecd4]/35 border-[#e6d2a6]/50 shadow-[0_18px_50px_-22px_rgba(120,80,30,0.30)]` + `backdrop-blur-2xl`.
+- Footer container (dark): `bg-[#2a2014]/40 border-[#c9a96b]/20 shadow-[0_18px_50px_-22px_rgba(0,0,0,0.55)]`.
+- Inactive speed pills & font buttons (light): `bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18]`.
+- Inactive (dark): `bg-white/[0.06] border-[#c9a96b]/15 text-[#f0e3bd]`.
+- Active speed pill: soft gold gradient `bg-gradient-to-br from-[#d9b878] to-[#b8893a] text-white border-[#e6d2a6]/60 shadow-[0_0_14px_-6px_rgba(184,137,58,0.55)]` (no purple). Keep an inset highlight `shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]`.
+- Play button: tone down to soft gold glow — `bg-gradient-to-br from-[#caa15f] to-[#8a6322] shadow-[0_0_18px_-6px_rgba(184,137,58,0.55)] border-white/25`.
+- Header buttons (theme/close): match new champagne glass tokens so the top chrome doesn't clash.
 
-## 2. Play button as primary
-- Size up: `h-12 w-12` circular (vs 10x10 pill today)
-- Alpha purple accent gradient: `bg-gradient-to-br from-[#7c5cff] to-[#b8893a]` with white icon
-- Soft glow: `shadow-[0_0_24px_-4px_rgba(124,92,255,0.55)]`
-- Pause state keeps same surface, swaps icon
-- Stays in same left slot
+### 2. Auto-hide behavior (already partially present, refine)
+Keep the existing listeners (`mousemove`, `touchstart`, `click`, `keydown`, `wheel`, scroller `scroll`) that call `bump()` to set `chromeVisible = true` and restart a 5s timer. Verify the 5s timeout is preserved; no functional rewiring needed.
 
-## 3. Speed pills
-- Compact pill row `h-8 px-3 rounded-full text-[11px]`
-- Active: filled purple/gold accent with subtle inner shadow
-- Inactive: `bg-white/40 dark:bg-white/5 border-white/30` glass
-- Same 3 options, same order
+### 3. Dim further during playback
+Add a derived opacity class:
 
-## 4. Font size cluster
-- Two circular glass buttons `h-9 w-9 rounded-full`
-- Consistent `h-4 w-4` icons, equal gap
-- Percentage label stays between them, tabular numbers
+- When `chromeVisible` is true → `opacity-100`.
+- When hidden AND `playing` → `opacity-[0.12]` (≈12%).
+- When hidden AND not playing → `opacity-25` (subtle but easier to find).
 
-## 5. Auto-hide
-Add inside `PresentationMode`:
-- `const [chromeVisible, setChromeVisible] = useState(true)`
-- `useRef<number>` timer; helper `bumpActivity()` sets visible=true and resets 5s timeout to set false
-- On mount (when `open`): attach listeners on `scrollerRef.current` (`scroll`) and `window` (`mousemove`, `touchstart`, `click`, `keydown`) → `bumpActivity`
-- Apply to footer AND header wrapper:
-  - `className={cn("transition-opacity duration-500", chromeVisible ? "opacity-100" : "opacity-20")}`
-  - Pointer events stay enabled so a tap reappears them
-- Clear timer on close/unmount; pause auto-hide while `!playing`? Keep simple: always 5s regardless of state (spec says "after 5s of inactivity").
+Apply to both `<header>` and `<footer>` so chrome dims uniformly.
 
-## 6. Readability guards
-- No background change to main content area
-- Footer keeps `relative z-10` and bottom safe-area padding
-- Reduced visual weight at idle via opacity fade (not blur removal)
+### 4. Tap-to-reveal
+The window-level `click`/`touchstart` listeners already trigger `bump()`, which restores full opacity and restarts the 5s timer. No new code needed beyond the opacity logic above.
 
-## Technical notes
-- Single file edit: `src/components/presentation/PresentationMode.tsx`
-- No new dependencies
-- Keep existing keyboard shortcuts and rAF auto-scroll untouched
-- Verify by opening any presentation (Agpeya/Feasts/Synaxarium), confirm: glass look, larger glowing play, pill speeds, circular font buttons, fade to 20% after 5s idle, reappear on activity.
+### 5. Smooth animation
+Change footer/header transition from `duration-500` to `duration-300 ease-out` to land in the requested 250–350ms window, applied to `transition-opacity`.
+
+### Technical notes
+
+- Single file touched: `src/components/presentation/PresentationMode.tsx`.
+- No state-shape changes; reuse `chromeVisible` + `playing`.
+- Pure className/style edits — no logic, route, or content changes.
+- Keyboard shortcuts, rAF auto-scroll loop, body scroll lock, and the Coptic ornaments remain untouched.
+
+### Acceptance check (after build mode)
+
+1. Open Presentation Mode → control bar visible in champagne glass.
+2. Press Play → after 5s the bar fades to ~12% opacity.
+3. Tap anywhere → bar returns to full opacity, timer restarts.
+4. Fade is smooth (~300ms), no harsh blue/white/gray remains.
