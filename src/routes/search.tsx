@@ -34,6 +34,16 @@ function norm(s: string): string {
 type Category = "bible" | "agpeya" | "katameros" | "synaxarium" | "feasts" | "meditations";
 type Scope = "all" | Category;
 
+const SCOPE_COLORS: Record<Scope, { color: string }> = {
+  all:         { color: "#8a7558" },
+  bible:       { color: "#caa15f" },
+  agpeya:      { color: "#8a6ec1" },
+  katameros:   { color: "#4a9e6e" },
+  synaxarium:  { color: "#a85450" },
+  feasts:      { color: "#c98a3c" },
+  meditations: { color: "#5b8fd1" },
+};
+
 const SCOPES: { id: Scope; label: string; placeholder: string }[] = [
   { id: "all",        label: "الكل",         placeholder: "ابحث في كل شيء..." },
   { id: "bible",      label: "الكتاب",       placeholder: "ابحث في الكتاب المقدس..." },
@@ -268,19 +278,31 @@ function SearchHub() {
             <div className="flex items-center gap-1.5 w-max">
               {SCOPES.map((s) => {
                 const active = s.id === scope;
+                const col = SCOPE_COLORS[s.id];
+                const c = col.color;
                 return (
                   <button
                     key={s.id}
                     type="button"
                     onClick={() => setScope(s.id)}
                     className={
-                      "px-3 h-7 rounded-full text-[12px] font-bold whitespace-nowrap border transition-all active:scale-95 " +
-                      (active
-                        ? "bg-[#caa15f] text-white border-[#caa15f] shadow-[0_4px_10px_-4px_rgba(120,80,30,0.5)]"
-                        : "bg-white/70 text-[#7a5a35] border-[#ead9b1] backdrop-blur-md")
+                      "relative px-3 h-7 rounded-full text-[12px] font-bold whitespace-nowrap border backdrop-blur-md transition-all duration-300 ease-out active:scale-95 " +
+                      (active ? "shadow-sm" : "")
                     }
+                    style={{
+                      color: c,
+                      backgroundColor: active ? `${c}22` : `${c}14`,
+                      borderColor: active ? `${c}55` : `${c}22`,
+                      boxShadow: active ? `0 0 14px -3px ${c}45` : undefined,
+                    }}
                   >
-                    {s.label}
+                    <span className={active ? "relative z-10" : ""}>{s.label}</span>
+                    {active && (
+                      <span
+                        className="absolute inset-0 rounded-full opacity-25 blur-[1px] -z-10"
+                        style={{ backgroundColor: c }}
+                      />
+                    )}
                   </button>
                 );
               })}
