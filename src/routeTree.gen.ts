@@ -27,6 +27,7 @@ import { Route as SynaxariumSaintIdRouteImport } from './routes/synaxarium.$sain
 import { Route as ProfileSecurityRouteImport } from './routes/profile.security'
 import { Route as ProfilePersonalRouteImport } from './routes/profile.personal'
 import { Route as ProfileMessagesRouteImport } from './routes/profile.messages'
+import { Route as ProfileMembershipRouteImport } from './routes/profile.membership'
 import { Route as ProfileFamilyRouteImport } from './routes/profile.family'
 import { Route as ProfileChurchRouteImport } from './routes/profile.church'
 import { Route as ProfileAppearanceRouteImport } from './routes/profile.appearance'
@@ -125,6 +126,11 @@ const ProfileMessagesRoute = ProfileMessagesRouteImport.update({
   path: '/messages',
   getParentRoute: () => ProfileRoute,
 } as any)
+const ProfileMembershipRoute = ProfileMembershipRouteImport.update({
+  id: '/membership',
+  path: '/membership',
+  getParentRoute: () => ProfileRoute,
+} as any)
 const ProfileFamilyRoute = ProfileFamilyRouteImport.update({
   id: '/family',
   path: '/family',
@@ -178,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
   '/profile/family': typeof ProfileFamilyRoute
+  '/profile/membership': typeof ProfileMembershipRoute
   '/profile/messages': typeof ProfileMessagesRoute
   '/profile/personal': typeof ProfilePersonalRoute
   '/profile/security': typeof ProfileSecurityRoute
@@ -204,6 +211,7 @@ export interface FileRoutesByTo {
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
   '/profile/family': typeof ProfileFamilyRoute
+  '/profile/membership': typeof ProfileMembershipRoute
   '/profile/messages': typeof ProfileMessagesRoute
   '/profile/personal': typeof ProfilePersonalRoute
   '/profile/security': typeof ProfileSecurityRoute
@@ -232,6 +240,7 @@ export interface FileRoutesById {
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
   '/profile/family': typeof ProfileFamilyRoute
+  '/profile/membership': typeof ProfileMembershipRoute
   '/profile/messages': typeof ProfileMessagesRoute
   '/profile/personal': typeof ProfilePersonalRoute
   '/profile/security': typeof ProfileSecurityRoute
@@ -261,6 +270,7 @@ export interface FileRouteTypes {
     | '/profile/appearance'
     | '/profile/church'
     | '/profile/family'
+    | '/profile/membership'
     | '/profile/messages'
     | '/profile/personal'
     | '/profile/security'
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/profile/appearance'
     | '/profile/church'
     | '/profile/family'
+    | '/profile/membership'
     | '/profile/messages'
     | '/profile/personal'
     | '/profile/security'
@@ -314,6 +325,7 @@ export interface FileRouteTypes {
     | '/profile/appearance'
     | '/profile/church'
     | '/profile/family'
+    | '/profile/membership'
     | '/profile/messages'
     | '/profile/personal'
     | '/profile/security'
@@ -473,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileMessagesRouteImport
       parentRoute: typeof ProfileRoute
     }
+    '/profile/membership': {
+      id: '/profile/membership'
+      path: '/membership'
+      fullPath: '/profile/membership'
+      preLoaderRoute: typeof ProfileMembershipRouteImport
+      parentRoute: typeof ProfileRoute
+    }
     '/profile/family': {
       id: '/profile/family'
       path: '/family'
@@ -541,6 +560,7 @@ interface ProfileRouteChildren {
   ProfileAppearanceRoute: typeof ProfileAppearanceRoute
   ProfileChurchRoute: typeof ProfileChurchRoute
   ProfileFamilyRoute: typeof ProfileFamilyRoute
+  ProfileMembershipRoute: typeof ProfileMembershipRoute
   ProfileMessagesRoute: typeof ProfileMessagesRoute
   ProfilePersonalRoute: typeof ProfilePersonalRoute
   ProfileSecurityRoute: typeof ProfileSecurityRoute
@@ -550,6 +570,7 @@ const ProfileRouteChildren: ProfileRouteChildren = {
   ProfileAppearanceRoute: ProfileAppearanceRoute,
   ProfileChurchRoute: ProfileChurchRoute,
   ProfileFamilyRoute: ProfileFamilyRoute,
+  ProfileMembershipRoute: ProfileMembershipRoute,
   ProfileMessagesRoute: ProfileMessagesRoute,
   ProfilePersonalRoute: ProfilePersonalRoute,
   ProfileSecurityRoute: ProfileSecurityRoute,
