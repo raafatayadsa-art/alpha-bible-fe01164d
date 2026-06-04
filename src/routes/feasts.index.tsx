@@ -153,7 +153,7 @@ function FeastsHome() {
               key={f.id}
               to="/feasts/$eventId"
               params={{ eventId: f.id }}
-              className="group block transition-transform duration-[280ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform hover:-translate-y-0.5 focus-visible:-translate-y-0.5 hover:scale-[1.02] focus-visible:scale-[1.02] active:scale-[0.985] active:translate-y-0 focus:outline-none"
+              className="group block origin-center touch-manipulation select-none [-webkit-tap-highlight-color:transparent] transition-transform duration-[280ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:scale-[1.02] focus-visible:-translate-y-0.5 focus-visible:scale-[1.02] active:scale-[0.985] active:translate-y-0 focus:outline-none"
             >
               <div className="relative pr-3">
                 <span
