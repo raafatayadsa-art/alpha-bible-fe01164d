@@ -152,8 +152,14 @@ export function PresentationMode({
     : "bg-[#fbf3e1] text-[#3a2a18]";
   const accent = dark ? "#f0d78c" : "#b8893a";
   const glassBtn = dark
-    ? "bg-white/10 border-white/15 text-[#f3e6c4]"
-    : "bg-white/85 border-[#efe2c4] text-[#3a2a18]";
+    ? "bg-white/[0.06] border-[#c9a96b]/20 text-[#f0e3bd] backdrop-blur"
+    : "bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18] backdrop-blur";
+
+  const chromeOpacity = chromeVisible
+    ? "opacity-100"
+    : playing
+      ? "opacity-[0.12]"
+      : "opacity-25";
 
   const titleSize = 30 * fontScale;
   const bodySize = 22 * fontScale;
@@ -185,7 +191,7 @@ export function PresentationMode({
 
       {/* Slim header */}
       <header
-        className={`relative z-10 flex items-center justify-between px-4 transition-opacity duration-500 ${chromeVisible ? "opacity-100" : "opacity-20"}`}
+        className={`relative z-10 flex items-center justify-between px-4 transition-opacity duration-300 ease-out ${chromeOpacity}`}
         style={{ paddingTop: "max(env(safe-area-inset-top), 12px)", paddingBottom: 6 }}
       >
         <div className="inline-flex items-center gap-2 text-[12px] font-bold opacity-70">
@@ -273,21 +279,21 @@ export function PresentationMode({
 
       {/* Minimal footer controls: Play/Pause · Speed · Font · Close already in header */}
       <footer
-        className={`relative z-10 px-4 transition-opacity duration-500 ${chromeVisible ? "opacity-100" : "opacity-20"}`}
+        className={`relative z-10 px-4 transition-opacity duration-300 ease-out ${chromeOpacity}`}
         style={{ paddingBottom: "max(env(safe-area-inset-bottom), 12px)", paddingTop: 6 }}
       >
         <div
           className={`mx-auto max-w-[560px] rounded-[28px] border backdrop-blur-2xl px-3 py-2.5 flex items-center justify-between gap-3 ${
             dark
-              ? "bg-white/10 border-white/15 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]"
-              : "bg-white/55 border-white/60 shadow-[0_20px_60px_-20px_rgba(60,40,15,0.45)]"
+              ? "bg-[#2a2014]/40 border-[#c9a96b]/20 shadow-[0_18px_50px_-22px_rgba(0,0,0,0.55)]"
+              : "bg-[#f6ecd4]/35 border-[#e6d2a6]/50 shadow-[0_18px_50px_-22px_rgba(120,80,30,0.30)]"
           }`}
         >
           <button
             type="button"
             aria-label={playing ? "إيقاف التمرير" : "بدء التمرير"}
             onClick={() => setPlaying((p) => !p)}
-            className="grid h-12 w-12 place-items-center rounded-full text-white bg-gradient-to-br from-[#7c5cff] to-[#b8893a] shadow-[0_0_24px_-4px_rgba(124,92,255,0.6)] active:scale-95 transition-transform border border-white/30"
+            className="grid h-12 w-12 place-items-center rounded-full text-white bg-gradient-to-br from-[#caa15f] to-[#8a6322] shadow-[0_0_18px_-6px_rgba(184,137,58,0.55)] active:scale-95 transition-transform border border-white/25"
           >
             {playing ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 translate-x-[1px]" />}
           </button>
@@ -301,10 +307,10 @@ export function PresentationMode({
                 aria-pressed={speed === s}
                 className={`h-8 px-3 rounded-full text-[11px] font-bold border transition-all ${
                   speed === s
-                    ? "bg-gradient-to-br from-[#7c5cff] to-[#b8893a] text-white border-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]"
+                    ? "bg-gradient-to-br from-[#d9b878] to-[#b8893a] text-white border-[#e6d2a6]/60 shadow-[0_0_14px_-6px_rgba(184,137,58,0.55),inset_0_1px_0_rgba(255,255,255,0.25)]"
                     : dark
-                      ? "bg-white/5 border-white/15 text-[#f3e6c4]"
-                      : "bg-white/40 border-white/50 text-[#3a2a18] backdrop-blur"
+                      ? "bg-white/[0.06] border-[#c9a96b]/20 text-[#f0e3bd]"
+                      : "bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18] backdrop-blur"
                 }`}
               >
                 {SPEED_LABEL[s]}
@@ -319,7 +325,7 @@ export function PresentationMode({
               aria-label="تصغير الخط"
               onClick={() => setFontScale((s) => Math.max(0.7, s - 0.1))}
               className={`grid h-9 w-9 place-items-center rounded-full border active:scale-95 transition-transform ${
-                dark ? "bg-white/5 border-white/15 text-[#f3e6c4]" : "bg-white/40 border-white/50 text-[#3a2a18] backdrop-blur"
+                dark ? "bg-white/[0.06] border-[#c9a96b]/20 text-[#f0e3bd]" : "bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18] backdrop-blur"
               }`}
             >
               <Minus className="h-4 w-4" />
@@ -335,7 +341,7 @@ export function PresentationMode({
               aria-label="تكبير الخط"
               onClick={() => setFontScale((s) => Math.min(2, s + 0.1))}
               className={`grid h-9 w-9 place-items-center rounded-full border active:scale-95 transition-transform ${
-                dark ? "bg-white/5 border-white/15 text-[#f3e6c4]" : "bg-white/40 border-white/50 text-[#3a2a18] backdrop-blur"
+                dark ? "bg-white/[0.06] border-[#c9a96b]/20 text-[#f0e3bd]" : "bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18] backdrop-blur"
               }`}
             >
               <Plus className="h-4 w-4" />
