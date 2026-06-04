@@ -367,30 +367,30 @@ function HomeScreen() {
       <div className="relative mx-auto w-full max-w-[440px] px-4 pb-36 pt-[max(env(safe-area-inset-top),12px)]">
         {/* Top bar */}
         <header className="flex items-center justify-between gap-2 pt-2">
-          <button aria-label="القائمة" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 backdrop-blur-xl active:scale-95 transition">
-            <Menu className="h-5 w-5 text-[#f0e6d0]" />
+          <button aria-label="القائمة" className="grid h-11 w-11 place-items-center rounded-full border border-[#efe2c4] bg-white/70 backdrop-blur-xl shadow-[0_6px_14px_-10px_rgba(120,80,30,0.4)] active:scale-95 transition">
+            <Menu className="h-5 w-5 text-[#3a2a18]" />
           </button>
           <div className="flex flex-col items-center min-w-0 flex-1">
             <div className="flex items-center gap-1.5 min-w-0">
-              <Sparkles className="h-3.5 w-3.5 text-[#e7c97a] shrink-0" />
-              <h1 className="font-extrabold text-[15px] text-white whitespace-nowrap [word-break:keep-all]">
+              <Sparkles className="h-3.5 w-3.5 text-[#b8893a] shrink-0" />
+              <h1 className="font-extrabold text-[15px] text-[#3a2a18] whitespace-nowrap [word-break:keep-all]">
                 {greeting} يا {userName}
               </h1>
               <span className="text-[14px]">☀️</span>
             </div>
-            <p className="text-[11px] text-white/55 mt-0.5">نعمة الرب معك اليوم</p>
+            <p className="text-[11px] text-[#6a543a] mt-0.5">نعمة الرب معك اليوم</p>
           </div>
           <div className="flex items-center gap-1.5">
-            <button aria-label="الإشعارات" className="relative grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 backdrop-blur-xl active:scale-95 transition">
-              <Bell className="h-5 w-5 text-[#f0e6d0]" />
+            <button aria-label="الإشعارات" className="relative grid h-11 w-11 place-items-center rounded-full border border-[#efe2c4] bg-white/70 backdrop-blur-xl shadow-[0_6px_14px_-10px_rgba(120,80,30,0.4)] active:scale-95 transition">
+              <Bell className="h-5 w-5 text-[#3a2a18]" />
               {notifCount > 0 && (
                 <span className="absolute top-1 right-1 grid h-4 min-w-4 px-1 place-items-center rounded-full bg-[#d88a2a] text-[10px] font-bold text-white">
                   {notifCount}
                 </span>
               )}
             </button>
-            <Link to="/search" aria-label="بحث" className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 backdrop-blur-xl active:scale-95 transition">
-              <Search className="h-5 w-5 text-[#f0e6d0]" />
+            <Link to="/search" aria-label="بحث" className="grid h-11 w-11 place-items-center rounded-full border border-[#efe2c4] bg-white/70 backdrop-blur-xl shadow-[0_6px_14px_-10px_rgba(120,80,30,0.4)] active:scale-95 transition">
+              <Search className="h-5 w-5 text-[#3a2a18]" />
             </Link>
           </div>
         </header>
