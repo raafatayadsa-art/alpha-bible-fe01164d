@@ -248,6 +248,23 @@ function HomeScreen() {
               }}
             />
 
+            {/* Coptic Ⲁ / Ⲱ identity — extremely subtle */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute top-2 right-3 select-none font-black leading-none"
+              style={{ fontSize: 64, color: "rgba(122,74,38,0.10)", letterSpacing: "-0.02em" }}
+            >
+              Ⲁ
+            </span>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute bottom-10 left-3 select-none font-black leading-none"
+              style={{ fontSize: 64, color: "rgba(122,74,38,0.10)", letterSpacing: "-0.02em" }}
+            >
+              Ⲱ
+            </span>
+
+
             {/* Content row: verse (left) + church (right) */}
             <div className="relative flex items-stretch gap-2 px-4 pt-5 pb-4 min-h-[210px]">
               {/* Verse text — left side (RTL: text-right inside) */}
