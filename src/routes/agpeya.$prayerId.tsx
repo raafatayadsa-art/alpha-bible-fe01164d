@@ -391,6 +391,18 @@ function PrayerReader() {
             {dark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
           </ControlBtn>
 
+          <ControlBtn
+            dark={dark}
+            ariaLabel="تباعد الأسطر"
+            onClick={() => {
+              const steps = [1.7, 1.9, 2.05, 2.25, 2.5];
+              const idx = steps.findIndex((s) => Math.abs(s - lineHeight) < 0.05);
+              setLineHeight(steps[(idx + 1) % steps.length] ?? 2.05);
+            }}
+          >
+            <Rows3 className="h-3.5 w-3.5" />
+          </ControlBtn>
+
           <span className={cn("mx-1 h-4 w-px", dark ? "bg-white/15" : "bg-[#c79356]/30")} />
 
           {/* Speed cycle */}
