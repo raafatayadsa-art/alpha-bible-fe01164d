@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { X, Plus, Minus, Moon, Sun, Cast, Play, Pause, Gauge, Rows3 } from "lucide-react";
+import { X, Moon, Sun, Cast, Play, Pause, Gauge, Rows3, Type } from "lucide-react";
 import { CopticCross } from "@/components/coptic";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
 
 export type PresentationSection = {
   id?: string;
