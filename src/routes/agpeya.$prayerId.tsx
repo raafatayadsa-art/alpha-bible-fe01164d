@@ -474,7 +474,9 @@ function PrayerReader() {
           else break;
         }
         // near-bottom guard: snap to last section
-        if (root.scrollTop + root.clientHeight >= root.scrollHeight - 4) {
+        // near-bottom guard: snap to last section (only when content actually scrolls)
+        const scrollable = root.scrollHeight - root.clientHeight;
+        if (scrollable > 8 && root.scrollTop + root.clientHeight >= root.scrollHeight - 4) {
           currentId = els[els.length - 1].id;
         }
         setActiveId((prev) => (prev === currentId ? prev : currentId));
