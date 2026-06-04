@@ -178,6 +178,7 @@ function SearchHub() {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [query, setQuery] = useState("");
+  const [scope, setScope] = useState<Scope>("all");
   const [recent, setRecent] = useState<string[]>([]);
 
   useEffect(() => {
@@ -186,7 +187,10 @@ function SearchHub() {
     return () => clearTimeout(t);
   }, []);
 
-  const results = useMemo(() => searchAll(query), [query]);
+  const results = useMemo(() => {
+    const all = searchAll(query);
+    return scope === "all" ? all : all.filter((r) => r.category === scope);
+  }, [query, scope]);
 
   const grouped = useMemo(() => {
     const map = new Map<Category, Result[]>();
@@ -209,6 +213,8 @@ function SearchHub() {
       setRecent(loadRecent());
     }
   };
+
+  const activeScope = SCOPES.find((s) => s.id === scope) ?? SCOPES[0];
 
   return (
     <div dir="rtl" className="min-h-screen bg-[#FAF8F3] text-[#3a2a18] pb-28">
@@ -241,8 +247,8 @@ function SearchHub() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onBlur={commitRecent}
-              placeholder="ابحث في كل شيء..."
-              className="flex-1 bg-transparent outline-none text-[15px] font-bold placeholder:font-normal placeholder:text-[#8a7558]"
+              placeholder={activeScope.placeholder}
+              className="flex-1 bg-transparent outline-none text-[15px] font-bold placeholder:font-normal placeholder:text-[#b89c70]"
               dir="rtl"
             />
             {query && (
@@ -255,6 +261,30 @@ function SearchHub() {
                 <X className="h-3.5 w-3.5" />
               </button>
             )}
+          </div>
+
+          {/* Compact scope selector */}
+          <div className="mt-3 -mx-4 px-4 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-1.5 w-max">
+              {SCOPES.map((s) => {
+                const active = s.id === scope;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setScope(s.id)}
+                    className={
+                      "px-3 h-7 rounded-full text-[12px] font-bold whitespace-nowrap border transition-all active:scale-95 " +
+                      (active
+                        ? "bg-[#caa15f] text-white border-[#caa15f] shadow-[0_4px_10px_-4px_rgba(120,80,30,0.5)]"
+                        : "bg-white/70 text-[#7a5a35] border-[#ead9b1] backdrop-blur-md")
+                    }
+                  >
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </header>
@@ -275,6 +305,7 @@ function SearchHub() {
     </div>
   );
 }
+
 
 function BeforeSearch({
   recent,
