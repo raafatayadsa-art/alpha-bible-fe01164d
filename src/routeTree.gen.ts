@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchRouteImport } from './routes/search'
-import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
@@ -19,6 +18,7 @@ import { Route as BibleRouteImport } from './routes/bible'
 import { Route as BookRouteImport } from './routes/$book'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SynaxariumIndexRouteImport } from './routes/synaxarium.index'
+import { Route as ProfileIndexRouteImport } from './routes/profile.index'
 import { Route as KatamerosIndexRouteImport } from './routes/katameros.index'
 import { Route as FeastsIndexRouteImport } from './routes/feasts.index'
 import { Route as AgpeyaIndexRouteImport } from './routes/agpeya.index'
@@ -39,11 +39,6 @@ import { Route as BookChapterRouteImport } from './routes/$book.$chapter'
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -86,6 +81,11 @@ const SynaxariumIndexRoute = SynaxariumIndexRouteImport.update({
   path: '/synaxarium/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KatamerosIndexRoute = KatamerosIndexRouteImport.update({
   id: '/katameros/',
   path: '/katameros/',
@@ -112,39 +112,39 @@ const SynaxariumSaintIdRoute = SynaxariumSaintIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileSecurityRoute = ProfileSecurityRouteImport.update({
-  id: '/security',
-  path: '/security',
-  getParentRoute: () => ProfileRoute,
+  id: '/profile/security',
+  path: '/profile/security',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ProfilePersonalRoute = ProfilePersonalRouteImport.update({
-  id: '/personal',
-  path: '/personal',
-  getParentRoute: () => ProfileRoute,
+  id: '/profile/personal',
+  path: '/profile/personal',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileMessagesRoute = ProfileMessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
-  getParentRoute: () => ProfileRoute,
+  id: '/profile/messages',
+  path: '/profile/messages',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileMembershipRoute = ProfileMembershipRouteImport.update({
-  id: '/membership',
-  path: '/membership',
-  getParentRoute: () => ProfileRoute,
+  id: '/profile/membership',
+  path: '/profile/membership',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileFamilyRoute = ProfileFamilyRouteImport.update({
-  id: '/family',
-  path: '/family',
-  getParentRoute: () => ProfileRoute,
+  id: '/profile/family',
+  path: '/profile/family',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileChurchRoute = ProfileChurchRouteImport.update({
-  id: '/church',
-  path: '/church',
-  getParentRoute: () => ProfileRoute,
+  id: '/profile/church',
+  path: '/profile/church',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileAppearanceRoute = ProfileAppearanceRouteImport.update({
-  id: '/appearance',
-  path: '/appearance',
-  getParentRoute: () => ProfileRoute,
+  id: '/profile/appearance',
+  path: '/profile/appearance',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const FeastsEventIdRoute = FeastsEventIdRouteImport.update({
   id: '/feasts/$eventId',
@@ -175,7 +175,6 @@ export interface FileRoutesByFullPath {
   '/diagnostics': typeof DiagnosticsRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRouteWithChildren
   '/search': typeof SearchRoute
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
@@ -193,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/agpeya/': typeof AgpeyaIndexRoute
   '/feasts/': typeof FeastsIndexRoute
   '/katameros/': typeof KatamerosIndexRoute
+  '/profile/': typeof ProfileIndexRoute
   '/synaxarium/': typeof SynaxariumIndexRoute
 }
 export interface FileRoutesByTo {
@@ -202,7 +202,6 @@ export interface FileRoutesByTo {
   '/diagnostics': typeof DiagnosticsRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRouteWithChildren
   '/search': typeof SearchRoute
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
@@ -220,6 +219,7 @@ export interface FileRoutesByTo {
   '/agpeya': typeof AgpeyaIndexRoute
   '/feasts': typeof FeastsIndexRoute
   '/katameros': typeof KatamerosIndexRoute
+  '/profile': typeof ProfileIndexRoute
   '/synaxarium': typeof SynaxariumIndexRoute
 }
 export interface FileRoutesById {
@@ -231,7 +231,6 @@ export interface FileRoutesById {
   '/diagnostics': typeof DiagnosticsRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRouteWithChildren
   '/search': typeof SearchRoute
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
@@ -249,6 +248,7 @@ export interface FileRoutesById {
   '/agpeya/': typeof AgpeyaIndexRoute
   '/feasts/': typeof FeastsIndexRoute
   '/katameros/': typeof KatamerosIndexRoute
+  '/profile/': typeof ProfileIndexRoute
   '/synaxarium/': typeof SynaxariumIndexRoute
 }
 export interface FileRouteTypes {
@@ -261,7 +261,6 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/home'
     | '/onboarding'
-    | '/profile'
     | '/search'
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
@@ -279,6 +278,7 @@ export interface FileRouteTypes {
     | '/agpeya/'
     | '/feasts/'
     | '/katameros/'
+    | '/profile/'
     | '/synaxarium/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -288,7 +288,6 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/home'
     | '/onboarding'
-    | '/profile'
     | '/search'
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
@@ -306,6 +305,7 @@ export interface FileRouteTypes {
     | '/agpeya'
     | '/feasts'
     | '/katameros'
+    | '/profile'
     | '/synaxarium'
   id:
     | '__root__'
@@ -316,7 +316,6 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/home'
     | '/onboarding'
-    | '/profile'
     | '/search'
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
@@ -334,6 +333,7 @@ export interface FileRouteTypes {
     | '/agpeya/'
     | '/feasts/'
     | '/katameros/'
+    | '/profile/'
     | '/synaxarium/'
   fileRoutesById: FileRoutesById
 }
@@ -345,15 +345,22 @@ export interface RootRouteChildren {
   DiagnosticsRoute: typeof DiagnosticsRoute
   HomeRoute: typeof HomeRoute
   OnboardingRoute: typeof OnboardingRoute
-  ProfileRoute: typeof ProfileRouteWithChildren
   SearchRoute: typeof SearchRoute
   AgpeyaPrayerIdRoute: typeof AgpeyaPrayerIdRoute
   AgpeyaSavedRoute: typeof AgpeyaSavedRoute
   FeastsEventIdRoute: typeof FeastsEventIdRoute
+  ProfileAppearanceRoute: typeof ProfileAppearanceRoute
+  ProfileChurchRoute: typeof ProfileChurchRoute
+  ProfileFamilyRoute: typeof ProfileFamilyRoute
+  ProfileMembershipRoute: typeof ProfileMembershipRoute
+  ProfileMessagesRoute: typeof ProfileMessagesRoute
+  ProfilePersonalRoute: typeof ProfilePersonalRoute
+  ProfileSecurityRoute: typeof ProfileSecurityRoute
   SynaxariumSaintIdRoute: typeof SynaxariumSaintIdRoute
   AgpeyaIndexRoute: typeof AgpeyaIndexRoute
   FeastsIndexRoute: typeof FeastsIndexRoute
   KatamerosIndexRoute: typeof KatamerosIndexRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
   SynaxariumIndexRoute: typeof SynaxariumIndexRoute
 }
 
@@ -364,13 +371,6 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -429,6 +429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SynaxariumIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/': {
+      id: '/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/katameros/': {
       id: '/katameros/'
       path: '/katameros'
@@ -466,52 +473,52 @@ declare module '@tanstack/react-router' {
     }
     '/profile/security': {
       id: '/profile/security'
-      path: '/security'
+      path: '/profile/security'
       fullPath: '/profile/security'
       preLoaderRoute: typeof ProfileSecurityRouteImport
-      parentRoute: typeof ProfileRoute
+      parentRoute: typeof rootRouteImport
     }
     '/profile/personal': {
       id: '/profile/personal'
-      path: '/personal'
+      path: '/profile/personal'
       fullPath: '/profile/personal'
       preLoaderRoute: typeof ProfilePersonalRouteImport
-      parentRoute: typeof ProfileRoute
+      parentRoute: typeof rootRouteImport
     }
     '/profile/messages': {
       id: '/profile/messages'
-      path: '/messages'
+      path: '/profile/messages'
       fullPath: '/profile/messages'
       preLoaderRoute: typeof ProfileMessagesRouteImport
-      parentRoute: typeof ProfileRoute
+      parentRoute: typeof rootRouteImport
     }
     '/profile/membership': {
       id: '/profile/membership'
-      path: '/membership'
+      path: '/profile/membership'
       fullPath: '/profile/membership'
       preLoaderRoute: typeof ProfileMembershipRouteImport
-      parentRoute: typeof ProfileRoute
+      parentRoute: typeof rootRouteImport
     }
     '/profile/family': {
       id: '/profile/family'
-      path: '/family'
+      path: '/profile/family'
       fullPath: '/profile/family'
       preLoaderRoute: typeof ProfileFamilyRouteImport
-      parentRoute: typeof ProfileRoute
+      parentRoute: typeof rootRouteImport
     }
     '/profile/church': {
       id: '/profile/church'
-      path: '/church'
+      path: '/profile/church'
       fullPath: '/profile/church'
       preLoaderRoute: typeof ProfileChurchRouteImport
-      parentRoute: typeof ProfileRoute
+      parentRoute: typeof rootRouteImport
     }
     '/profile/appearance': {
       id: '/profile/appearance'
-      path: '/appearance'
+      path: '/profile/appearance'
       fullPath: '/profile/appearance'
       preLoaderRoute: typeof ProfileAppearanceRouteImport
-      parentRoute: typeof ProfileRoute
+      parentRoute: typeof rootRouteImport
     }
     '/feasts/$eventId': {
       id: '/feasts/$eventId'
@@ -556,29 +563,6 @@ const BookRouteChildren: BookRouteChildren = {
 
 const BookRouteWithChildren = BookRoute._addFileChildren(BookRouteChildren)
 
-interface ProfileRouteChildren {
-  ProfileAppearanceRoute: typeof ProfileAppearanceRoute
-  ProfileChurchRoute: typeof ProfileChurchRoute
-  ProfileFamilyRoute: typeof ProfileFamilyRoute
-  ProfileMembershipRoute: typeof ProfileMembershipRoute
-  ProfileMessagesRoute: typeof ProfileMessagesRoute
-  ProfilePersonalRoute: typeof ProfilePersonalRoute
-  ProfileSecurityRoute: typeof ProfileSecurityRoute
-}
-
-const ProfileRouteChildren: ProfileRouteChildren = {
-  ProfileAppearanceRoute: ProfileAppearanceRoute,
-  ProfileChurchRoute: ProfileChurchRoute,
-  ProfileFamilyRoute: ProfileFamilyRoute,
-  ProfileMembershipRoute: ProfileMembershipRoute,
-  ProfileMessagesRoute: ProfileMessagesRoute,
-  ProfilePersonalRoute: ProfilePersonalRoute,
-  ProfileSecurityRoute: ProfileSecurityRoute,
-}
-
-const ProfileRouteWithChildren =
-  ProfileRoute._addFileChildren(ProfileRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BookRoute: BookRouteWithChildren,
@@ -587,15 +571,22 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnosticsRoute: DiagnosticsRoute,
   HomeRoute: HomeRoute,
   OnboardingRoute: OnboardingRoute,
-  ProfileRoute: ProfileRouteWithChildren,
   SearchRoute: SearchRoute,
   AgpeyaPrayerIdRoute: AgpeyaPrayerIdRoute,
   AgpeyaSavedRoute: AgpeyaSavedRoute,
   FeastsEventIdRoute: FeastsEventIdRoute,
+  ProfileAppearanceRoute: ProfileAppearanceRoute,
+  ProfileChurchRoute: ProfileChurchRoute,
+  ProfileFamilyRoute: ProfileFamilyRoute,
+  ProfileMembershipRoute: ProfileMembershipRoute,
+  ProfileMessagesRoute: ProfileMessagesRoute,
+  ProfilePersonalRoute: ProfilePersonalRoute,
+  ProfileSecurityRoute: ProfileSecurityRoute,
   SynaxariumSaintIdRoute: SynaxariumSaintIdRoute,
   AgpeyaIndexRoute: AgpeyaIndexRoute,
   FeastsIndexRoute: FeastsIndexRoute,
   KatamerosIndexRoute: KatamerosIndexRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
   SynaxariumIndexRoute: SynaxariumIndexRoute,
 }
 export const routeTree = rootRouteImport
