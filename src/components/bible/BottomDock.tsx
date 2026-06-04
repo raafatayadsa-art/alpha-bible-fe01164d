@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home as HomeIcon, HandHeart, Users, User as UserIcon } from "lucide-react";
+import { Home as HomeIcon, HandHeart, BookOpen, User as UserIcon } from "lucide-react";
 import logoBible from "@/assets/home/logo-bible.png";
 import { cn } from "@/lib/utils";
 
