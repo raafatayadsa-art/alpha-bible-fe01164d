@@ -20,13 +20,15 @@ import {
   readPrayerPosition,
   savePrayerPosition,
   SPEED_PX_PER_SEC,
+  useAgpeyaAudio,
   useAgpeyaFontSize,
+  useAgpeyaLineHeight,
   useAgpeyaSpeed,
   useAgpeyaTheme,
   useSavedAgpeya,
   type AgpeyaSpeed,
 } from "@/features/agpeya";
-import type { AgpeyaTabKey } from "@/features/agpeya";
+import type { AgpeyaPrayer, AgpeyaTabKey } from "@/features/agpeya";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agpeya/$prayerId")({
