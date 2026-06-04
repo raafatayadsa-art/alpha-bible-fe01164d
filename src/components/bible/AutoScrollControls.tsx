@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, Minus, Plus, Moon, Sun } from "lucide-react";
+import { Play, Pause, Minus, Plus, Moon, Sun, Rows3, Type } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] as const;
