@@ -871,82 +871,82 @@ function FeaturedNewsCard({
   );
 }
 
-// ===== Primary Stack — Apple Wallet style layered =====
+// ===== Primary Cover Flow Carousel — center card with peek sides =====
 function PrimaryStack({ cards }: { cards: { key: string; title: string; sub: string; image: string; to: string; accent: string; glyph: "Ⲁ" | "Ⲱ" }[] }) {
-  const total = cards.length;
-  const [index, setIndex] = useState(0);
-  const startX = useRef<number | null>(null);
-  const [dx, setDx] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
 
-  const onStart = (e: React.TouchEvent | React.MouseEvent) => {
-    startX.current = "touches" in e ? e.touches[0].clientX : e.clientX;
-    setDx(0);
-  };
-  const onMove = (e: React.TouchEvent | React.MouseEvent) => {
-    if (startX.current == null) return;
-    const x = "touches" in e ? e.touches[0].clientX : e.clientX;
-    setDx(x - startX.current);
-  };
-  const onEnd = () => {
-    if (Math.abs(dx) > 60) setIndex((i) => i + (dx < 0 ? 1 : -1));
-    startX.current = null;
-    setDx(0);
-  };
-
-  const mod = ((index % total) + total) % total;
-  const visible = Math.min(4, total);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    let raf = 0;
+    const update = () => {
+      const center = el.scrollLeft + el.clientWidth / 2;
+      const items = Array.from(el.querySelectorAll<HTMLElement>("[data-cf-card]"));
+      let best = 0;
+      let bestDist = Infinity;
+      items.forEach((it, i) => {
+        const c = it.offsetLeft + it.offsetWidth / 2;
+        const d = Math.abs(c - center);
+        if (d < bestDist) { bestDist = d; best = i; }
+      });
+      setActive(best);
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    // Initial center on the first card
+    requestAnimationFrame(() => {
+      const first = el.querySelector<HTMLElement>("[data-cf-card]");
+      if (first) {
+        const target = first.offsetLeft + first.offsetWidth / 2 - el.clientWidth / 2;
+        el.scrollTo({ left: target, behavior: "auto" });
+      }
+      update();
+    });
+    return () => { el.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
+  }, [cards.length]);
 
   return (
-    <div
-      className="relative h-[260px] w-full select-none"
-      style={{ perspective: 1200 }}
-      onTouchStart={onStart as any}
-      onTouchMove={onMove as any}
-      onTouchEnd={onEnd}
-      onMouseDown={onStart as any}
-      onMouseMove={(e) => { if (startX.current != null) onMove(e); }}
-      onMouseUp={onEnd}
-      onMouseLeave={() => { if (startX.current != null) onEnd(); }}
-    >
-      {Array.from({ length: visible }).map((_, rel) => {
-        const c = cards[(mod + rel) % total];
-        const isFront = rel === 0;
-        const scale = 1 - rel * 0.05;
-        const translateY = rel * 12;
-        const translateX = isFront ? dx : 0;
-        const rotate = isFront ? dx * 0.015 : 0;
-        const opacity = rel <= 2 ? 1 : 0.5;
-        return (
-          <div
-            key={`${c.key}-${rel}`}
-            className="absolute inset-x-6 top-0"
-            style={{
-              transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale}) rotate(${rotate}deg)`,
-              zIndex: 30 - rel,
-              opacity,
-              transition: startX.current != null && isFront ? "none" : "transform 400ms cubic-bezier(0.22,1,0.36,1), opacity 300ms",
-            }}
-          >
-            {isFront ? (
-              <Link to={c.to as any} aria-label={c.title} className="block active:scale-[0.98] transition-transform">
-                <PrimaryArtCardFull {...c} />
-              </Link>
-            ) : (
-              <div className="pointer-events-none"><PrimaryArtCardFull {...c} /></div>
-            )}
-          </div>
-        );
-      })}
+    <div className="relative -mx-4">
+      <div
+        ref={containerRef}
+        dir="ltr"
+        className="flex items-center gap-3 overflow-x-auto snap-x snap-mandatory px-[18%] pb-6 pt-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        style={{ scrollBehavior: "smooth" }}
+      >
+        {cards.map((c, i) => {
+          const isActive = i === active;
+          return (
+            <Link
+              key={c.key}
+              to={c.to as any}
+              data-cf-card
+              aria-label={c.title}
+              className="snap-center shrink-0 w-[64%] active:scale-[0.98]"
+              style={{
+                transform: isActive ? "scale(1)" : "scale(0.86)",
+                opacity: isActive ? 1 : 0.65,
+                transition: "transform 320ms cubic-bezier(0.22,1,0.36,1), opacity 320ms",
+              }}
+            >
+              <PrimaryArtCardFull {...c} />
+            </Link>
+          );
+        })}
+      </div>
       {/* indicators */}
-      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+      <div className="mt-1 flex items-center justify-center gap-1.5">
         {cards.map((_, i) => (
           <span
             key={i}
             className="h-1.5 rounded-full transition-all"
             style={{
-              width: i === mod ? 20 : 6,
-              background: i === mod ? "#e7c97a" : "rgba(255,255,255,0.25)",
-              boxShadow: i === mod ? "0 0 8px rgba(231,201,122,0.6)" : "none",
+              width: i === active ? 20 : 6,
+              background: i === active ? "#e7c97a" : "rgba(255,255,255,0.25)",
+              boxShadow: i === active ? "0 0 8px rgba(231,201,122,0.6)" : "none",
             }}
           />
         ))}
