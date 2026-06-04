@@ -561,8 +561,19 @@ function PrayerReader() {
     if (!root) return;
     const el = root.querySelector(`#section-${id}`) as HTMLElement | null;
     if (!el) return;
-    const top = el.offsetTop - 16;
-    root.scrollTo({ top, behavior: "smooth" });
+    // Immediate visual feedback
+    setActiveId(id);
+    try {
+      const rootRect = root.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      const offset = 16;
+      const top = root.scrollTop + (elRect.top - rootRect.top) - offset;
+      const max = Math.max(0, root.scrollHeight - root.clientHeight);
+      root.scrollTo({ top: Math.max(0, Math.min(max, top)), behavior: "smooth" });
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn("[agpeya] jumpTo failed", err);
+    }
   };
 
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
