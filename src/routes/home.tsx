@@ -34,7 +34,7 @@ import newsYouth from "@/assets/home/news-youth.jpg";
 import newsMass from "@/assets/home/news-mass.jpg";
 
 import logoBible from "@/assets/home/logo-bible.png";
-import { CopticWatermark } from "@/components/coptic";
+import { CopticWatermark, CopticCross } from "@/components/coptic";
 
 export const Route = createFileRoute("/home")({
   ssr: false,
