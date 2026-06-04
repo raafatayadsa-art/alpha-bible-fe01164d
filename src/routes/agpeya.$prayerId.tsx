@@ -700,6 +700,7 @@ function PrayerReader() {
             )}
           </div>
           <div className="flex items-center gap-1.5">
+            <DisplayButton tone={dark ? "dark" : "light"} onClick={() => setPresentOpen(true)} />
             <IconButton dark={dark} ariaLabel="مشاركة" onClick={handleShare}>
               <Share2 className="h-4 w-4" />
             </IconButton>
