@@ -38,6 +38,7 @@ import {
   useSavedAgpeya,
 } from "@/features/agpeya";
 import type { AgpeyaPrayer } from "@/features/agpeya";
+import { CopticWatermark } from "@/components/coptic";
 import { cn } from "@/lib/utils";
 
 /* ---------- Lifecycle states ---------- */
