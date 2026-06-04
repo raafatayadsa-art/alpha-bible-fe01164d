@@ -36,10 +36,10 @@ type Msg = {
 };
 
 const COLORS: Record<Category, string> = {
-  "كاهن": "#8a6ec1",
-  "خدمة": "#4a9e6e",
-  "عضوية": "#4a86c1",
-  "طلبات": "#c98a3c",
+  "كاهن": "#8a6ec1",   // purple (gold trim added per-card)
+  "خدمة": "#4a86c1",   // soft blue
+  "عضوية": "#2f9d6e",  // emerald
+  "طلبات": "#c98a3c",  // amber
   "إشعار": "#b85a5a",
 };
 
