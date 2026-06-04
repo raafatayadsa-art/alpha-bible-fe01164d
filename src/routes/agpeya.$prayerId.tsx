@@ -982,6 +982,12 @@ function PrayerReader() {
           {notice}
         </div>
       )}
+
+      <PresentationMode
+        open={presentOpen}
+        onOpenChange={setPresentOpen}
+        content={presentationContent}
+      />
     </div>
   );
 }
