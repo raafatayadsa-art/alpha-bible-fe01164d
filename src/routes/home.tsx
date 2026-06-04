@@ -958,7 +958,7 @@ function PrimaryStack({ cards }: { cards: { key: string; title: string; sub: str
 function PrimaryArtCardFull({ title, sub, image, accent, glyph }: { title: string; sub: string; image: string; accent: string; glyph: "Ⲁ" | "Ⲱ" }) {
   return (
     <div
-      className="relative h-[240px] w-full overflow-hidden rounded-[28px] border border-white/15"
+      className="relative h-[212px] w-full overflow-hidden rounded-[26px] border border-white/15"
       style={{
         boxShadow: `0 28px 56px -22px rgba(0,0,0,0.85), 0 0 0 1px ${accent}33, inset 0 0 36px ${accent}26, inset 0 1px 0 rgba(255,255,255,0.18)`,
         background: "#0a0612",
