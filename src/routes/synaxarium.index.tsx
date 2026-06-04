@@ -58,9 +58,37 @@ function SynaxariumHome() {
   const list: Saint[] =
     active === "all" ? SAINTS : SAINTS.filter((s) => SAINT_CATEGORY[s.id] === active);
   const upcoming = list.filter((s) => s.id !== today.id);
+  const navigate = useNavigate();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const topRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (searchOpen) {
+      const t = setTimeout(() => searchInputRef.current?.focus(), 80);
+      return () => clearTimeout(t);
+    }
+  }, [searchOpen]);
+
+  const handleMartyrs = () => {
+    setActive("martyrs");
+    topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const searchResults = SAINTS.filter((s) => {
+    if (!query.trim()) return true;
+    const q = query.trim();
+    return (
+      s.name.includes(q) ||
+      s.title.includes(q) ||
+      s.summary.includes(q) ||
+      s.copticDate.includes(q)
+    );
+  });
 
   return (
-    <div dir="rtl" className="relative min-h-dvh bg-[#faf3e3]">
+    <div ref={topRef} dir="rtl" className="relative min-h-dvh bg-[#faf3e3]">
       <CopticWatermark />
 
       {/* Header */}
