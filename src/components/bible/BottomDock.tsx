@@ -51,8 +51,8 @@ export function BottomDock({
               to="/bible"
               active={isActive("/bible") || isActive("/books") || pathname.split("/").length >= 2}
             />
-            <DockItem icon={Users} label="المجتمع" />
-            <DockItem icon={UserIcon} label="الملف الشخصي" />
+            <DockItem icon={BookOpen} label="المكتبة" to="/books" active={isActive("/books")} />
+            <DockItem icon={UserIcon} label="الملف الشخصي" to="/profile" active={isActive("/profile")} />
           </div>
         </div>
       </div>
