@@ -131,7 +131,7 @@ function HomeScreen() {
     // Row 1
     { key: "bible", icon: iconBible, title: "الكتاب المقدس", sub: "إقرا كلمة الله", to: "/books" },
     { key: "prayer", icon: iconPrayer, title: "الأجبية", sub: "صلوات السبع ساعات\nصلاة كل ساعة", to: "/agpeya" },
-    { key: "katameros", icon: iconMeditation, title: "القطمارس", sub: "قراءات الكنيسة\nاليومية" },
+    { key: "katameros", icon: iconMeditation, title: "القطمارس", sub: "قراءات الكنيسة\nاليومية", to: "/katameros" },
     // Row 2
     { key: "synaxarium", icon: iconMeeting, title: "السنكسار", sub: "سير القديسين\nيوماً بيوم", to: "/synaxarium" },
     { key: "feasts", icon: iconCalendar, title: "الأعياد والمناسبات", sub: "اكتشف الأعياد\nوالمواسم", to: "/feasts" },
