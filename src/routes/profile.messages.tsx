@@ -18,7 +18,7 @@ import {
   Bell,
 } from "lucide-react";
 import { BottomDock } from "@/components/bible/BottomDock";
-import { CopticWatermark, CopticCross } from "@/components/coptic";
+import { CopticWatermark, CopticCross, CopticSeparator } from "@/components/coptic";
 
 type Category = "كاهن" | "خدمة" | "عضوية" | "طلبات" | "إشعار";
 
