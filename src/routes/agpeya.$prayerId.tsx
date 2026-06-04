@@ -817,58 +817,22 @@ function PrayerReader() {
         </article>
       </main>
 
-      {/* Floating reader controls */}
-      <div
-        dir="rtl"
-        className="fixed inset-x-0 z-40 mx-auto flex w-full max-w-[640px] items-center justify-center px-3"
-        style={{ bottom: "max(env(safe-area-inset-bottom), 16px)" }}
-      >
-        <div
-          className={cn(
-            "flex items-center gap-1 rounded-full border px-2 py-1.5 backdrop-blur-2xl",
-            dark
-              ? "border-white/10 bg-[#0b1a2c]/85 shadow-[0_20px_46px_-22px_rgba(0,0,0,0.9)]"
-              : "border-[#c79356]/40 bg-white/85 shadow-[0_20px_46px_-22px_rgba(120,80,30,0.5)]",
-          )}
-        >
-          <ControlBtn dark={dark} ariaLabel="تصغير الخط" onClick={() => setFontSize(Math.max(14, fontSize - 1))}>
-            <Minus className="h-3.5 w-3.5" />
-          </ControlBtn>
-          <span className={cn("min-w-[26px] text-center text-[11px] font-bold tabular-nums", dark ? "text-[#f0d78c]" : "text-[#5b3a18]")}>
-            {fontSize}
-          </span>
-          <ControlBtn dark={dark} ariaLabel="تكبير الخط" onClick={() => setFontSize(Math.min(34, fontSize + 1))}>
-            <Plus className="h-3.5 w-3.5" />
-          </ControlBtn>
-
-          <span className={cn("mx-1 h-4 w-px", dark ? "bg-white/15" : "bg-[#c79356]/30")} />
-
-          <ControlBtn dark={dark} ariaLabel={dark ? "وضع النهار" : "الوضع الليلي"} onClick={() => setTheme(dark ? "light" : "dark")}>
-            {dark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-          </ControlBtn>
-
-          <ControlBtn
-            dark={dark}
-            ariaLabel="تباعد الأسطر"
-            onClick={() => {
-              const steps = [1.7, 1.9, 2.05, 2.25, 2.5];
-              const idx = steps.findIndex((s) => Math.abs(s - lineHeight) < 0.05);
-              setLineHeight(steps[(idx + 1) % steps.length] ?? 2.05);
-            }}
-          >
-            <Rows3 className="h-3.5 w-3.5" />
-          </ControlBtn>
-
-        </div>
-      </div>
-
-      {/* Auto-scroll controller — same as Katamaros/Bible reader */}
+      {/* Auto-scroll controller — unified bar (font + line spacing + theme + scroll) */}
       <AutoScrollControls
         spiritualMode={dark}
         onToggleSpiritual={() => setTheme(dark ? "light" : "dark")}
         scrollContainer={scrollerRef.current}
         bottomClass="bottom-[88px]"
+        fontSize={fontSize}
+        setFontSize={(n) => setFontSize(Math.max(14, Math.min(34, n)))}
+        fontMin={14}
+        fontMax={34}
+        fontStep={1}
+        lineHeight={lineHeight}
+        setLineHeight={setLineHeight}
+        lineHeightSteps={[1.7, 1.9, 2.05, 2.25, 2.5]}
       />
+
 
       {/* Share fallback dialog */}
       {shareOpen && (
