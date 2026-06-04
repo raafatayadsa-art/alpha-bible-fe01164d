@@ -40,10 +40,39 @@ export function PresentationMode({
   const [dark, setDark] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState<Speed>("medium");
+  const [chromeVisible, setChromeVisible] = useState(true);
 
   const scrollerRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
   const lastTsRef = useRef<number | null>(null);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Auto-hide chrome after 5s of inactivity
+  useEffect(() => {
+    if (!open) return;
+    const bump = () => {
+      setChromeVisible(true);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = setTimeout(() => setChromeVisible(false), 5000);
+    };
+    bump();
+    const events: Array<keyof WindowEventMap> = [
+      "mousemove",
+      "touchstart",
+      "click",
+      "keydown",
+      "wheel",
+    ];
+    events.forEach((e) => window.addEventListener(e, bump, { passive: true } as AddEventListenerOptions));
+    const sc = scrollerRef.current;
+    sc?.addEventListener("scroll", bump, { passive: true });
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, bump));
+      sc?.removeEventListener("scroll", bump);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    };
+  }, [open]);
 
   // Reset scroll on open
   useEffect(() => {
