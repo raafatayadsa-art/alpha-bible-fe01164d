@@ -439,8 +439,8 @@ function HomeScreen() {
             </h2>
           </div>
           <div className="flex flex-col gap-2.5">
-            {news.map((n) => (
-              <NewsCard key={n.key} {...n} />
+            {news.map(({ key, ...n }) => (
+              <NewsCard key={key} {...n} />
             ))}
           </div>
         </section>
