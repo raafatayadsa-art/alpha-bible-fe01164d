@@ -9,15 +9,13 @@ import {
   Plus,
   Sun,
   Moon,
-  Play,
-  Pause,
-  Gauge,
   Rows3,
   X,
   Copy,
   Send,
   MessageCircle,
 } from "lucide-react";
+import { AutoScrollControls } from "@/components/bible/AutoScrollControls";
 import {
   PresentationMode,
   DisplayButton,
@@ -33,14 +31,11 @@ import {
   getAgpeyaPrayer,
   readPrayerPosition,
   savePrayerPosition,
-  SPEED_PX_PER_SEC,
   useAgpeyaAudio,
   useAgpeyaFontSize,
   useAgpeyaLineHeight,
-  useAgpeyaSpeed,
   useAgpeyaTheme,
   useSavedAgpeya,
-  type AgpeyaSpeed,
 } from "@/features/agpeya";
 import type { AgpeyaPrayer } from "@/features/agpeya";
 import { cn } from "@/lib/utils";
@@ -402,8 +397,6 @@ function PrayerReader() {
   const [fontSize, setFontSize] = useAgpeyaFontSize();
   const [lineHeight, setLineHeight] = useAgpeyaLineHeight();
   const [theme, setTheme] = useAgpeyaTheme();
-  const [speed, setSpeed] = useAgpeyaSpeed();
-  const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string>(sections[0]?.id ?? "");
@@ -551,32 +544,8 @@ function PrayerReader() {
     }
   }, [activeId]);
 
-  // Auto-scroll loop
-  useEffect(() => {
-    if (!playing) return;
-    const el = scrollerRef.current;
-    if (!el) return;
-    let raf = 0;
-    let last = performance.now();
-    let acc = 0;
-    const step = (t: number) => {
-      const dt = Math.min(64, t - last);
-      last = t;
-      acc += (SPEED_PX_PER_SEC[speed] * dt) / 1000;
-      if (acc >= 1) {
-        const d = Math.floor(acc);
-        acc -= d;
-        el.scrollTop += d;
-        if (el.scrollTop + el.clientHeight >= el.scrollHeight - 1) {
-          setPlaying(false);
-          return;
-        }
-      }
-      raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [playing, speed]);
+
+
 
   // Swipe navigation between prayers
   const touchStart = useRef<{ x: number; y: number } | null>(null);
@@ -647,8 +616,8 @@ function PrayerReader() {
     } catch { /* ignore */ }
   };
 
-  const speeds: AgpeyaSpeed[] = ["slow", "medium", "fast"];
-  const speedLabel: Record<AgpeyaSpeed, string> = { slow: "بطيء", medium: "متوسط", fast: "سريع" };
+
+
 
   return (
     <div
@@ -888,40 +857,16 @@ function PrayerReader() {
             <Rows3 className="h-3.5 w-3.5" />
           </ControlBtn>
 
-          <span className={cn("mx-1 h-4 w-px", dark ? "bg-white/15" : "bg-[#c79356]/30")} />
-
-          <button
-            type="button"
-            onClick={() => {
-              const i = speeds.indexOf(speed);
-              setSpeed(speeds[(i + 1) % speeds.length]);
-            }}
-            className={cn(
-              "flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold transition-colors",
-              dark ? "bg-white/5 text-[#f0d78c]" : "bg-[#fbf3e1] text-[#5b3a18]",
-            )}
-            aria-label="سرعة التمرير"
-          >
-            <Gauge className="h-3 w-3" />
-            {speedLabel[speed]}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setPlaying((p) => !p)}
-            className={cn(
-              "ms-1 grid h-10 w-10 place-items-center rounded-full text-white transition-all active:scale-95",
-              "bg-gradient-to-br from-[#7a5cb0] to-[#5a3d92]",
-              playing
-                ? "shadow-[0_0_14px_rgba(122,92,176,0.85)] ring-1 ring-[#b89dd9]/40"
-                : "shadow-[0_6px_14px_-6px_rgba(90,61,146,0.6)] ring-1 ring-[#b89dd9]/25",
-            )}
-            aria-label={playing ? "إيقاف التمرير" : "تشغيل التمرير"}
-          >
-            {playing ? <Pause className="h-4 w-4 fill-white" /> : <Play className="h-4 w-4 fill-white" />}
-          </button>
         </div>
       </div>
+
+      {/* Auto-scroll controller — same as Katamaros/Bible reader */}
+      <AutoScrollControls
+        spiritualMode={dark}
+        onToggleSpiritual={() => setTheme(dark ? "light" : "dark")}
+        scrollContainer={scrollerRef.current}
+        bottomClass="bottom-[88px]"
+      />
 
       {/* Share fallback dialog */}
       {shareOpen && (
