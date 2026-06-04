@@ -1,4 +1,4 @@
-import type { FeastEvent } from "./types";
+import type { FeastEvent, FeastCategory } from "./types";
 import feastCovenant from "@/assets/feasts/feast-covenant.jpg";
 import feastResurrection from "@/assets/feasts/feast-resurrection.jpg";
 import { heavenlyChurch, churchChalice, churchPeople, churchBell } from "@/assets/home";
