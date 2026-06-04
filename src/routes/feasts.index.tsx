@@ -1,11 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bell, Search, BookOpen, Calendar, Moon, BellRing, ChevronLeft, Plus } from "lucide-react";
-import { useState } from "react";
+import { Bell, Search, BookOpen, Calendar, Moon, BellRing, ChevronLeft, Plus, Star, Cross, Fish, Church } from "lucide-react";
+import { useState, type ReactNode } from "react";
 import { FEASTS, CATEGORIES, getTodayFeast, type FeastCategory } from "@/features/feasts";
 import { BottomDock } from "@/components/bible/BottomDock";
 import { GlassSurface } from "@/components/bible/primitives";
-import { CopticCross, CopticWatermark, CopticSeparator, Timeline, TimelineItem } from "@/components/coptic";
+import { CopticCross, CopticWatermark, CopticSeparator } from "@/components/coptic";
 import { cn } from "@/lib/utils";
+
+const CATEGORY_ICONS: Record<string, ReactNode> = {
+  all: <Calendar className="h-3.5 w-3.5" />,
+  feast: <Church className="h-3.5 w-3.5" />,
+  fast: <Fish className="h-3.5 w-3.5" />,
+  saint: <Cross className="h-3.5 w-3.5" />,
+  occasion: <Star className="h-3.5 w-3.5" />,
+};
 
 export const Route = createFileRoute("/feasts/")({
   ssr: false,
