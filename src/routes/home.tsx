@@ -402,33 +402,50 @@ function HomeScreen() {
           onToggleSaved={toggleSaved}
         />
 
-        {/* PRIMARY STACKED CAROUSEL — Apple Wallet style */}
+        {/* PRIMARY STACKED CAROUSEL — auto-rotating cover flow, infinite */}
         <section className="mt-7">
           <div className="mb-3 flex items-center justify-between px-1">
             <h2 className="text-[14px] font-extrabold text-[#3a2a18] tracking-tight flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-[#b8893a]" />
+              <CopticCross className="text-[#b8893a]" size={14} />
               اكتشف رحلتك اليوم
             </h2>
-            <span className="text-[11px] font-bold text-[#7a4a26]">اسحب →</span>
           </div>
-          <PrimaryStack cards={primary} />
+          <Coverflow
+            items={primary}
+            direction={1}
+            height={228}
+            cardWidthPct={68}
+            peekPct={64}
+            getKey={(c) => c.key}
+            renderCard={(c) => (
+              <Link to={c.to as any} aria-label={c.title} className="block">
+                <PrimaryArtCardFull {...c} />
+              </Link>
+            )}
+          />
         </section>
 
-        {/* DAILY CAROUSEL */}
-        <section className="mt-5 -mx-4">
-          <div className="mb-2.5 flex items-center justify-between px-5">
+        {/* DAILY — opposite-direction auto cover flow */}
+        <section className="mt-5">
+          <div className="mb-2.5 flex items-center justify-between px-1">
             <h2 className="text-[14px] font-extrabold text-[#3a2a18] tracking-tight flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-[#b8893a]" />
+              <CopticCross className="text-[#b8893a]" size={14} />
               تابع رحلتك الروحية
             </h2>
           </div>
-          <div className="flex gap-3 overflow-x-auto px-4 pb-4 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            {daily.map((d) => (
-              <Link key={d.key} to={d.to as any} className="snap-start shrink-0 active:scale-[0.97] transition-transform">
+          <Coverflow
+            items={daily}
+            direction={-1}
+            height={150}
+            cardWidthPct={72}
+            peekPct={66}
+            getKey={(d) => d.key}
+            renderCard={(d) => (
+              <Link to={d.to as any} aria-label={d.title} className="block">
                 <DailyCard {...d} />
               </Link>
-            ))}
-          </div>
+            )}
+          />
         </section>
 
         {/* CHURCH NEWS — featured */}
