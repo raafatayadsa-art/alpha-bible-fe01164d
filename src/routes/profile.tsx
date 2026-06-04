@@ -112,22 +112,36 @@ function ProfileHero() {
         <span>Ⲁ</span>
       </div>
       {/* Cross at top center */}
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 text-[#f0d78c]/40">
+      <div className="absolute top-3 left-1/2 -translate-x-1/2 text-[#f0d78c]/50 drop-shadow-[0_0_8px_rgba(240,215,140,0.5)]">
         <CopticCross size={18} />
       </div>
+      {/* Golden rays */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-[180px] opacity-60 mix-blend-screen"
+        style={{
+          background:
+            "conic-gradient(from 270deg at 50% 0%, transparent 0deg, rgba(240,215,140,0.18) 12deg, transparent 24deg, rgba(240,215,140,0.22) 40deg, transparent 56deg, rgba(240,215,140,0.16) 80deg, transparent 100deg, rgba(240,215,140,0.22) 130deg, transparent 160deg, rgba(240,215,140,0.18) 200deg, transparent 230deg)",
+        }}
+      />
 
       <div className="relative px-5 pt-6 pb-5 flex flex-col items-center text-center">
         {/* Avatar with halo */}
         <div className="relative">
           <div
             aria-hidden
-            className="absolute inset-0 -m-2 rounded-full"
+            className="absolute inset-0 -m-3 rounded-full"
             style={{
               background:
                 "conic-gradient(from 90deg, #e7c97a, #d88a2a, #f0d78c, #b8893a, #e7c97a)",
-              filter: "blur(6px)",
-              opacity: 0.85,
+              filter: "blur(8px)",
+              opacity: 0.9,
             }}
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 -m-1 rounded-full"
+            style={{ boxShadow: "0 0 32px 6px rgba(240,215,140,0.45)" }}
           />
           <div className="relative h-[88px] w-[88px] rounded-full border-2 border-[#f0d78c] overflow-hidden bg-gradient-to-b from-[#5a3a1e] to-[#3a2418] grid place-items-center">
             <span className="text-[34px] font-bold text-[#f0d78c]">
@@ -135,14 +149,19 @@ function ProfileHero() {
             </span>
           </div>
           {MEMBER.verified && (
-            <span className="absolute -bottom-1 -right-1 grid h-7 w-7 place-items-center rounded-full bg-gradient-to-b from-[#f0d78c] to-[#b8893a] border-2 border-[#1e120a] shadow-lg">
+            <span className="absolute -bottom-1 -right-1 grid h-7 w-7 place-items-center rounded-full bg-gradient-to-b from-[#f0d78c] to-[#b8893a] border-2 border-[#1e120a] shadow-[0_4px_12px_rgba(216,138,42,0.6)]">
               <BadgeCheck className="h-4 w-4 text-[#1e120a]" strokeWidth={2.5} />
             </span>
           )}
         </div>
 
-        <h1 className="mt-3 text-[20px] font-extrabold text-[#f7e7b8]">{MEMBER.name}</h1>
-        <p className="mt-0.5 text-[12px] text-[#e7c97a]/85 flex items-center gap-1.5">
+        <h1 className="mt-3 text-[20px] font-extrabold text-[#f7e7b8] drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">{MEMBER.name}</h1>
+        {MEMBER.verified && (
+          <span className="mt-1.5 inline-flex items-center gap-1 rounded-full border border-[#f0d78c]/45 bg-gradient-to-b from-[#f0d78c]/15 to-[#b8893a]/10 px-2.5 py-0.5 text-[10.5px] font-bold text-[#f0d78c] shadow-[0_0_10px_-2px_rgba(240,215,140,0.5)]">
+            <BadgeCheck className="h-3 w-3" strokeWidth={2.5} /> عضو موثق
+          </span>
+        )}
+        <p className="mt-1 text-[12px] text-[#e7c97a]/85 flex items-center gap-1.5">
           <Crown className="h-3 w-3" /> {MEMBER.role}
         </p>
         <p className="mt-0.5 text-[11px] text-[#d8c190]/75">{MEMBER.church}</p>
@@ -150,6 +169,7 @@ function ProfileHero() {
     </div>
   );
 }
+
 
 // ===== Smart Membership Card =====
 function MembershipCard() {
