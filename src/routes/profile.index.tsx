@@ -337,15 +337,28 @@ function ProfileHero() {
 
         {MEMBER.verified && (
           <span
-            className="mt-2.5 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold text-white border"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-full pl-3 pr-2.5 py-1.5 text-[11px] font-extrabold text-white border tracking-wide"
             style={{
-              background: "linear-gradient(135deg, rgba(94,224,160,0.28), rgba(31,158,99,0.4))",
-              borderColor: "rgba(94,224,160,0.55)",
-              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.28), 0 0 14px rgba(46,204,113,0.35)",
-              backdropFilter: "blur(8px)",
+              background:
+                "linear-gradient(135deg, rgba(125,240,184,0.22) 0%, rgba(46,180,120,0.32) 50%, rgba(15,106,68,0.42) 100%)",
+              borderColor: "rgba(125,240,184,0.6)",
+              boxShadow:
+                "inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -6px 12px rgba(15,80,50,0.25), 0 0 18px rgba(46,204,113,0.45), 0 6px 16px -8px rgba(15,80,50,0.6)",
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
             }}
           >
-            <BadgeCheck className="h-3 w-3" strokeWidth={2.8} /> عضو كنسي موثق
+            <span
+              aria-hidden
+              className="grid h-4 w-4 place-items-center rounded-full"
+              style={{
+                background: "radial-gradient(circle at 35% 30%, #c8ffe2, #22b478 65%, #0f6a44 100%)",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6), 0 0 6px rgba(125,240,184,0.65)",
+              }}
+            >
+              <BadgeCheck className="h-2.5 w-2.5 text-white" strokeWidth={3.2} />
+            </span>
+            عضو كنسي موثق
           </span>
         )}
       </div>
