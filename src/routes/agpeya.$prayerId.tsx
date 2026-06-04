@@ -397,8 +397,6 @@ function PrayerReader() {
   const [fontSize, setFontSize] = useAgpeyaFontSize();
   const [lineHeight, setLineHeight] = useAgpeyaLineHeight();
   const [theme, setTheme] = useAgpeyaTheme();
-  const [speed, setSpeed] = useAgpeyaSpeed();
-  const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string>(sections[0]?.id ?? "");
