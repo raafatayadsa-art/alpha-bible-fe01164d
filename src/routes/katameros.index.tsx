@@ -20,6 +20,7 @@ import {
 import { BottomDock } from "@/components/bible/BottomDock";
 import { GlassSurface } from "@/components/bible/primitives";
 import { CopticCross, CopticWatermark, CopticSeparator } from "@/components/coptic";
+import heroImage from "@/assets/katameros-hero.png.asset.json";
 import { NotificationsCenter, type NotificationItem } from "@/components/overlays/NotificationsCenter";
 import {
   getTodayKatameros,
