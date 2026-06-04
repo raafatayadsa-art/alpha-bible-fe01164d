@@ -1,11 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Bookmark, BookmarkCheck, Share2, MoreVertical, BookOpen, Calendar, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { FEASTS, getFeast } from "@/features/feasts";
 import { BottomDock } from "@/components/bible/BottomDock";
 import { GlassSurface, BackButton } from "@/components/bible/primitives";
 import { CopticCross, CopticWatermark, CopticSeparator } from "@/components/coptic";
+import {
+  PresentationMode,
+  DisplayButton,
+  type PresentationContent,
+} from "@/components/presentation/PresentationMode";
 
 export const Route = createFileRoute("/feasts/$eventId")({
   ssr: false,
