@@ -680,7 +680,7 @@ function HeroCardView({
             <button
               aria-label="مشاركة"
               onClick={() =>
-                shareWithImage({
+                openShareSheet({
                   title: card.title,
                   body: card.body,
                   meta: card.meta,
