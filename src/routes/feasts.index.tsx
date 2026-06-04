@@ -1,11 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Bell, Search, BookOpen, Calendar, Moon, BellRing, ChevronLeft, Star, Cross, Fish, Church } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { FEASTS, CATEGORIES, getTodayFeast, type FeastCategory } from "@/features/feasts";
 import { getTodaySaint } from "@/features/synaxarium";
 import { BottomDock } from "@/components/bible/BottomDock";
 import { GlassSurface } from "@/components/bible/primitives";
 import { CopticCross, CopticWatermark, CopticSeparator } from "@/components/coptic";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
 
 const CATEGORY_ICONS: Record<string, ReactNode> = {
