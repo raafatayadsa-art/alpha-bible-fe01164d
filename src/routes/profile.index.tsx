@@ -6,7 +6,7 @@ import {
 import { BottomDock } from "@/components/bible/BottomDock";
 import { CopticWatermark, CopticCross } from "@/components/coptic";
 
-export const Route = createFileRoute("/profile")({
+export const Route = createFileRoute("/profile/")({
   ssr: false,
   head: () => ({
     meta: [
