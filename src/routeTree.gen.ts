@@ -17,6 +17,7 @@ import { Route as BibleRouteImport } from './routes/bible'
 import { Route as BookRouteImport } from './routes/$book'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SynaxariumIndexRouteImport } from './routes/synaxarium.index'
+import { Route as KatamerosIndexRouteImport } from './routes/katameros.index'
 import { Route as FeastsIndexRouteImport } from './routes/feasts.index'
 import { Route as AgpeyaIndexRouteImport } from './routes/agpeya.index'
 import { Route as BookIndexRouteImport } from './routes/$book.index'
@@ -64,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
 const SynaxariumIndexRoute = SynaxariumIndexRouteImport.update({
   id: '/synaxarium/',
   path: '/synaxarium/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KatamerosIndexRoute = KatamerosIndexRouteImport.update({
+  id: '/katameros/',
+  path: '/katameros/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeastsIndexRoute = FeastsIndexRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/$book/': typeof BookIndexRoute
   '/agpeya/': typeof AgpeyaIndexRoute
   '/feasts/': typeof FeastsIndexRoute
+  '/katameros/': typeof KatamerosIndexRoute
   '/synaxarium/': typeof SynaxariumIndexRoute
 }
 export interface FileRoutesByTo {
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/$book': typeof BookIndexRoute
   '/agpeya': typeof AgpeyaIndexRoute
   '/feasts': typeof FeastsIndexRoute
+  '/katameros': typeof KatamerosIndexRoute
   '/synaxarium': typeof SynaxariumIndexRoute
 }
 export interface FileRoutesById {
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/$book/': typeof BookIndexRoute
   '/agpeya/': typeof AgpeyaIndexRoute
   '/feasts/': typeof FeastsIndexRoute
+  '/katameros/': typeof KatamerosIndexRoute
   '/synaxarium/': typeof SynaxariumIndexRoute
 }
 export interface FileRouteTypes {
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/$book/'
     | '/agpeya/'
     | '/feasts/'
+    | '/katameros/'
     | '/synaxarium/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/$book'
     | '/agpeya'
     | '/feasts'
+    | '/katameros'
     | '/synaxarium'
   id:
     | '__root__'
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '/$book/'
     | '/agpeya/'
     | '/feasts/'
+    | '/katameros/'
     | '/synaxarium/'
   fileRoutesById: FileRoutesById
 }
@@ -231,6 +243,7 @@ export interface RootRouteChildren {
   SynaxariumSaintIdRoute: typeof SynaxariumSaintIdRoute
   AgpeyaIndexRoute: typeof AgpeyaIndexRoute
   FeastsIndexRoute: typeof FeastsIndexRoute
+  KatamerosIndexRoute: typeof KatamerosIndexRoute
   SynaxariumIndexRoute: typeof SynaxariumIndexRoute
 }
 
@@ -290,6 +303,13 @@ declare module '@tanstack/react-router' {
       path: '/synaxarium'
       fullPath: '/synaxarium/'
       preLoaderRoute: typeof SynaxariumIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/katameros/': {
+      id: '/katameros/'
+      path: '/katameros'
+      fullPath: '/katameros/'
+      preLoaderRoute: typeof KatamerosIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feasts/': {
@@ -377,8 +397,19 @@ const rootRouteChildren: RootRouteChildren = {
   SynaxariumSaintIdRoute: SynaxariumSaintIdRoute,
   AgpeyaIndexRoute: AgpeyaIndexRoute,
   FeastsIndexRoute: FeastsIndexRoute,
+  KatamerosIndexRoute: KatamerosIndexRoute,
   SynaxariumIndexRoute: SynaxariumIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
