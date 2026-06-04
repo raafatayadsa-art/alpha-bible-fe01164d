@@ -304,7 +304,7 @@ function AgpeyaHome() {
 
         {/* ===== Day Prayers ===== */}
         <SectionTitle title="صلوات النهار" />
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3.5">
           {day.map((p) => (
             <PrayerCard key={p.id} p={p} />
           ))}
@@ -312,7 +312,7 @@ function AgpeyaHome() {
 
         {/* ===== Night Prayers ===== */}
         <SectionTitle title="صلوات الليل" />
-        <div className="grid grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-4 gap-3">
           {night.map((p) => (
             <PrayerCard key={p.id} p={p} />
           ))}
@@ -320,7 +320,7 @@ function AgpeyaHome() {
 
         {/* ===== Extras ===== */}
         <SectionTitle title="صلوات إضافية" />
-        <div className="grid grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-4 gap-3">
           {extra.map((p) => (
             <PrayerCard key={p.id} p={p} />
           ))}
