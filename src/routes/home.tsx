@@ -1251,12 +1251,34 @@ function ShareSheetHost() {
     close();
   };
 
+  // Save image silently (no auto-download UX prompt) — used by external flows.
+  const ensureImage = async (download: boolean) => {
+    try {
+      const blob = await getShareBlob(req);
+      if (!blob) return;
+      if (download) {
+        const u = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = u; a.download = "alpha-coptic.jpg";
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(u), 1000);
+      }
+    } catch {}
+  };
+
+  const shareToExternal = async (href: string) => {
+    setBusy(true);
+    await ensureImage(true); // auto-download branded image so user can attach
+    setBusy(false);
+    openExternal(href);
+  };
+
   const options: { key: string; label: string; color: string; emoji: string; onClick: () => void }[] = [
-    { key: "wa", label: "واتساب", color: "#25D366", emoji: "💬", onClick: () => openExternal(`https://wa.me/?text=${encoded}`) },
-    { key: "tg", label: "تيليجرام", color: "#229ED9", emoji: "✈️", onClick: () => openExternal(`https://t.me/share/url?url=${url}&text=${encoded}`) },
-    { key: "fb", label: "فيسبوك", color: "#1877F2", emoji: "📘", onClick: () => openExternal(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${encoded}`) },
+    { key: "wa", label: "واتساب", color: "#25D366", emoji: "💬", onClick: () => shareToExternal(`https://wa.me/?text=${encoded}`) },
+    { key: "tg", label: "تيليجرام", color: "#229ED9", emoji: "✈️", onClick: () => shareToExternal(`https://t.me/share/url?url=${url}&text=${encoded}`) },
+    { key: "fb", label: "فيسبوك", color: "#1877F2", emoji: "📘", onClick: () => shareToExternal(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${encoded}`) },
     { key: "ig", label: "إنستجرام", color: "#E1306C", emoji: "📷", onClick: async () => { await doSaveImage(); } },
-    { key: "native", label: "مشاركة", color: "#e7c97a", emoji: "🔗", onClick: doNative },
+    { key: "native", label: "مشاركة", color: "#d88a2a", emoji: "🔗", onClick: doNative },
     { key: "copy", label: "نسخ النص", color: "#8a6ec1", emoji: "📋", onClick: doCopy },
   ];
 
@@ -1267,36 +1289,39 @@ function ShareSheetHost() {
       className="fixed inset-0 z-[60] flex items-end justify-center"
       onClick={close}
     >
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in" />
+      <div className="absolute inset-0 bg-[#3a2a18]/45 backdrop-blur-sm animate-in fade-in" />
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[440px] rounded-t-[28px] border-t border-x border-white/12 bg-gradient-to-b from-[#1a1230] to-[#0c0918] px-4 pt-3 pb-[max(env(safe-area-inset-bottom),20px)]"
-        style={{ boxShadow: "0 -20px 40px -10px rgba(0,0,0,0.7)" }}
+        className="relative w-full max-w-[440px] rounded-t-[24px] border-t border-x border-[#efe2c4] bg-gradient-to-b from-[#fbf3e1] to-[#f4ead8] px-4 pt-2.5 pb-[max(env(safe-area-inset-bottom),14px)]"
+        style={{ boxShadow: "0 -16px 32px -10px rgba(120,80,30,0.35), inset 0 1px 0 rgba(255,255,255,0.9)" }}
       >
-        <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-white/15" />
+        <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-[#d8c190]" />
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-[14px] font-extrabold text-white">مشاركة</h3>
-          <button aria-label="إغلاق" onClick={close} className="grid h-8 w-8 place-items-center rounded-full bg-white/8 text-white/70">
-            <X className="h-4 w-4" />
+          <h3 className="text-[13px] font-extrabold text-[#3a2a18] flex items-center gap-1.5">
+            <CopticCross className="text-[#b8893a]" size={12} />
+            مشاركة
+          </h3>
+          <button aria-label="إغلاق" onClick={close} className="grid h-7 w-7 place-items-center rounded-full bg-[#ecdcb6] text-[#7a4a26]">
+            <X className="h-3.5 w-3.5" />
           </button>
         </div>
-        <p className="mt-1 px-1 text-[11.5px] text-white/60 line-clamp-2 text-right">{req.title} — {req.body.slice(0, 80)}…</p>
+        <p className="mt-1 px-1 text-[11px] text-[#6a543a] line-clamp-1 text-right">{req.title} — {req.body.slice(0, 70)}…</p>
 
-        <div className="mt-4 grid grid-cols-3 gap-3">
+        <div className="mt-3 grid grid-cols-6 gap-2">
           {options.map((o) => (
             <button
               key={o.key}
               disabled={busy}
               onClick={o.onClick}
-              className="flex flex-col items-center gap-1.5 rounded-2xl border border-white/10 bg-white/[0.04] p-3 active:scale-[0.96] transition disabled:opacity-50"
+              className="flex flex-col items-center gap-1 rounded-xl p-1.5 active:scale-[0.94] transition disabled:opacity-50"
             >
               <span
-                className="grid h-12 w-12 place-items-center rounded-full text-[22px]"
+                className="grid h-10 w-10 place-items-center rounded-full text-[18px]"
                 style={{ background: `${o.color}22`, border: `1px solid ${o.color}66` }}
               >
                 {o.emoji}
               </span>
-              <span className="text-[11px] font-bold text-white">{o.label}</span>
+              <span className="text-[9.5px] font-bold text-[#3a2a18] leading-tight text-center">{o.label}</span>
             </button>
           ))}
         </div>
@@ -1304,9 +1329,9 @@ function ShareSheetHost() {
         <button
           onClick={doSaveImage}
           disabled={busy}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.05] py-3 text-[12.5px] font-bold text-white active:scale-[0.99] transition disabled:opacity-50"
+          className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-[#efe2c4] bg-white/60 py-2.5 text-[12px] font-bold text-[#3a2a18] active:scale-[0.99] transition disabled:opacity-50"
         >
-          <Link2 className="h-4 w-4 text-[#e7c97a]" />
+          <Link2 className="h-3.5 w-3.5 text-[#b8893a]" />
           حفظ صورة المشاركة
         </button>
       </div>
