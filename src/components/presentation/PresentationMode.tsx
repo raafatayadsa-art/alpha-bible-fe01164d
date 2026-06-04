@@ -297,71 +297,69 @@ export function PresentationMode({
         style={{ paddingBottom: "max(env(safe-area-inset-bottom), 12px)", paddingTop: 6 }}
       >
         <div
-          className={`mx-auto max-w-[560px] rounded-[28px] border backdrop-blur-2xl px-3 py-2.5 flex items-center justify-between gap-3 ${
+          className={`mx-auto w-fit max-w-[92vw] rounded-full border backdrop-blur-2xl px-2 py-1.5 flex items-center gap-1.5 ${
             dark
-              ? "bg-[#2a2014]/40 border-[#c9a96b]/20 shadow-[0_18px_50px_-22px_rgba(0,0,0,0.55)]"
-              : "bg-[#f6ecd4]/35 border-[#e6d2a6]/50 shadow-[0_18px_50px_-22px_rgba(120,80,30,0.30)]"
+              ? "bg-[#2a2014]/45 border-[#c9a96b]/25 shadow-[0_18px_50px_-22px_rgba(0,0,0,0.55)]"
+              : "bg-[#f6ecd4]/45 border-[#e6d2a6]/55 shadow-[0_18px_50px_-22px_rgba(120,80,30,0.30)]"
           }`}
         >
           <button
             type="button"
             aria-label={playing ? "إيقاف التمرير" : "بدء التمرير"}
             onClick={() => setPlaying((p) => !p)}
-            className="grid h-12 w-12 place-items-center rounded-full text-white bg-gradient-to-br from-[#caa15f] to-[#8a6322] shadow-[0_0_18px_-6px_rgba(184,137,58,0.55)] active:scale-95 transition-transform border border-white/25"
+            className="grid h-9 w-9 place-items-center rounded-full text-white bg-gradient-to-br from-[#d9b878] to-[#8a6322] shadow-[0_0_14px_-6px_rgba(184,137,58,0.55)] active:scale-95 transition-transform border border-white/25"
           >
-            {playing ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 translate-x-[1px]" />}
+            {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 translate-x-[1px]" />}
           </button>
 
-          <div className="flex items-center gap-1.5">
-            {(Object.keys(SPEED_LABEL) as Speed[]).map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setSpeed(s)}
-                aria-pressed={speed === s}
-                className={`h-8 px-3 rounded-full text-[11px] font-bold border transition-all ${
-                  speed === s
-                    ? "bg-gradient-to-br from-[#d9b878] to-[#b8893a] text-white border-[#e6d2a6]/60 shadow-[0_0_14px_-6px_rgba(184,137,58,0.55),inset_0_1px_0_rgba(255,255,255,0.25)]"
-                    : dark
-                      ? "bg-white/[0.06] border-[#c9a96b]/20 text-[#f0e3bd]"
-                      : "bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18] backdrop-blur"
-                }`}
-              >
-                {SPEED_LABEL[s]}
-              </button>
-            ))}
-          </div>
+          <span className={`h-5 w-px ${dark ? "bg-[#c9a96b]/25" : "bg-[#b8893a]/20"}`} />
 
-
-          <div className="flex items-center gap-1.5">
+          {(Object.keys(SPEED_LABEL) as Speed[]).map((s) => (
             <button
+              key={s}
               type="button"
-              aria-label="تصغير الخط"
-              onClick={() => setFontScale((s) => Math.max(0.7, s - 0.1))}
-              className={`grid h-9 w-9 place-items-center rounded-full border active:scale-95 transition-transform ${
-                dark ? "bg-white/[0.06] border-[#c9a96b]/20 text-[#f0e3bd]" : "bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18] backdrop-blur"
+              onClick={() => setSpeed(s)}
+              aria-pressed={speed === s}
+              className={`h-9 px-2.5 rounded-full text-[11px] font-bold border transition-all ${
+                speed === s
+                  ? "bg-gradient-to-br from-[#d9b878] to-[#b8893a] text-white border-[#e6d2a6]/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]"
+                  : dark
+                    ? "bg-white/[0.06] border-[#c9a96b]/20 text-[#f0e3bd]"
+                    : "bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18]"
               }`}
             >
-              <Minus className="h-4 w-4" />
+              {SPEED_LABEL[s]}
             </button>
-            <span
-              className="text-[11px] font-bold tabular-nums w-10 text-center opacity-80"
-              aria-live="polite"
-            >
-              {Math.round(fontScale * 100)}%
-            </span>
-            <button
-              type="button"
-              aria-label="تكبير الخط"
-              onClick={() => setFontScale((s) => Math.min(2, s + 0.1))}
-              className={`grid h-9 w-9 place-items-center rounded-full border active:scale-95 transition-transform ${
-                dark ? "bg-white/[0.06] border-[#c9a96b]/20 text-[#f0e3bd]" : "bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18] backdrop-blur"
-              }`}
-            >
-              <Plus className="h-4 w-4" />
-            </button>
-          </div>
+          ))}
 
+          <span className={`h-5 w-px ${dark ? "bg-[#c9a96b]/25" : "bg-[#b8893a]/20"}`} />
+
+          <button
+            type="button"
+            aria-label="تصغير الخط"
+            onClick={() => setFontScale((s) => Math.max(0.7, s - 0.1))}
+            className={`grid h-9 w-9 place-items-center rounded-full border active:scale-95 transition-transform ${
+              dark ? "bg-white/[0.06] border-[#c9a96b]/20 text-[#f0e3bd]" : "bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18]"
+            }`}
+          >
+            <Minus className="h-4 w-4" />
+          </button>
+          <span
+            className="text-[11px] font-bold tabular-nums w-9 text-center opacity-80"
+            aria-live="polite"
+          >
+            {Math.round(fontScale * 100)}%
+          </span>
+          <button
+            type="button"
+            aria-label="تكبير الخط"
+            onClick={() => setFontScale((s) => Math.min(2, s + 0.1))}
+            className={`grid h-9 w-9 place-items-center rounded-full border active:scale-95 transition-transform ${
+              dark ? "bg-white/[0.06] border-[#c9a96b]/20 text-[#f0e3bd]" : "bg-[#fff7e3]/55 border-[#e6d2a6]/45 text-[#5b3a18]"
+            }`}
+          >
+            <Plus className="h-4 w-4" />
+          </button>
         </div>
       </footer>
     </div>
