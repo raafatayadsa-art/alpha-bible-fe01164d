@@ -491,13 +491,13 @@ function MessagesScreen() {
         <Header
           onSearch={() => setShowSearch((s) => !s)}
           onFilter={() => {
-            const order: Filter[] = ["الكل", "غير مقروءة", "مقروءة"];
-            const idx = order.indexOf(filter as any);
-            setFilter(order[(idx + 1) % order.length] ?? "الكل");
+            const idx = FILTERS.indexOf(filter);
+            setFilter(FILTERS[(idx + 1) % FILTERS.length]);
           }}
           unreadCount={unreadCount}
           onMarkAll={markAll}
         />
+
 
         {showSearch && (
           <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-2xl border border-[#efe2c4] bg-white/80">
