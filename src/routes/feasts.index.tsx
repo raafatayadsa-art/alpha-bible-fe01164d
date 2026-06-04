@@ -7,6 +7,8 @@ import { BottomDock } from "@/components/bible/BottomDock";
 import { GlassSurface } from "@/components/bible/primitives";
 import { CopticCross, CopticWatermark, CopticSeparator } from "@/components/coptic";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
+import { SearchOverlay } from "@/components/overlays/SearchOverlay";
+import { NotificationsCenter, type NotificationItem } from "@/components/overlays/NotificationsCenter";
 import { cn } from "@/lib/utils";
 
 const CATEGORY_ICONS: Record<string, ReactNode> = {
