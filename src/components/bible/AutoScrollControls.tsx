@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, Minus, Plus, Moon, Sun } from "lucide-react";
+import { Play, Pause, Minus, Plus, Moon, Sun, Rows3, Type } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] as const;
@@ -29,6 +29,14 @@ export function AutoScrollControls({
   scrollContainer,
   bottomClass = "bottom-24",
   visible,
+  fontSize,
+  setFontSize,
+  fontMin = 14,
+  fontMax = 34,
+  fontStep = 1,
+  lineHeight,
+  setLineHeight,
+  lineHeightSteps = [1.6, 1.8, 2.0, 2.2, 2.4],
 }: {
   spiritualMode: boolean;
   onToggleSpiritual: () => void;
@@ -38,6 +46,14 @@ export function AutoScrollControls({
   visible?: boolean;
   /** legacy, unused */
   hidden?: boolean;
+  fontSize?: number;
+  setFontSize?: (n: number) => void;
+  fontMin?: number;
+  fontMax?: number;
+  fontStep?: number;
+  lineHeight?: number;
+  setLineHeight?: (n: number) => void;
+  lineHeightSteps?: number[];
 }) {
   const [playing, setPlaying] = useState(false);
   const [speedIdx, setSpeedIdx] = useState<number>(loadInitialSpeedIdx);
@@ -214,6 +230,57 @@ export function AutoScrollControls({
       >
         <Plus className="h-3 w-3" />
       </button>
+
+      {(setFontSize && typeof fontSize === "number") && (
+        <>
+          <span className={cn("mx-0.5 h-4 w-px", spiritualMode ? "bg-[#c9a96b]/25" : "bg-[#b8893a]/20")} />
+          <button
+            type="button"
+            aria-label="تصغير الخط"
+            onClick={() => setFontSize(Math.max(fontMin, +(fontSize - fontStep).toFixed(2)))}
+            className="grid h-6 w-6 place-items-center rounded-full active:scale-90 transition-transform disabled:opacity-40"
+            style={spiritualMode ? { color: "#f0d78c" } : undefined}
+            disabled={fontSize <= fontMin}
+          >
+            <Type className="h-2.5 w-2.5" />
+          </button>
+          <span
+            className="min-w-7 text-center text-[10.5px] font-bold tabular-nums"
+            style={spiritualMode ? { color: "#f0d78c" } : { color: "#8a6322" }}
+          >
+            {Number.isInteger(fontSize) ? fontSize : fontSize.toFixed(0)}
+          </span>
+          <button
+            type="button"
+            aria-label="تكبير الخط"
+            onClick={() => setFontSize(Math.min(fontMax, +(fontSize + fontStep).toFixed(2)))}
+            className="grid h-6 w-6 place-items-center rounded-full active:scale-90 transition-transform disabled:opacity-40"
+            style={spiritualMode ? { color: "#f0d78c" } : undefined}
+            disabled={fontSize >= fontMax}
+          >
+            <Type className="h-3.5 w-3.5" />
+          </button>
+        </>
+      )}
+
+      {(setLineHeight && typeof lineHeight === "number" && lineHeightSteps.length > 0) && (
+        <>
+          <span className={cn("mx-0.5 h-4 w-px", spiritualMode ? "bg-[#c9a96b]/25" : "bg-[#b8893a]/20")} />
+          <button
+            type="button"
+            aria-label="تباعد الأسطر"
+            onClick={() => {
+              const idx = lineHeightSteps.findIndex((s) => Math.abs(s - lineHeight) < 0.05);
+              const next = lineHeightSteps[(idx + 1) % lineHeightSteps.length] ?? lineHeightSteps[0];
+              setLineHeight(next);
+            }}
+            className="grid h-6 w-6 place-items-center rounded-full active:scale-90 transition-transform"
+            style={spiritualMode ? { color: "#f0d78c" } : undefined}
+          >
+            <Rows3 className="h-3.5 w-3.5" />
+          </button>
+        </>
+      )}
 
       <span className={cn("mx-0.5 h-4 w-px", spiritualMode ? "bg-[#c9a96b]/25" : "bg-[#b8893a]/20")} />
 
