@@ -122,12 +122,12 @@ function HomeScreen() {
 
 
   const quickCards = [
-    { key: "bible", icon: iconBible, title: "اكمل القراءة", sub: "تابع حيث توقفت\nفي الكتاب المقدس", to: "/books" },
-    { key: "hymn", icon: iconHymn, title: "ترنيمة اليوم", sub: "استمع لترنيمة مختارة\nكل يوم" },
+    { key: "bible", icon: iconBible, title: "الكتاب المقدس", sub: "إقرا كلمة الله", to: "/books" },
+    { key: "hymn", icon: iconHymn, title: "الصوتيات", sub: "استمع لترنيمة مختارة\nكل يوم" },
     { key: "prayer", icon: iconPrayer, title: "الأجبية", sub: "صلوات السبع ساعات\nصلاة كل ساعة", to: "/agpeya" },
-    { key: "meeting", icon: iconMeeting, title: "اجتماع اليوم", sub: "لا تفوت اجتماع\nكنيستك اليوم" },
+    { key: "meeting", icon: iconMeeting, title: "الأطفال", sub: "قصص و أنشطة تعلم الايمان" },
     { key: "calendar", icon: iconCalendar, title: "المناسبات", sub: "اكتشف المناسبات\nالقادمة" },
-    { key: "meditation", icon: iconMeditation, title: "التأمل اليومي", sub: "لحظات من التأمل\nوالقرب من الله" },
+    { key: "meditation", icon: iconMeditation, title: "التأملات ", sub: "رحلات روحية \n و تأملات يومية" },
   ];
 
   const church = [
