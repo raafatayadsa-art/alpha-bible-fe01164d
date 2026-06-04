@@ -135,15 +135,36 @@ function ProfileHero() {
       <div className="relative px-4 pt-12 pb-5 flex flex-col items-center text-center">
         {/* Premium Orthodox Halo + Cross system */}
         <div className="relative">
-          {/* Outer glow aura */}
+          {/* Radiant outer aura — strong sacred glow */}
           <div
             aria-hidden
-            className="absolute inset-0 -m-[42px] rounded-full"
+            className="absolute inset-0 -m-[80px] rounded-full"
             style={{
-              background: "radial-gradient(circle, rgba(240,215,140,0.55), rgba(216,138,42,0.18) 45%, transparent 70%)",
-              filter: "blur(14px)",
+              background: "radial-gradient(circle, rgba(255,236,170,0.85), rgba(240,180,70,0.4) 30%, rgba(216,138,42,0.15) 55%, transparent 75%)",
+              filter: "blur(22px)",
             }}
           />
+          {/* Radiating light beams behind avatar */}
+          <div
+            aria-hidden
+            className="absolute inset-0 -m-[120px] rounded-full opacity-90 mix-blend-screen"
+            style={{
+              background:
+                "conic-gradient(from 0deg, transparent 0deg, rgba(255,240,180,0.55) 6deg, transparent 14deg, rgba(255,230,150,0.4) 26deg, transparent 38deg, rgba(255,240,180,0.5) 54deg, transparent 70deg, rgba(255,225,140,0.45) 88deg, transparent 104deg, rgba(255,240,180,0.55) 124deg, transparent 142deg, rgba(255,230,150,0.4) 162deg, transparent 180deg, rgba(255,240,180,0.55) 198deg, transparent 216deg, rgba(255,230,150,0.4) 236deg, transparent 254deg, rgba(255,240,180,0.5) 274deg, transparent 290deg, rgba(255,225,140,0.45) 308deg, transparent 324deg, rgba(255,240,180,0.55) 344deg, transparent 360deg)",
+              maskImage: "radial-gradient(circle, transparent 28%, black 38%, black 70%, transparent 88%)",
+              WebkitMaskImage: "radial-gradient(circle, transparent 28%, black 38%, black 70%, transparent 88%)",
+            }}
+          />
+          {/* Inner warm glow */}
+          <div
+            aria-hidden
+            className="absolute inset-0 -m-[36px] rounded-full"
+            style={{
+              background: "radial-gradient(circle, rgba(255,244,208,0.7), rgba(240,180,70,0.3) 50%, transparent 75%)",
+              filter: "blur(10px)",
+            }}
+          />
+
 
           {/* Premium engraved halo */}
           <svg
@@ -250,20 +271,33 @@ function ProfileHero() {
             <div aria-hidden className="absolute inset-x-0 top-0 h-1/2" style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.22), transparent)" }} />
           </div>
 
-          {/* Emerald verified badge */}
+          {/* Emerald scalloped verified badge */}
           {MEMBER.verified && (
             <span
-              className="absolute -bottom-1 -right-1 grid h-7 w-7 place-items-center rounded-full border-2 border-[#1e120a]"
-              style={{
-                background: "radial-gradient(120% 90% at 30% 20%, #5ee0a0, #1f9e63 60%, #14704a 100%)",
-                boxShadow:
-                  "inset 0 1px 0 rgba(255,255,255,0.4), 0 0 14px rgba(46,204,113,0.65), 0 6px 14px -6px rgba(20,112,74,0.8)",
-              }}
+              className="absolute -bottom-1.5 -right-1.5 grid h-9 w-9 place-items-center"
               aria-label="عضو موثق"
+              style={{ filter: "drop-shadow(0 0 10px rgba(46,204,113,0.65)) drop-shadow(0 6px 14px rgba(20,112,74,0.7))" }}
             >
-              <BadgeCheck className="h-4 w-4 text-white" strokeWidth={2.8} />
+              <svg viewBox="0 0 40 40" className="absolute inset-0 h-full w-full">
+                <defs>
+                  <radialGradient id="emeraldFill" cx="35%" cy="28%" r="75%">
+                    <stop offset="0%" stopColor="#7df0b8" />
+                    <stop offset="45%" stopColor="#22b478" />
+                    <stop offset="100%" stopColor="#0f6a44" />
+                  </radialGradient>
+                </defs>
+                <path
+                  d="M20 2 L24 4 L28 2.5 L30.5 6 L34.5 6.5 L35.5 10.5 L38.5 13 L37.5 17 L39 21 L36.5 24.5 L37 28.5 L33.5 30.5 L32 34.5 L28 35 L25 38 L20.5 36.5 L16 38 L12 35 L8 34.5 L6.5 30.5 L3 28.5 L3.5 24.5 L1 21 L2.5 17 L1.5 13 L4.5 10.5 L5.5 6.5 L9.5 6 L12 2.5 L16 4 Z"
+                  fill="url(#emeraldFill)"
+                  stroke="#ffffff"
+                  strokeWidth="1.2"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <BadgeCheck className="relative h-4.5 w-4.5 text-white" strokeWidth={3} />
             </span>
           )}
+
         </div>
 
 
