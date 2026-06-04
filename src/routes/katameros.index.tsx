@@ -215,7 +215,7 @@ function KatamerosHome() {
               </button>
             </div>
           </div>
-        </GlassSurface>
+        </div>
 
         {/* CONTINUE READING (only if applicable) */}
         {continueReading && (
