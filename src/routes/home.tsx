@@ -161,6 +161,7 @@ function HomeScreen() {
             "radial-gradient(80% 60% at 0% 80%, rgba(214,168,98,0.18), transparent 65%)",
         }}
       />
+      <CopticWatermark />
 
       <div className="relative mx-auto w-full max-w-[440px] px-4 pb-36 pt-[max(env(safe-area-inset-top),12px)]">
         {/* Top bar */}
