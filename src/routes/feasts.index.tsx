@@ -212,7 +212,7 @@ function FeastsHome() {
                     {/* CENTER: title + description */}
                     <div className="min-w-0 text-right">
                       {isToday && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[#6a4ab5] text-white text-[9.5px] font-bold px-2 py-0.5 mb-1">
+                        <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-[#6a4ab5] text-white text-[9.5px] font-bold px-2 py-0.5 shadow-[0_6px_12px_-6px_rgba(106,74,181,0.6)]">
                           <span className="h-1.5 w-1.5 rounded-full bg-white" />
                           اليوم
                         </span>
