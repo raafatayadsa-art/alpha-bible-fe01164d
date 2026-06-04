@@ -1,7 +1,10 @@
 import type { FeastEvent, FeastCategory } from "./types";
-import feastCovenant from "@/assets/feasts/feast-covenant.jpg";
-import feastResurrection from "@/assets/feasts/feast-resurrection.jpg";
-import { heavenlyChurch, churchChalice, churchPeople, churchBell } from "@/assets/home";
+import feastLastSupper from "@/assets/feasts/feast-last-supper.jpg";
+import feastCrucifixion from "@/assets/feasts/feast-crucifixion.jpg";
+import feastHolyLight from "@/assets/feasts/feast-holy-light.jpg";
+import feastEmptyTomb from "@/assets/feasts/feast-empty-tomb.jpg";
+import feastPalmSunday from "@/assets/feasts/feast-palm-sunday.jpg";
+import feastThomas from "@/assets/feasts/feast-thomas.jpg";
 
 export const FEASTS: FeastEvent[] = [
   {
