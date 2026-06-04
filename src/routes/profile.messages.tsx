@@ -109,7 +109,7 @@ const SEED: Msg[] = [
   },
 ];
 
-const FILTERS = ["الكل", "الكاهن", "الخدمة", "العضوية", "طلبات", "غير مقروءة", "مقروءة"] as const;
+const FILTERS = ["الكل", "الكاهن", "الخدمة", "العضوية", "الطلبات"] as const;
 type Filter = typeof FILTERS[number];
 
 function matchesFilter(m: Msg, f: Filter) {
@@ -118,9 +118,7 @@ function matchesFilter(m: Msg, f: Filter) {
     case "الكاهن": return m.category === "كاهن";
     case "الخدمة": return m.category === "خدمة";
     case "العضوية": return m.category === "عضوية";
-    case "طلبات": return m.category === "طلبات";
-    case "غير مقروءة": return m.unread;
-    case "مقروءة": return !m.unread;
+    case "الطلبات": return m.category === "طلبات";
   }
 }
 
