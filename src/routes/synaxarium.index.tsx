@@ -415,6 +415,28 @@ function SynaxariumHome() {
           </div>
         </DrawerContent>
       </Drawer>
+
+      {/* Notifications panel */}
+      <Drawer open={notifOpen} onOpenChange={setNotifOpen}>
+        <DrawerContent className="bg-white border-[#ead9b1]" dir="rtl">
+          <DrawerHeader className="text-right">
+            <DrawerTitle className="font-arabic-serif text-[17px] text-[#3a2a18]">التنبيهات</DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4 pb-[calc(env(safe-area-inset-bottom)+16px)]">
+            <div className="rounded-2xl bg-[#faf3e3] border border-[#ead9b1] p-6 text-center text-[13px] text-[#6a543a]">
+              لا توجد تنبيهات حالياً
+            </div>
+            <DrawerClose asChild>
+              <button
+                type="button"
+                className="mt-3 h-11 w-full rounded-2xl bg-white border border-[#ead9b1] text-[13px] font-bold text-[#3a2a18] active:scale-[0.98] transition-transform"
+              >
+                إغلاق
+              </button>
+            </DrawerClose>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }
