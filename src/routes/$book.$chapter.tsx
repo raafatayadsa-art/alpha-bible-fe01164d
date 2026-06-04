@@ -44,6 +44,7 @@ import {
   type LookupDictionaryRow,
 } from "@/lib/dictionary";
 import { setChapterDictState } from "@/lib/chapter-dict-store";
+import { normalizeEntityTab, isPersonEntity, isPlaceEntity } from "@/lib/entity-category";
 
 /**
  * HMR_EPOCH — bumps on every hot-module reload of this file (and indirectly
