@@ -31,14 +31,11 @@ import {
   getAgpeyaPrayer,
   readPrayerPosition,
   savePrayerPosition,
-  SPEED_PX_PER_SEC,
   useAgpeyaAudio,
   useAgpeyaFontSize,
   useAgpeyaLineHeight,
-  useAgpeyaSpeed,
   useAgpeyaTheme,
   useSavedAgpeya,
-  type AgpeyaSpeed,
 } from "@/features/agpeya";
 import type { AgpeyaPrayer } from "@/features/agpeya";
 import { cn } from "@/lib/utils";
