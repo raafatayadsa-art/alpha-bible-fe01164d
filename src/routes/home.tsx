@@ -417,8 +417,8 @@ function HomeScreen() {
         {/* DAILY CAROUSEL */}
         <section className="mt-5 -mx-4">
           <div className="mb-2.5 flex items-center justify-between px-5">
-            <h2 className="text-[14px] font-extrabold text-white tracking-tight flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-[#e7c97a]" />
+            <h2 className="text-[14px] font-extrabold text-[#3a2a18] tracking-tight flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-[#b8893a]" />
               تابع رحلتك الروحية
             </h2>
           </div>
