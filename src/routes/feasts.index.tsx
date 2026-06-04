@@ -217,10 +217,7 @@ function FeastsHome() {
                           اليوم
                         </span>
                       )}
-                      <div className={cn(
-                        "font-arabic-serif font-extrabold text-[#3a2a18] leading-tight line-clamp-1",
-                        isToday ? "text-[16.5px]" : "text-[15.5px]",
-                      )}>
+                      <div className="font-arabic-serif text-[15.5px] font-extrabold text-[#3a2a18] leading-tight line-clamp-1">
                         {f.title}
                       </div>
                       <div className="text-[12.5px] text-[#5a4630] line-clamp-2 mt-1 leading-relaxed">
