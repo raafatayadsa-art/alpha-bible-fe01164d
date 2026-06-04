@@ -449,9 +449,27 @@ function ReadingCard({
   const Icon = READING_ICON[reading.type];
   const tone = READING_TONE[reading.type];
 
+  const isCompleted = status === "completed";
+  const isCurrent = status === "in-progress";
+
+  const surfaceStyle = isCompleted
+    ? {
+        background: `linear-gradient(180deg, ${tone}0F, ${tone}0A)`,
+        borderColor: `${tone}38`,
+      }
+    : isCurrent
+      ? {
+          background: `linear-gradient(180deg, ${tone}14, #ffffff)`,
+          borderColor: `${tone}55`,
+        }
+      : undefined;
+
   return (
     <div id={`reading-${reading.id}`} className="scroll-mt-4">
-      <GlassSurface className="p-0 bg-white border-[#ead9b1] shadow-[0_10px_24px_-20px_rgba(120,80,30,0.5)] overflow-hidden transition-shadow duration-300 [@media(hover:hover)]:hover:shadow-[0_18px_32px_-22px_rgba(120,80,30,0.55)]">
+      <GlassSurface
+        className="p-0 border shadow-[0_10px_24px_-20px_rgba(120,80,30,0.5)] overflow-hidden transition-all duration-300 [@media(hover:hover)]:hover:shadow-[0_18px_32px_-22px_rgba(120,80,30,0.55)]"
+        style={surfaceStyle ?? { background: "#ffffff", borderColor: "#ead9b1" }}
+      >
         <div className="flex items-center gap-3 p-3">
           <div
             className="grid h-11 w-11 place-items-center rounded-xl text-white shrink-0 shadow-[0_6px_14px_-8px_rgba(0,0,0,0.35)]"
@@ -475,7 +493,8 @@ function ReadingCard({
             </div>
           </div>
           <div className="flex flex-col items-end gap-1.5 shrink-0">
-            <StatusBadge status={status} />
+            <StatusBadge status={status} tone={tone} />
+
             <button
               type="button"
               onClick={expanded ? onClose : onOpen}
