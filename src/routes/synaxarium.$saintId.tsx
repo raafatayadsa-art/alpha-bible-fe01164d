@@ -563,6 +563,12 @@ function SaintDetails() {
         </DrawerContent>
       </Drawer>
 
+      <PresentationMode
+        open={presentOpen}
+        onOpenChange={setPresentOpen}
+        content={presentationContent}
+      />
+
       <BottomDock />
     </div>
   );
