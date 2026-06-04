@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { ProfileSubShell } from "@/components/profile/Shell";
 import { CopticCross, CopticSeparator } from "@/components/coptic";
-import alphaLogoAsset from "@/assets/alpha-logo.png";
+import alphaLogoAsset from "@/assets/alpha-logo.png.asset.json";
 
 type Role =
   | "الأب"
@@ -176,7 +176,7 @@ function SummaryCard({ members }: { members: Member[] }) {
         }}
       >
         <img
-          src={alphaLogoAsset}
+          src={alphaLogoAsset.url}
           alt="Alpha"
           className="h-9 w-9 object-contain"
           style={{ filter: "drop-shadow(0 1px 2px rgba(122,74,20,0.35))" }}
