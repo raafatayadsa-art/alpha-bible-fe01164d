@@ -6,19 +6,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { CopticWatermark } from "@/components/coptic";
 
 
-import heroImg from "@/assets/home/hero.png";
 import churchHeavenly from "@/assets/home/heavenly-church.png";
 import iconBible from "@/assets/home/icon-bible.png";
-import iconHymn from "@/assets/home/icon-hymn.png";
 import iconPrayer from "@/assets/home/icon-prayer.png";
 import iconMeeting from "@/assets/home/icon-meeting.png";
 import iconCalendar from "@/assets/home/icon-calendar.png";
 import iconMeditation from "@/assets/home/icon-meditation.png";
 import continueImg from "@/assets/home/continue.png";
 import playerImg from "@/assets/home/player.png";
-import churchChalice from "@/assets/home/church-chalice.png";
-import churchPeople from "@/assets/home/church-people.png";
-import churchBell from "@/assets/home/church-bell.png";
+
 
 export const Route = createFileRoute("/home")({
   ssr: false,
