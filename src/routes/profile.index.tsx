@@ -93,16 +93,18 @@ function ProfileHero() {
         }}
       />
 
-      {/* Incense smoke */}
+      {/* Incense smoke + soft clouds */}
       <div
         aria-hidden
-        className="absolute inset-0 opacity-60 mix-blend-screen"
+        className="absolute inset-0 opacity-70 mix-blend-screen"
         style={{
           background:
+            "radial-gradient(60% 28% at 18% 26%, rgba(255,244,208,0.18), transparent 70%)," +
+            "radial-gradient(55% 24% at 82% 30%, rgba(240,225,255,0.16), transparent 70%)," +
             "radial-gradient(45% 22% at 22% 78%, rgba(240,215,140,0.18), transparent 70%)," +
             "radial-gradient(38% 20% at 78% 82%, rgba(200,170,230,0.16), transparent 70%)," +
             "radial-gradient(30% 18% at 50% 92%, rgba(240,215,140,0.14), transparent 70%)",
-          filter: "blur(8px)",
+          filter: "blur(10px)",
         }}
       />
 
@@ -120,10 +122,10 @@ function ProfileHero() {
       {/* Soft gold light rays */}
       <div
         aria-hidden
-        className="absolute inset-x-0 top-0 h-[220px] opacity-70 mix-blend-screen"
+        className="absolute inset-x-0 top-0 h-[240px] opacity-75 mix-blend-screen"
         style={{
           background:
-            "conic-gradient(from 270deg at 50% 0%, transparent 0deg, rgba(240,215,140,0.28) 12deg, transparent 28deg, rgba(240,215,140,0.32) 50deg, transparent 78deg, rgba(240,215,140,0.26) 118deg, transparent 158deg, rgba(240,215,140,0.32) 202deg, transparent 250deg, rgba(240,215,140,0.28) 292deg, transparent 332deg)",
+            "conic-gradient(from 270deg at 50% 0%, transparent 0deg, rgba(240,215,140,0.30) 12deg, transparent 28deg, rgba(240,215,140,0.34) 50deg, transparent 78deg, rgba(240,215,140,0.28) 118deg, transparent 158deg, rgba(240,215,140,0.34) 202deg, transparent 250deg, rgba(240,215,140,0.30) 292deg, transparent 332deg)",
         }}
       />
 
@@ -133,7 +135,30 @@ function ProfileHero() {
       <div aria-hidden className="absolute bottom-16 left-7 text-[#f0d78c]/25"><CopticCross size={7} /></div>
       <div aria-hidden className="absolute bottom-20 right-5 text-[#f0d78c]/30"><CopticCross size={9} /></div>
 
-      <div className="relative px-4 pt-12 pb-5 flex flex-col items-center text-center">
+      {/* Alpha Logo — top center crest */}
+      <div className="relative pt-3 flex justify-center">
+        <div
+          className="relative grid place-items-center"
+          style={{ filter: "drop-shadow(0 0 14px rgba(240,215,140,0.55)) drop-shadow(0 2px 8px rgba(0,0,0,0.45))" }}
+        >
+          <span
+            aria-hidden
+            className="absolute inset-0 -m-3 rounded-full"
+            style={{
+              background: "radial-gradient(circle, rgba(255,244,208,0.45), rgba(216,162,58,0.18) 55%, transparent 75%)",
+              filter: "blur(8px)",
+            }}
+          />
+          <img
+            src={alphaLogoAsset.url}
+            alt="Alpha"
+            className="relative h-9 w-auto object-contain select-none"
+            draggable={false}
+          />
+        </div>
+      </div>
+
+      <div className="relative px-4 pt-5 pb-5 flex flex-col items-center text-center">
         {/* Premium Orthodox Halo + Cross system */}
         <div className="relative">
           {/* Radiant outer aura — strong sacred glow */}
