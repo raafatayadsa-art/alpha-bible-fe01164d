@@ -342,36 +342,147 @@ function HomeScreen() {
           </div>
         </section>
 
-        {/* Quick access grid 3x2 */}
-        <section className="mt-4 grid grid-cols-3 gap-2.5">
-          {quickCards.map((c) => (
-            <Pressable key={c.key} to={c.to} ariaLabel={c.title} className="min-w-0">
-              <div className="relative h-full rounded-3xl bg-[#fbf3e1] border border-[#efe2c4] shadow-[0_10px_24px_-14px_rgba(120,80,30,0.35),inset_0_1px_0_rgba(255,255,255,0.7)] px-2 pt-2.5 pb-2 text-center min-w-0">
-                <div className="mx-auto h-[72px] w-full grid place-items-center overflow-hidden">
-                  <img src={c.icon} alt="" className="max-h-[72px] max-w-full object-contain drop-shadow-[0_8px_10px_rgba(80,40,10,0.18)]" draggable={false} />
+        {/* Primary modules — large horizontal swipe */}
+        <section className="mt-5 -mx-4">
+          <div className="mb-2.5 flex items-center justify-between px-5">
+            <h2 className="text-[14px] font-extrabold text-[#3a2a18] tracking-tight">المحتوى الأساسي</h2>
+            <span className="text-[11px] font-bold text-[#b8893a]">اسحب →</span>
+          </div>
+          <div className="flex gap-3 overflow-x-auto px-4 pb-3 snap-x snap-mandatory scroll-px-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {primary.map((c) => (
+              <Pressable key={c.key} to={c.to} ariaLabel={c.title} className="snap-start shrink-0">
+                <div
+                  className="relative h-[210px] w-[170px] overflow-hidden rounded-[28px] border border-white/60 text-right shadow-[0_22px_44px_-22px_rgba(60,40,15,0.55),inset_0_1px_0_rgba(255,255,255,0.6)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5"
+                  style={{ background: c.gradient }}
+                >
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background:
+                        "radial-gradient(120% 60% at 10% 0%, rgba(255,255,255,0.55), transparent 55%)," +
+                        "radial-gradient(80% 60% at 100% 100%, rgba(0,0,0,0.18), transparent 60%)",
+                    }}
+                  />
+                  <span
+                    aria-hidden
+                    className="absolute -left-2 -bottom-4 select-none font-black leading-none"
+                    style={{ fontSize: 130, color: "rgba(255,255,255,0.28)", textShadow: "0 4px 18px rgba(0,0,0,0.15)" }}
+                  >
+                    {c.glyph}
+                  </span>
+                  <div
+                    className="absolute top-3 right-3 grid h-[78px] w-[78px] place-items-center rounded-2xl"
+                    style={{
+                      background: "linear-gradient(160deg,rgba(255,255,255,0.65),rgba(255,255,255,0.15))",
+                      boxShadow: "0 14px 24px -10px rgba(80,40,10,0.35), inset 0 1px 0 rgba(255,255,255,0.9)",
+                      backdropFilter: "blur(8px)",
+                    }}
+                  >
+                    <img
+                      src={c.icon}
+                      alt=""
+                      draggable={false}
+                      className="h-[64px] w-[64px] object-contain"
+                      style={{ filter: "drop-shadow(0 8px 10px rgba(60,30,5,0.35))" }}
+                    />
+                  </div>
+                  <div className="absolute inset-x-3 bottom-3">
+                    <h3 className="text-[17px] font-extrabold leading-tight text-white" style={{ textShadow: "0 2px 6px rgba(60,30,5,0.45)" }}>
+                      {c.title}
+                    </h3>
+                    <p className="mt-0.5 text-[11px] font-medium text-white/90 leading-snug" style={{ textShadow: "0 1px 3px rgba(60,30,5,0.35)" }}>
+                      {c.sub}
+                    </p>
+                    <div className="mt-2 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-bold text-white" style={{ background: "rgba(255,255,255,0.22)", backdropFilter: "blur(6px)" }}>
+                      افتح
+                      <ChevronLeft className="h-3 w-3" />
+                    </div>
+                  </div>
                 </div>
-                <h3 className="mt-1.5 text-[12px] font-extrabold text-[#3a2a18] leading-tight [word-break:keep-all] [overflow-wrap:normal]">{c.title}</h3>
-                <p className="mt-0.5 text-[10px] leading-[1.35] text-[#6a543a] whitespace-pre-line [word-break:keep-all]">{c.sub}</p>
-                <div className="mt-1 flex justify-center">
-                  <ChevronLeft className="h-3.5 w-3.5 text-[#b8893a]" />
-                </div>
-              </div>
-            </Pressable>
-          ))}
+              </Pressable>
+            ))}
+          </div>
         </section>
 
+        {/* Secondary modules */}
+        <section className="mt-2">
+          <div className="mb-2 flex items-center justify-between px-1">
+            <h2 className="text-[13px] font-extrabold text-[#3a2a18]">اكتشف اليوم</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-2.5">
+            {secondary.map((s) => (
+              <Pressable key={s.key} to={s.to} ariaLabel={s.title}>
+                <div
+                  className="relative overflow-hidden rounded-2xl border border-white/60 p-3 text-right shadow-[0_10px_22px_-14px_rgba(60,40,15,0.40),inset_0_1px_0_rgba(255,255,255,0.7)]"
+                  style={{ background: s.bg }}
+                >
+                  <span
+                    aria-hidden
+                    className="absolute -left-2 -bottom-3 select-none font-black leading-none"
+                    style={{ fontSize: 64, color: `${s.color}1f` }}
+                  >
+                    Ⲁ
+                  </span>
+                  <div className="flex items-center gap-2.5">
+                    <div
+                      className="grid h-11 w-11 place-items-center rounded-xl"
+                      style={{
+                        background: "linear-gradient(160deg,rgba(255,255,255,0.85),rgba(255,255,255,0.35))",
+                        boxShadow: `0 8px 14px -8px ${s.color}66, inset 0 1px 0 rgba(255,255,255,0.9)`,
+                      }}
+                    >
+                      <img
+                        src={s.icon}
+                        alt=""
+                        draggable={false}
+                        className="h-8 w-8 object-contain"
+                        style={{ filter: "drop-shadow(0 4px 6px rgba(60,30,5,0.25))" }}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-[13px] font-extrabold leading-tight" style={{ color: s.color }}>
+                        {s.title}
+                      </h3>
+                      <p className="text-[10px] text-[#6a543a]/85 mt-0.5">اضغط للعرض</p>
+                    </div>
+                  </div>
+                </div>
+              </Pressable>
+            ))}
+          </div>
+        </section>
 
-        {/* Continue your journey */}
+        {/* Continue reading */}
         <section className="mt-4">
-          <Pressable to="/books" ariaLabel="الكتاب المقدس">
-            <div className="flex items-center gap-3 rounded-3xl bg-[#fbf3e1] border border-[#efe2c4] p-2.5 shadow-[0_10px_24px_-14px_rgba(120,80,30,0.30)]">
-              <img src={continueImg} alt="" className="h-[78px] w-[110px] rounded-2xl object-cover" draggable={false} />
+          <div className="mb-2 flex items-center justify-between px-1">
+            <h2 className="text-[13px] font-extrabold text-[#3a2a18]">متابعة القراءة</h2>
+            <span className="text-[11px] font-bold text-[#b8893a]">آخر ما فتحت</span>
+          </div>
+          <Pressable to="/books" ariaLabel="استكمل الكتاب المقدس">
+            <div
+              className="relative flex items-center gap-3 overflow-hidden rounded-3xl border border-white/60 p-2.5 shadow-[0_14px_28px_-16px_rgba(60,40,15,0.45),inset_0_1px_0_rgba(255,255,255,0.7)]"
+              style={{ background: "linear-gradient(135deg,#fff7e3 0%,#f0dcab 100%)" }}
+            >
+              <span
+                aria-hidden
+                className="absolute -left-3 -bottom-4 select-none font-black leading-none"
+                style={{ fontSize: 90, color: "rgba(202,161,95,0.18)" }}
+              >
+                Ⲱ
+              </span>
+              <img
+                src={continueImg}
+                alt=""
+                className="h-[78px] w-[110px] rounded-2xl object-cover shadow-[0_10px_18px_-10px_rgba(60,30,5,0.45)]"
+                draggable={false}
+              />
               <div className="flex-1 text-right">
-                <h3 className="text-[14px] font-extrabold text-[#3a2a18]">الكتاب المقدس</h3>
-                <p className="mt-0.5 text-[11px] text-[#6a543a] leading-snug">إقرا كلمة الله<br />اليوم 5 من 30 يوم</p>
+                <h3 className="text-[14px] font-extrabold text-[#3a2a18]">إنجيل يوحنا</h3>
+                <p className="mt-0.5 text-[11px] text-[#6a543a] leading-snug">الإصحاح 3 · اليوم 5 من 30</p>
                 <div className="mt-2 flex items-center gap-2">
-                  <div className="h-1.5 flex-1 rounded-full bg-[#ecdcb6] overflow-hidden">
-                    <div className="h-full rounded-full bg-gradient-to-r from-[#c79356] to-[#7a4a26]" style={{ width: "35%" }} />
+                  <div className="h-1.5 flex-1 rounded-full bg-white/60 overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: "35%", background: "linear-gradient(90deg,#caa15f,#7a4a26)" }} />
                   </div>
                   <span className="text-[11px] font-bold text-[#7a4a26]">35%</span>
                 </div>
@@ -381,29 +492,12 @@ function HomeScreen() {
           </Pressable>
         </section>
 
-        {/* From your church */}
-        <section className="mt-4">
-          <div className="mb-2 flex items-center justify-between px-1">
-            <h2 className="text-[13px] font-extrabold text-[#3a2a18]">من كنيستك</h2>
-            <button className="text-[12px] font-bold text-[#b8893a]">عرض الكل</button>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {church.map((it) => (
-              <Pressable key={it.key} ariaLabel={it.title}>
-                <div className="rounded-2xl bg-[#fbf3e1] border border-[#efe2c4] p-2.5 text-right shadow-[0_8px_18px_-12px_rgba(120,80,30,0.30)]">
-                  <img src={it.img} alt="" className="h-12 w-auto object-contain" draggable={false} />
-                  <h3 className="mt-1 text-[12px] font-bold text-[#3a2a18] leading-tight">{it.title}</h3>
-                  <p className="mt-0.5 text-[10px] leading-tight text-[#6a543a]">{it.time}</p>
-                  <p className="text-[10px] leading-tight text-[#6a543a]">{it.place}</p>
-                </div>
-              </Pressable>
-            ))}
-          </div>
-        </section>
-
         {/* Mini player */}
         <section className="mt-4">
-          <div className="flex items-center gap-3 rounded-3xl bg-[#fbf3e1] border border-[#efe2c4] p-2.5 shadow-[0_10px_24px_-14px_rgba(120,80,30,0.30)]">
+          <div
+            className="relative flex items-center gap-3 overflow-hidden rounded-3xl border border-white/60 p-2.5 shadow-[0_14px_28px_-16px_rgba(60,40,15,0.40),inset_0_1px_0_rgba(255,255,255,0.7)]"
+            style={{ background: "linear-gradient(135deg,#fff4d6 0%,#ead09a 100%)" }}
+          >
             <img src={playerImg} alt="" className="h-14 w-14 rounded-2xl object-cover" draggable={false} />
             <div className="flex-1 text-right">
               <h3 className="text-[14px] font-extrabold text-[#3a2a18]">مجدك في الأعالي</h3>
@@ -426,6 +520,7 @@ function HomeScreen() {
             </div>
           </div>
         </section>
+
       </div>
 
       {/* Bottom dock — premium iOS-style glass dock with smart hide/show */}
