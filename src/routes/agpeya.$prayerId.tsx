@@ -320,7 +320,7 @@ function GospelCard({
     <GlassCard dark={dark}>
       <div className={cn(
         "mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold",
-        dark ? "bg-[#f0d78c]/15 text-[#f0d78c]" : "bg-[#1f4032]/10 text-[#1f4032]",
+        dark ? "bg-[#f0d78c]/15 text-[#f0d78c]" : "bg-[#5a3d92]/10 text-[#5a3d92]",
       )}>
         <CopticCross className="h-3 w-3" />
         {g.reference}
