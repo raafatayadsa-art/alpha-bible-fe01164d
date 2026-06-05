@@ -428,9 +428,9 @@ function HomeScreen() {
           <Coverflow
             items={primary}
             direction={1}
-            height={228}
+            height={244}
             cardWidthPct={62}
-            peekPct={54}
+            peekPct={46}
             getKey={(c) => c.key}
             renderCard={(c) => (
               <Link to={c.to as any} aria-label={c.title} className="block">
@@ -451,9 +451,9 @@ function HomeScreen() {
           <Coverflow
             items={daily}
             direction={-1}
-            height={150}
+            height={164}
             cardWidthPct={66}
-            peekPct={56}
+            peekPct={48}
             getKey={(d) => d.key}
             renderCard={(d) => (
               <Link to={d.to as any} aria-label={d.title} className="block">
@@ -462,6 +462,7 @@ function HomeScreen() {
             )}
           />
         </section>
+
 
         {/* CHURCH NEWS — featured */}
         <section className="mt-4">
