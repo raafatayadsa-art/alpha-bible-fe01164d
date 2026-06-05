@@ -47,7 +47,16 @@ export type ChurchPost = {
   image: string;
   date: string;
   author: string;
+  /** Legacy boolean. Prefer pinnedUntil. If true with no pinnedUntil, treated as pinned indefinitely. */
   pinned?: boolean;
+  /** Epoch ms — pinned while now < pinnedUntil. */
+  pinnedUntil?: number;
+  /** Epoch ms — post expires (hidden from main feed) once now >= expiresAt. */
+  expiresAt?: number | null;
+  /** Manually archived (always hidden from main feed). */
+  archived?: boolean;
+  /** Prayer requests: marked completed / closed. */
+  closed?: boolean;
   details?: ChurchPostDetails;
 };
 

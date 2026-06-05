@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { X, ImagePlus, Send, ShieldCheck } from "lucide-react";
 import { POST_TYPE_META, type ChurchPost, type ChurchPostDetails, type PostType } from "@/data/church-posts";
-import { newPostId, saveUserPost } from "./post-store";
+import { computeDefaultExpiry, newPostId, saveUserPost } from "./post-store";
 import newsCandle from "@/assets/home/news-candle.jpg";
 import newsYouth from "@/assets/home/news-youth.jpg";
 import newsMass from "@/assets/home/news-mass.jpg";
@@ -150,14 +150,27 @@ type FormState = {
   returnDate: string;
   seats: string;
   places: string;
+  expiresAt: string; // datetime-local string ("YYYY-MM-DDTHH:mm"), "" means no expiration
 };
 
 const EMPTY: FormState = {
   title: "", body: "", author: "خدمة الإعلام", image: null,
   date: "", time: "", place: "", priest: "", audience: "",
   groom: "", bride: "", personName: "", deathDate: "",
-  verse: "", returnDate: "", seats: "", places: "",
+  verse: "", returnDate: "", seats: "", places: "", expiresAt: "",
 };
+
+function toDatetimeLocal(ms: number | null): string {
+  if (!ms) return "";
+  const d = new Date(ms);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function fromDatetimeLocal(s: string): number | null {
+  if (!s) return null;
+  const ms = Date.parse(s);
+  return Number.isFinite(ms) ? ms : null;
+}
 
 function formatHijriOrToday(): string {
   const d = new Date();
@@ -174,42 +187,55 @@ function buildPost(cat: CategoryDef, f: FormState): ChurchPost | null {
   const trim = (s: string) => s.trim();
   const has = (s: string) => trim(s).length > 0;
 
+  const userExpiry = fromDatetimeLocal(f.expiresAt);
+  const finalize = (base: ChurchPost): ChurchPost => {
+    const exp =
+      userExpiry !== null
+        ? userExpiry
+        : computeDefaultExpiry(base.type, {
+            date: f.date,
+            time: f.time,
+            returnDate: f.returnDate,
+          });
+    return { ...base, expiresAt: exp };
+  };
+
   switch (cat.key) {
     case "news":
     case "announcement":
     case "report": {
       if (!has(f.title) || !has(f.body)) return null;
-      return {
+      return finalize({
         id, type: cat.type, title: trim(f.title), body: trim(f.body),
         excerpt: trim(f.body).slice(0, 140), image, date, author, details,
-      };
+      });
     }
     case "prayer": {
       if (!has(f.title) || !has(f.body)) return null;
-      return {
+      return finalize({
         id, type: "prayer", title: trim(f.title), body: trim(f.body),
         excerpt: trim(f.body).slice(0, 140), image, date, author, details,
-      };
+      });
     }
     case "liturgy": {
       if (!has(f.title) || !has(f.date)) return null;
       details.date = f.date; details.time = f.time; details.place = f.place; details.priest = f.priest;
-      return {
+      return finalize({
         id, type: "liturgy", title: trim(f.title),
         body: trim(f.body) || `قداس ${trim(f.title)}${has(f.place) ? ` بـ${trim(f.place)}` : ""}.`,
         excerpt: `${f.date}${has(f.time) ? ` · ${f.time}` : ""}${has(f.place) ? ` · ${f.place}` : ""}`,
         image, date, author, details,
-      };
+      });
     }
     case "meeting": {
       if (!has(f.title) || !has(f.date)) return null;
       details.date = f.date; details.time = f.time; details.place = f.place; details.audience = f.audience;
-      return {
+      return finalize({
         id, type: "meeting", title: trim(f.title),
         body: trim(f.body) || `اجتماع ${trim(f.title)}${has(f.audience) ? ` · ${trim(f.audience)}` : ""}.`,
         excerpt: `${f.date}${has(f.time) ? ` · ${f.time}` : ""}${has(f.place) ? ` · ${f.place}` : ""}`,
         image, date, author, details,
-      };
+      });
     }
     case "trip": {
       if (!has(f.title) || !has(f.date)) return null;
@@ -217,12 +243,12 @@ function buildPost(cat: CategoryDef, f: FormState): ChurchPost | null {
       details.date = f.date; details.returnDate = f.returnDate;
       details.places = f.places;
       if (!Number.isNaN(seatsN) && seatsN > 0) details.seats = seatsN;
-      return {
+      return finalize({
         id, type: "trip", title: trim(f.title),
         body: trim(f.body) || `رحلة إلى ${trim(f.places) || trim(f.title)}.`,
         excerpt: `${f.date}${has(f.returnDate) ? ` → ${f.returnDate}` : ""}${seatsN > 0 ? ` · ${seatsN} مكان` : ""}`,
         image, date, author, details,
-      };
+      });
     }
     case "wedding-full":
     case "wedding-half": {
@@ -230,13 +256,13 @@ function buildPost(cat: CategoryDef, f: FormState): ChurchPost | null {
       details.groom = f.groom; details.bride = f.bride;
       details.date = f.date; details.place = f.place; details.verse = f.verse;
       const label = cat.eventType || "فرح";
-      return {
+      return finalize({
         id, type: "wedding",
         title: `${label} مبارك: ${trim(f.groom)} و${trim(f.bride)}`,
         body: trim(f.body) || `نشارككم فرحة ${label} الأخ ${trim(f.groom)} والأخت ${trim(f.bride)}.`,
         excerpt: `${f.date}${has(f.place) ? ` · ${trim(f.place)}` : ""}`,
         image, date, author, details,
-      };
+      });
     }
     case "condolence":
     case "fortyDay":
@@ -244,13 +270,13 @@ function buildPost(cat: CategoryDef, f: FormState): ChurchPost | null {
       if (!has(f.personName)) return null;
       details.personName = f.personName; details.deathDate = f.deathDate; details.verse = f.verse;
       const label = cat.eventType || "تعزية";
-      return {
+      return finalize({
         id, type: "condolence",
         title: `${label}: ${trim(f.personName)}`,
         body: trim(f.body) || `بقلوب مؤمنة بقيامة الموتى، نطلب صلواتكم من أجل نياحة ${trim(f.personName)}.`,
         excerpt: `${has(f.deathDate) ? f.deathDate + " · " : ""}${trim(f.body).slice(0, 100)}`,
         image, date, author, details,
-      };
+      });
     }
     default:
       return null;
@@ -354,6 +380,51 @@ function CategoryForm({ cat, f, set }: { cat: CategoryDef; f: FormState; set: (k
       return null;
   }
 }
+
+/* --------------------------- Expiration field -------------------------------- */
+const EXPIRY_HINTS: Record<CategoryKey, string> = {
+  news: "اختياري — يُنصح بضبط تاريخ انتهاء.",
+  announcement: "اختياري — يُنصح بضبط تاريخ انتهاء.",
+  liturgy: "افتراضيًا: ينتهي تلقائيًا بعد موعد القداس.",
+  meeting: "افتراضيًا: ينتهي تلقائيًا بعد موعد الاجتماع.",
+  trip: "افتراضيًا: ينتهي تلقائيًا بعد تاريخ العودة.",
+  "wedding-full": "افتراضيًا: 7 أيام، يمكن التعديل.",
+  "wedding-half": "افتراضيًا: 7 أيام، يمكن التعديل.",
+  condolence: "افتراضيًا: 7 أيام، يمكن التعديل.",
+  fortyDay: "افتراضيًا: 7 أيام، يمكن التعديل.",
+  annual: "افتراضيًا: 7 أيام، يمكن التعديل.",
+  report: "بدون تاريخ انتهاء افتراضيًا (اختياري).",
+  prayer: "ينتهي فقط عند إغلاق الطلبة يدويًا.",
+};
+
+function ExpirationField({
+  cat, f, set,
+}: { cat: CategoryDef; f: FormState; set: (k: keyof FormState, v: string | null) => void }) {
+  return (
+    <div className="mt-3 rounded-2xl bg-white/85 border border-[#efe2c4] p-3 text-right">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[10.5px] font-bold text-[#7a5a30]">{EXPIRY_HINTS[cat.key]}</span>
+        <span className="text-[11.5px] font-extrabold text-[#3a2a18]">تاريخ الانتهاء</span>
+      </div>
+      <input
+        type="datetime-local"
+        className="w-full rounded-xl bg-white/90 border border-[#efe2c4] px-3 py-2 text-[13px] text-[#3a2a18] outline-none focus:border-[#c79356]"
+        value={f.expiresAt}
+        onChange={(e) => set("expiresAt", e.target.value)}
+      />
+      {f.expiresAt ? (
+        <button
+          type="button"
+          onClick={() => set("expiresAt", "")}
+          className="mt-1.5 text-[10.5px] font-extrabold text-[#a8344f]"
+        >
+          مسح — استخدام الافتراضي
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
 
 /* --------------------------------- Builder ----------------------------------- */
 export function PostBuilder({ onClose }: { onClose: () => void }) {
@@ -462,6 +533,8 @@ export function PostBuilder({ onClose }: { onClose: () => void }) {
           </div>
 
           <CategoryForm cat={cat} f={form} set={set} />
+
+          <ExpirationField cat={cat} f={form} set={set} />
 
           {error ? (
             <p className="mt-3 text-[12px] font-extrabold text-[#a8344f] text-right">{error}</p>
