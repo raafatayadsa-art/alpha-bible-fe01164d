@@ -8,7 +8,7 @@ import {
   CHURCH_PLACES, KIND_LABEL, PLACE_STATS, mapsUrlFor, getRecentPlaceIds,
   formatDistance, findPlace, type ChurchPlace, type PlaceKind,
 } from "@/data/church-places";
-import heroChurch from "@/assets/home/heavenly-church.png";
+import heroChurch from "@/assets/home/hero-church-premium.jpg";
 
 export const Route = createFileRoute("/church/directory")({
   ssr: false,
