@@ -628,8 +628,7 @@ function ChurchScreen() {
       <div className="relative mx-auto w-full max-w-[440px] px-4 pt-2 pb-[calc(env(safe-area-inset-bottom,0px)+120px)] space-y-5">
         <HeroChurchCard />
         <QuickGrid />
-        <Announcement />
-        <LatestNews />
+        <ChurchPostsFeed />
         <UpcomingMeetings />
         <LiveBroadcast />
       </div>
