@@ -495,11 +495,48 @@ function SmallPostCard({ post }: { post: ChurchPost }) {
   );
 }
 
+function HorizontalPostCard({ post }: { post: ChurchPost }) {
+  return (
+    <Link
+      to="/church/post/$id"
+      params={{ id: post.id }}
+      className="block shrink-0 w-[260px] active:scale-[0.98] transition-transform"
+    >
+      <Glass padded={false} className="overflow-hidden">
+        <div className="relative h-[140px]">
+          <img src={post.image} alt={post.title} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1a0f04]/85 via-[#1a0f04]/15 to-transparent" />
+          <div className="absolute top-2 right-2 flex items-center gap-1.5">
+            {post.pinned && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#b8893a] px-2 py-0.5 text-[9.5px] font-extrabold text-white border border-white/40">
+                <Pin className="h-3 w-3" strokeWidth={2.6} /> مثبت
+              </span>
+            )}
+            <CategoryPill type={post.type} />
+          </div>
+          <div className="absolute bottom-2 right-2.5 left-2.5 text-right text-white">
+            <h3 className="font-arabic-serif text-[13.5px] font-extrabold leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.65)] line-clamp-2">
+              {post.title}
+            </h3>
+          </div>
+        </div>
+        <div className="px-3 py-2.5 text-right">
+          <p className="text-[11.5px] text-[#6a543a] leading-snug line-clamp-2">{post.excerpt}</p>
+          <p className="mt-1.5 inline-flex items-center gap-1.5 text-[10px] font-bold text-[#8a6a3a]">
+            <CalendarDays className="h-3 w-3 text-[#b8893a]" />
+            {post.date}
+          </p>
+        </div>
+      </Glass>
+    </Link>
+  );
+}
+
 function ChurchPostsFeed() {
-  // Featured = first pinned, else first post. Rest go below.
   const sorted = [...CHURCH_POSTS].sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned));
-  const featured = sorted[0];
-  const rest = sorted.slice(1);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  // Reverse direction compared to Quick Access (negative direction).
+  useAutoMarquee(trackRef, { speed: 18, direction: -1 });
 
   return (
     <section>
@@ -517,11 +554,16 @@ function ChurchPostsFeed() {
           </button>
         }
       />
-      <div className="space-y-3">
-        {featured && <FeaturedPostCard post={featured} />}
-        {rest.map((p) => (
-          <SmallPostCard key={p.id} post={p} />
-        ))}
+      <div
+        ref={trackRef}
+        className="-mx-4 overflow-x-auto no-scrollbar scroll-smooth"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
+        <div className="flex gap-3 px-4 pb-2">
+          {sorted.map((p) => (
+            <HorizontalPostCard key={p.id} post={p} />
+          ))}
+        </div>
       </div>
     </section>
   );
