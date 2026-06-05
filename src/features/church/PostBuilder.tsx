@@ -256,13 +256,13 @@ function buildPost(cat: CategoryDef, f: FormState): ChurchPost | null {
       details.groom = f.groom; details.bride = f.bride;
       details.date = f.date; details.place = f.place; details.verse = f.verse;
       const label = cat.eventType || "فرح";
-      return {
+      return finalize({
         id, type: "wedding",
         title: `${label} مبارك: ${trim(f.groom)} و${trim(f.bride)}`,
         body: trim(f.body) || `نشارككم فرحة ${label} الأخ ${trim(f.groom)} والأخت ${trim(f.bride)}.`,
         excerpt: `${f.date}${has(f.place) ? ` · ${trim(f.place)}` : ""}`,
         image, date, author, details,
-      };
+      });
     }
     case "condolence":
     case "fortyDay":
