@@ -270,13 +270,13 @@ function buildPost(cat: CategoryDef, f: FormState): ChurchPost | null {
       if (!has(f.personName)) return null;
       details.personName = f.personName; details.deathDate = f.deathDate; details.verse = f.verse;
       const label = cat.eventType || "تعزية";
-      return {
+      return finalize({
         id, type: "condolence",
         title: `${label}: ${trim(f.personName)}`,
         body: trim(f.body) || `بقلوب مؤمنة بقيامة الموتى، نطلب صلواتكم من أجل نياحة ${trim(f.personName)}.`,
         excerpt: `${has(f.deathDate) ? f.deathDate + " · " : ""}${trim(f.body).slice(0, 100)}`,
         image, date, author, details,
-      };
+      });
     }
     default:
       return null;
