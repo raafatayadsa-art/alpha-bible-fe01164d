@@ -234,17 +234,19 @@ function MiniStat({ icon: Icon, value, label }: { icon: any; value: string; labe
   );
 }
 
-function FloatAction({ icon: Icon, label }: { icon: any; label: string }) {
+function FloatAction({ icon: Icon, label, onClick }: { icon: any; label: string; onClick?: () => void }) {
   return (
     <button
       type="button"
       aria-label={label}
+      onClick={onClick}
       className="inline-grid h-9 w-9 place-items-center rounded-full bg-white/25 backdrop-blur-xl border border-white/40 text-white shadow-[0_8px_20px_-10px_rgba(0,0,0,0.6)] active:scale-90 transition-transform"
     >
       <Icon className="h-4 w-4" strokeWidth={2.2} />
     </button>
   );
 }
+
 
 function StatTile({ icon: Icon, value, label, tone }: { icon: any; value: string; label: string; tone: string }) {
   return (
