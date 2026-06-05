@@ -12,7 +12,8 @@ import { CopticWatermark } from "@/components/coptic";
 import { CHURCH_POSTS, POST_TYPE_META, type ChurchPost } from "@/data/church-posts";
 import {
   PRAYER_REQUESTS, PRAYER_TABS, filterPrayers, prayerStats,
-  type PrayerFilter, type PrayerRequest,
+  ENCOURAGEMENT_MESSAGES, ENCOURAGEMENT_TOTAL, ENCOURAGEMENT_CHIPS, ENCOURAGEMENT_MAX,
+  type PrayerFilter, type PrayerRequest, type EncouragementMessage,
 } from "@/data/prayer-requests";
 
 import cardChurch from "@/assets/home/card-church.jpg";
