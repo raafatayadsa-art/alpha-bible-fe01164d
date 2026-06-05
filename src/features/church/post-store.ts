@@ -14,23 +14,33 @@ type RepliesMap = Record<string, Reply[]>;
 
 /* ------------------------ tiny pub/sub on localStorage ------------------------ */
 const listeners = new Set<() => void>();
-function emit() {
+function bumpVersion() {
+  cache.clear();
   listeners.forEach((l) => l());
 }
 function subscribe(l: () => void) {
   listeners.add(l);
-  const onStorage = () => l();
+  const onStorage = () => {
+    cache.clear();
+    l();
+  };
   if (typeof window !== "undefined") window.addEventListener("storage", onStorage);
   return () => {
     listeners.delete(l);
     if (typeof window !== "undefined") window.removeEventListener("storage", onStorage);
   };
 }
+
+/** Cache parsed snapshots so useSyncExternalStore gets stable references. */
+const cache = new Map<string, unknown>();
 function read<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
+  if (cache.has(key)) return cache.get(key) as T;
   try {
     const raw = window.localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
+    const v = raw ? (JSON.parse(raw) as T) : fallback;
+    cache.set(key, v);
+    return v;
   } catch {
     return fallback;
   }
@@ -39,7 +49,8 @@ function write<T>(key: string, value: T) {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
-    emit();
+    cache.set(key, value);
+    bumpVersion();
   } catch {
     /* quota / disabled storage */
   }
