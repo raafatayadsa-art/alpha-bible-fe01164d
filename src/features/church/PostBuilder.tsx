@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { X, ImagePlus, Send, ShieldCheck } from "lucide-react";
 import { POST_TYPE_META, type ChurchPost, type ChurchPostDetails, type PostType } from "@/data/church-posts";
-import { newPostId, saveUserPost } from "./post-store";
+import { computeDefaultExpiry, newPostId, saveUserPost } from "./post-store";
 import newsCandle from "@/assets/home/news-candle.jpg";
 import newsYouth from "@/assets/home/news-youth.jpg";
 import newsMass from "@/assets/home/news-mass.jpg";
