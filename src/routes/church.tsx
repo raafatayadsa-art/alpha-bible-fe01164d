@@ -579,7 +579,124 @@ function PostCardActions({ post }: { post: ChurchPost }) {
   );
 }
 
+function PinMenu({ post, onClose }: { post: ChurchPost; onClose: () => void }) {
+  const [customOpen, setCustomOpen] = useState(false);
+  const [custom, setCustom] = useState("");
+  const pinned = isPinned(post);
+
+  const apply = (days: number) => {
+    pinForDays(post.id, days);
+    onClose();
+  };
+  const applyCustom = () => {
+    const ms = Date.parse(custom);
+    if (Number.isFinite(ms) && ms > Date.now()) {
+      pinUntil(post.id, ms);
+      onClose();
+    }
+  };
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-[65] flex items-end sm:items-center justify-center px-3 pb-[max(env(safe-area-inset-bottom,0px),12px)]"
+    >
+      <button
+        type="button"
+        aria-label="إغلاق"
+        onClick={onClose}
+        className="absolute inset-0 bg-[#1a0f04]/55 backdrop-blur-sm"
+      />
+      <div className="relative w-full max-w-[380px] rounded-[24px] border border-white/75 bg-[#fbf3e1]/95 backdrop-blur-2xl shadow-[0_30px_60px_-20px_rgba(60,40,16,0.6)] p-4 text-right">
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid h-8 w-8 place-items-center rounded-full bg-white/90 border border-[#efe2c4] text-[#7a5a30] active:scale-90"
+            aria-label="إغلاق"
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <h3 className="font-arabic-serif text-[14.5px] font-extrabold text-[#3a2a18]">تثبيت المنشور</h3>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {[1, 3, 7].map((d) => (
+            <button
+              key={d}
+              type="button"
+              onClick={() => apply(d)}
+              className="rounded-2xl bg-white/90 border border-[#efe2c4] py-2.5 text-[12px] font-extrabold text-[#3a2a18] active:scale-95"
+            >
+              {d.toLocaleString("ar-EG")} يوم
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setCustomOpen((v) => !v)}
+          className="mt-2.5 w-full rounded-2xl bg-white/90 border border-[#efe2c4] py-2.5 text-[12px] font-extrabold text-[#3a2a18] active:scale-95"
+        >
+          حتى تاريخ مخصص
+        </button>
+        {customOpen ? (
+          <div className="mt-2 flex items-center gap-2">
+            <input
+              type="datetime-local"
+              value={custom}
+              onChange={(e) => setCustom(e.target.value)}
+              className="flex-1 rounded-xl bg-white/95 border border-[#efe2c4] px-3 py-2 text-[12.5px] text-[#3a2a18] outline-none"
+            />
+            <button
+              type="button"
+              onClick={applyCustom}
+              className="rounded-full bg-gradient-to-l from-[#7a4a26] to-[#b8893a] text-white text-[11.5px] font-extrabold px-3 py-2 active:scale-95"
+            >
+              تثبيت
+            </button>
+          </div>
+        ) : null}
+        {pinned ? (
+          <button
+            type="button"
+            onClick={() => { unpinPost(post.id); onClose(); }}
+            className="mt-3 w-full rounded-2xl bg-[#fff0f2] border border-[#f1c8cf] py-2.5 text-[12px] font-extrabold text-[#a8344f] active:scale-95"
+          >
+            إلغاء التثبيت
+          </button>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => { archivePost(post.id); onClose(); }}
+          className="mt-2 w-full rounded-2xl bg-white/70 border border-[#efe2c4] py-2.5 text-[11.5px] font-extrabold text-[#6a543a] active:scale-95"
+        >
+          أرشفة المنشور
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ManageButton({ post }: { post: ChurchPost }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button
+        type="button"
+        aria-label="إدارة المنشور"
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen(true); }}
+        className="absolute top-2 left-2 grid h-7 w-7 place-items-center rounded-full bg-white/85 border border-white/60 text-[#7a5a30] backdrop-blur active:scale-90 shadow"
+      >
+        <Pin className={"h-3.5 w-3.5 " + (isPinned(post) ? "text-[#b8893a] fill-current" : "")} strokeWidth={2.4} />
+      </button>
+      {open ? <PinMenu post={post} onClose={() => setOpen(false)} /> : null}
+    </>
+  );
+}
+
 function HorizontalPostCard({ post }: { post: ChurchPost }) {
+  const canManage = useCanManagePosts();
+  const pinned = isPinned(post);
   return (
     <div className="shrink-0 w-[260px]">
       <Glass padded={false} className="overflow-hidden">
@@ -592,13 +709,14 @@ function HorizontalPostCard({ post }: { post: ChurchPost }) {
             <img src={post.image} alt={post.title} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#1a0f04]/85 via-[#1a0f04]/15 to-transparent" />
             <div className="absolute top-2 right-2 flex items-center gap-1.5">
-              {post.pinned && (
+              {pinned && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-[#b8893a] px-2 py-0.5 text-[9.5px] font-extrabold text-white border border-white/40">
                   <Pin className="h-3 w-3" strokeWidth={2.6} /> مثبت
                 </span>
               )}
               <CategoryPill type={post.type} />
             </div>
+            {canManage ? <ManageButton post={post} /> : null}
             <div className="absolute bottom-2 right-2.5 left-2.5 text-right text-white">
               <h3 className="font-arabic-serif text-[13.5px] font-extrabold leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.65)] line-clamp-2">
                 {post.title}
@@ -622,8 +740,7 @@ function HorizontalPostCard({ post }: { post: ChurchPost }) {
 }
 
 function ChurchPostsFeed() {
-  const allPosts = useAllPosts();
-  const sorted = [...allPosts].sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned));
+  const sorted = useActivePosts();
   const trackRef = useRef<HTMLDivElement | null>(null);
   useAutoMarquee(trackRef, { speed: 18, direction: -1 });
   const [builderOpen, setBuilderOpen] = useState(false);
@@ -633,16 +750,24 @@ function ChurchPostsFeed() {
       <SectionTitle
         title="منشورات الكنيسة"
         action={
-          <button
-            type="button"
-            aria-label="منشور جديد"
-            title="إنشاء منشور (للكهنة والخدام)"
-            onClick={() => setBuilderOpen(true)}
-            className="inline-flex items-center gap-1 rounded-full bg-gradient-to-l from-[#7a4a26] to-[#b8893a] text-white text-[11px] font-extrabold px-3 py-1.5 shadow-[0_10px_20px_-10px_rgba(122,74,38,0.6)] active:scale-95 transition-transform"
-          >
-            <Plus className="h-3.5 w-3.5" strokeWidth={2.6} />
-            منشور
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/church/archive"
+              className="text-[11px] font-bold text-[#b8893a]"
+            >
+              الأرشيف
+            </Link>
+            <button
+              type="button"
+              aria-label="منشور جديد"
+              title="إنشاء منشور (للكهنة والخدام)"
+              onClick={() => setBuilderOpen(true)}
+              className="inline-flex items-center gap-1 rounded-full bg-gradient-to-l from-[#7a4a26] to-[#b8893a] text-white text-[11px] font-extrabold px-3 py-1.5 shadow-[0_10px_20px_-10px_rgba(122,74,38,0.6)] active:scale-95 transition-transform"
+            >
+              <Plus className="h-3.5 w-3.5" strokeWidth={2.6} />
+              منشور
+            </button>
+          </div>
         }
       />
       <div
