@@ -935,7 +935,7 @@ function EncourageModal({
 }
 
 
-function PrayerPreview({ item }: { item: PrayerRequest }) {
+function PrayerPreview({ item, liveCount }: { item: PrayerRequest; liveCount: number }) {
   return (
     <Link
       to="/church/prayer"
