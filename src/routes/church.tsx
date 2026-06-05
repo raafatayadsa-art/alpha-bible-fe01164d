@@ -929,11 +929,13 @@ function ContactsCard() {
 
 function MessageRow({ contact, unread }: { contact: Contact; unread?: number }) {
   const tone = ROLE_TONE[contact.roleType];
-  return (
-    <button
-      type="button"
-      className="w-full flex items-center gap-3 rounded-2xl bg-white/70 border border-white/80 p-2.5 text-right active:scale-[0.98] transition-transform shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_14px_-12px_rgba(120,80,30,0.4)]"
-    >
+  const allowed = contact.messagingAllowed;
+  const className =
+    "w-full flex items-center gap-3 rounded-2xl bg-white/70 border border-white/80 p-2.5 text-right transition-transform shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_14px_-12px_rgba(120,80,30,0.4)] " +
+    (allowed ? "active:scale-[0.98]" : "opacity-70 cursor-not-allowed");
+
+  const inner = (
+    <>
       <div
         className="h-11 w-11 shrink-0 rounded-full grid place-items-center text-[#f3e6c4] font-arabic-serif text-[16px] font-extrabold border-2 border-white shadow-[0_6px_14px_-6px_rgba(60,40,16,0.5)]"
         style={{ background: tone.bg }}
@@ -945,16 +947,46 @@ function MessageRow({ contact, unread }: { contact: Contact; unread?: number }) 
           <p className="font-arabic-serif text-[13.5px] font-extrabold text-[#3a2a18] leading-tight truncate">
             {contact.name}
           </p>
-          {unread ? (
+          {allowed && unread ? (
             <span className="inline-grid h-5 min-w-5 px-1.5 place-items-center rounded-full bg-[#c44569] text-white text-[10px] font-extrabold">
               {unread}
             </span>
           ) : null}
         </div>
-        <p className="mt-0.5 text-[10.5px] text-[#7a5a30] truncate">اضغط لبدء محادثة خاصة</p>
+        <p className="mt-0.5 inline-flex items-center gap-1 text-[10.5px] text-[#7a5a30] truncate">
+          {allowed ? (
+            "اضغط لبدء محادثة خاصة"
+          ) : (
+            <>
+              <Lock className="h-2.5 w-2.5" /> المحادثة معطّلة بإذن الكاهن
+            </>
+          )}
+        </p>
       </div>
-      <Send className="h-4 w-4 text-[#c79356] -scale-x-100 shrink-0" strokeWidth={2.4} />
-    </button>
+      {allowed ? (
+        <Send className="h-4 w-4 text-[#c79356] -scale-x-100 shrink-0" strokeWidth={2.4} />
+      ) : (
+        <Lock className="h-4 w-4 text-[#a08862] shrink-0" strokeWidth={2.2} />
+      )}
+    </>
+  );
+
+  if (!allowed) {
+    return (
+      <div className={className} aria-disabled="true">
+        {inner}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      to="/church/chat/$contactId"
+      params={{ contactId: contact.id }}
+      className={className}
+    >
+      {inner}
+    </Link>
   );
 }
 
