@@ -320,7 +320,8 @@ function UpcomingActivities({ extra }: { extra: Activity[] }) {
 }
 
 /* ----------------------------- Management toolbar -------------------------- */
-type Action = { key: string; label: string; icon: any; tone: string };
+type ActionKey = "new-service" | "new-activity" | "new-meeting" | "new-announcement";
+type Action = { key: ActionKey; label: string; icon: any; tone: string };
 
 const PRIEST_ACTIONS: Action[] = [
   { key: "new-service",  label: "خدمة جديدة",   icon: Plus,         tone: "#7a4a26" },
@@ -331,10 +332,11 @@ const LEADER_ACTIONS: Action[] = [
   { key: "new-announcement", label: "إعلان جديد",  icon: MegaphoneIcon, tone: "#a8669a" },
 ];
 
-function ActionButton({ a }: { a: Action }) {
+function ActionButton({ a, onClick }: { a: Action; onClick: () => void }) {
   return (
     <button
       type="button"
+      onClick={onClick}
       className="inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/85 px-3 py-2 text-[12px] font-extrabold text-[#3a2a18] backdrop-blur-md shadow-[0_10px_24px_-14px_rgba(120,80,30,0.5),inset_0_1px_0_rgba(255,255,255,0.9)] active:scale-95 transition-transform"
     >
       <span
@@ -385,7 +387,7 @@ function RoleSwitcher({ role }: { role: ChurchRole }) {
   );
 }
 
-function ManagementBar({ role }: { role: ChurchRole }) {
+function ManagementBar({ role, onAction }: { role: ChurchRole; onAction: (k: ActionKey) => void }) {
   const isPriest = role === "priest" || role === "admin";
   const isLeader = role === "leader" || isPriest;
   const actions: Action[] = [
@@ -406,25 +408,81 @@ function ManagementBar({ role }: { role: ChurchRole }) {
         <span className="text-[10.5px] font-bold text-[#b8893a]">{ROLE_LABEL[role]}</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {actions.map((a) => <ActionButton key={a.key} a={a} />)}
+        {actions.map((a) => <ActionButton key={a.key} a={a} onClick={() => onAction(a.key)} />)}
       </div>
     </section>
   );
 }
 
+/* --------------------------- adapters: user -> view ------------------------ */
+const AR_MONTHS = [
+  "يناير","فبراير","مارس","أبريل","مايو","يونيو",
+  "يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر",
+];
+const KIND_TONES: Record<string, string> = {
+  "اجتماع": "#5b8fd1", "مؤتمر": "#7a4a26", "رحلة": "#b8893a",
+  "يوم روحي": "#1f8a5a", "خلوة": "#8a6ec1", "تدريب خدام": "#a8669a",
+};
+function userActivityToCard(u: UserActivity): Activity {
+  const d = u.date ? new Date(u.date) : new Date();
+  const repeatTag = u.repeat && u.repeat !== "none" ? ` · ${REPEAT_LABELS[u.repeat]}` : "";
+  return {
+    id: u.id,
+    kind: u.kind as any,
+    title: u.title,
+    day: String(d.getDate()).padStart(2, "0"),
+    month: AR_MONTHS[d.getMonth()] ?? "",
+    time: (u.time ?? "—") + repeatTag,
+    place: u.location ?? "—",
+    tone: KIND_TONES[u.kind] ?? "#8a6ec1",
+  };
+}
+const TYPE_PRESET: Record<string, Category | undefined> = Object.fromEntries(
+  CATEGORIES.map((c) => [c.key, c]),
+);
+function userServiceToCard(s: UserService): Category {
+  const preset = TYPE_PRESET[s.type];
+  const servantCount = s.servants ? s.servants.split(/[،,]/).filter(Boolean).length : 0;
+  return {
+    key: s.id,
+    label: s.name,
+    icon: preset?.icon ?? Users,
+    tone: preset?.tone ?? "#8a6ec1",
+    members: 0,
+    servants: servantCount,
+    img: s.image || preset?.img || cardChurch,
+  };
+}
+
 /* --------------------------------- Screen ---------------------------------- */
 function ServiceHub() {
   const role = useChurchRole();
+  const userServices = useUserServices();
+  const userActivities = useUserActivities();
+  const [builder, setBuilder] = useState<null | "service" | "activity">(null);
+
+  const onAction = (k: ActionKey) => {
+    if (k === "new-service") setBuilder("service");
+    else if (k === "new-activity" || k === "new-meeting") setBuilder("activity");
+    // "new-announcement" left as no-op here (handled by Posts system)
+  };
+
+  const extraCategories = userServices.map(userServiceToCard);
+  const extraActivities = userActivities.map(userActivityToCard);
+
   return (
     <div dir="rtl" className="min-h-screen bg-[#f4ead8]">
       <Header />
       <main className="px-4 pb-[max(env(safe-area-inset-bottom),16px)] space-y-5">
         <Hero />
         <RoleSwitcher role={role} />
-        <ManagementBar role={role} />
-        <CategoriesGrid />
-        <UpcomingActivities />
+        <ManagementBar role={role} onAction={onAction} />
+        <CategoriesGrid extra={extraCategories} />
+        <UpcomingActivities extra={extraActivities} />
       </main>
+      {builder && (
+        <ServiceBuilder mode={builder} onClose={() => setBuilder(null)} />
+      )}
     </div>
   );
 }
