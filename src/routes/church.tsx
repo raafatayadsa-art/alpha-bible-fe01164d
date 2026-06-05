@@ -213,15 +213,28 @@ function MiniStat({ icon: Icon, value, label }: { icon: any; value: string; labe
   );
 }
 
-function FloatAction({ icon: Icon, label }: { icon: any; label: string }) {
+function MiniStat({ icon: Icon, value, label }: { icon: any; value: string; label: string }) {
   return (
-    <button
-      type="button"
-      aria-label={label}
-      className="inline-grid h-9 w-9 place-items-center rounded-full bg-white/25 backdrop-blur-xl border border-white/40 text-white shadow-[0_8px_20px_-10px_rgba(0,0,0,0.6)] active:scale-90 transition-transform"
-    >
-      <Icon className="h-4 w-4" strokeWidth={2.2} />
-    </button>
+    <div className="rounded-xl bg-white/75 border border-white/80 px-2 py-1.5 text-center min-w-[46px] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_4px_10px_-8px_rgba(120,80,30,0.4)]">
+      <Icon className="mx-auto h-3.5 w-3.5 text-[#b8893a]" strokeWidth={2} />
+      <p className="mt-0.5 text-[11.5px] font-extrabold text-[#3a2a18] leading-none">{value}</p>
+      <p className="mt-0.5 text-[8.5px] text-[#6a543a] leading-none">{label}</p>
+    </div>
+  );
+}
+
+function StatTile({ icon: Icon, value, label, tone }: { icon: any; value: string; label: string; tone: string }) {
+  return (
+    <div className="rounded-2xl bg-white/80 border border-white/80 px-2 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_18px_-12px_rgba(120,80,30,0.45)]">
+      <div
+        className="mx-auto grid h-7 w-7 place-items-center rounded-lg border border-white/70"
+        style={{ background: `linear-gradient(160deg, ${tone}22, ${tone}55)`, color: tone }}
+      >
+        <Icon className="h-4 w-4" strokeWidth={2.2} />
+      </div>
+      <p className="mt-1 text-[12.5px] font-extrabold text-[#3a2a18] leading-none">{value}</p>
+      <p className="mt-0.5 text-[9px] font-bold text-[#6a543a] leading-none">{label}</p>
+    </div>
   );
 }
 
