@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as PrayerRequestsRouteImport } from './routes/prayer-requests'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
@@ -33,7 +34,6 @@ import { Route as ProfileMembershipRouteImport } from './routes/profile.membersh
 import { Route as ProfileChurchRouteImport } from './routes/profile.church'
 import { Route as ProfileAppearanceRouteImport } from './routes/profile.appearance'
 import { Route as FeastsEventIdRouteImport } from './routes/feasts.$eventId'
-import { Route as ChurchPrayerRouteImport } from './routes/church.prayer'
 import { Route as AgpeyaSavedRouteImport } from './routes/agpeya.saved'
 import { Route as AgpeyaPrayerIdRouteImport } from './routes/agpeya.$prayerId'
 import { Route as BookChapterRouteImport } from './routes/$book.$chapter'
@@ -43,6 +43,11 @@ import { Route as ChurchChatContactIdRouteImport } from './routes/church.chat.$c
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrayerRequestsRoute = PrayerRequestsRouteImport.update({
+  id: '/prayer-requests',
+  path: '/prayer-requests',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -160,11 +165,6 @@ const FeastsEventIdRoute = FeastsEventIdRouteImport.update({
   path: '/feasts/$eventId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChurchPrayerRoute = ChurchPrayerRouteImport.update({
-  id: '/prayer',
-  path: '/prayer',
-  getParentRoute: () => ChurchRoute,
-} as any)
 const AgpeyaSavedRoute = AgpeyaSavedRouteImport.update({
   id: '/agpeya/saved',
   path: '/agpeya/saved',
@@ -200,11 +200,11 @@ export interface FileRoutesByFullPath {
   '/diagnostics': typeof DiagnosticsRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
+  '/prayer-requests': typeof PrayerRequestsRoute
   '/search': typeof SearchRoute
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
   '/agpeya/saved': typeof AgpeyaSavedRoute
-  '/church/prayer': typeof ChurchPrayerRoute
   '/feasts/$eventId': typeof FeastsEventIdRoute
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
@@ -231,11 +231,11 @@ export interface FileRoutesByTo {
   '/diagnostics': typeof DiagnosticsRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
+  '/prayer-requests': typeof PrayerRequestsRoute
   '/search': typeof SearchRoute
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
   '/agpeya/saved': typeof AgpeyaSavedRoute
-  '/church/prayer': typeof ChurchPrayerRoute
   '/feasts/$eventId': typeof FeastsEventIdRoute
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
@@ -264,11 +264,11 @@ export interface FileRoutesById {
   '/diagnostics': typeof DiagnosticsRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
+  '/prayer-requests': typeof PrayerRequestsRoute
   '/search': typeof SearchRoute
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
   '/agpeya/saved': typeof AgpeyaSavedRoute
-  '/church/prayer': typeof ChurchPrayerRoute
   '/feasts/$eventId': typeof FeastsEventIdRoute
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
@@ -298,11 +298,11 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/home'
     | '/onboarding'
+    | '/prayer-requests'
     | '/search'
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
     | '/agpeya/saved'
-    | '/church/prayer'
     | '/feasts/$eventId'
     | '/profile/appearance'
     | '/profile/church'
@@ -329,11 +329,11 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/home'
     | '/onboarding'
+    | '/prayer-requests'
     | '/search'
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
     | '/agpeya/saved'
-    | '/church/prayer'
     | '/feasts/$eventId'
     | '/profile/appearance'
     | '/profile/church'
@@ -361,11 +361,11 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/home'
     | '/onboarding'
+    | '/prayer-requests'
     | '/search'
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
     | '/agpeya/saved'
-    | '/church/prayer'
     | '/feasts/$eventId'
     | '/profile/appearance'
     | '/profile/church'
@@ -394,6 +394,7 @@ export interface RootRouteChildren {
   DiagnosticsRoute: typeof DiagnosticsRoute
   HomeRoute: typeof HomeRoute
   OnboardingRoute: typeof OnboardingRoute
+  PrayerRequestsRoute: typeof PrayerRequestsRoute
   SearchRoute: typeof SearchRoute
   AgpeyaPrayerIdRoute: typeof AgpeyaPrayerIdRoute
   AgpeyaSavedRoute: typeof AgpeyaSavedRoute
@@ -420,6 +421,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prayer-requests': {
+      id: '/prayer-requests'
+      path: '/prayer-requests'
+      fullPath: '/prayer-requests'
+      preLoaderRoute: typeof PrayerRequestsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -583,13 +591,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeastsEventIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/church/prayer': {
-      id: '/church/prayer'
-      path: '/prayer'
-      fullPath: '/church/prayer'
-      preLoaderRoute: typeof ChurchPrayerRouteImport
-      parentRoute: typeof ChurchRoute
-    }
     '/agpeya/saved': {
       id: '/agpeya/saved'
       path: '/agpeya/saved'
@@ -641,13 +642,11 @@ const BookRouteChildren: BookRouteChildren = {
 const BookRouteWithChildren = BookRoute._addFileChildren(BookRouteChildren)
 
 interface ChurchRouteChildren {
-  ChurchPrayerRoute: typeof ChurchPrayerRoute
   ChurchChatContactIdRoute: typeof ChurchChatContactIdRoute
   ChurchPostIdRoute: typeof ChurchPostIdRoute
 }
 
 const ChurchRouteChildren: ChurchRouteChildren = {
-  ChurchPrayerRoute: ChurchPrayerRoute,
   ChurchChatContactIdRoute: ChurchChatContactIdRoute,
   ChurchPostIdRoute: ChurchPostIdRoute,
 }
@@ -664,6 +663,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnosticsRoute: DiagnosticsRoute,
   HomeRoute: HomeRoute,
   OnboardingRoute: OnboardingRoute,
+  PrayerRequestsRoute: PrayerRequestsRoute,
   SearchRoute: SearchRoute,
   AgpeyaPrayerIdRoute: AgpeyaPrayerIdRoute,
   AgpeyaSavedRoute: AgpeyaSavedRoute,
