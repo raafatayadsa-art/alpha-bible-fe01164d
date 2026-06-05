@@ -243,12 +243,12 @@ function buildPost(cat: CategoryDef, f: FormState): ChurchPost | null {
       details.date = f.date; details.returnDate = f.returnDate;
       details.places = f.places;
       if (!Number.isNaN(seatsN) && seatsN > 0) details.seats = seatsN;
-      return {
+      return finalize({
         id, type: "trip", title: trim(f.title),
         body: trim(f.body) || `رحلة إلى ${trim(f.places) || trim(f.title)}.`,
         excerpt: `${f.date}${has(f.returnDate) ? ` → ${f.returnDate}` : ""}${seatsN > 0 ? ` · ${seatsN} مكان` : ""}`,
         image, date, author, details,
-      };
+      });
     }
     case "wedding-full":
     case "wedding-half": {
