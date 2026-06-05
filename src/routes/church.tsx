@@ -696,6 +696,7 @@ function ChurchScreen() {
         <HeroChurchCard />
         <QuickGrid />
         <ChurchPostsFeed />
+        <PrayerRequestsCard />
         <UpcomingMeetings />
         <LiveBroadcast />
       </div>
