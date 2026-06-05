@@ -972,7 +972,7 @@ function PrayerPreview({ item, liveCount }: { item: PrayerRequest; liveCount: nu
         <span className="text-[10.5px] font-bold text-[#7a5a30]">{item.name}</span>
         <span className="inline-flex items-center gap-1 rounded-full bg-[#c79356]/12 px-2 py-0.5 text-[10px] font-extrabold text-[#8a6325] border border-[#c79356]/25">
           <Heart className="h-2.5 w-2.5 fill-current" strokeWidth={0} />
-          {item.prayers.toLocaleString("ar-EG")} صلّوا
+          {liveCount.toLocaleString("ar-EG")} صلّوا
         </span>
       </div>
     </Link>
