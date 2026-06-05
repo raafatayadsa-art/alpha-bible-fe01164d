@@ -4,7 +4,7 @@ import {
   ArrowRight, Phone, MessageCircle, MapPin, ShieldCheck, Users,
   HandHeart, Newspaper, Radio, CalendarDays, BookOpen, Library, Heart,
   Play, ChevronLeft, Clock, Sparkles, Bell, Flame, Pin, Plus,
-  Navigation, Share2, Crown, UserCog, Send, Lock,
+  Navigation, Share2, Crown, UserCog, Send, Lock, X, MessageSquareHeart, Check,
 } from "lucide-react";
 import { CHURCH_CONTACTS, type ChurchContact } from "@/data/church-contacts";
 import { BottomDock } from "@/components/bible/BottomDock";
