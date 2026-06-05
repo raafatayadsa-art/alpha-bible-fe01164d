@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight, Phone, MessageCircle, MapPin, ShieldCheck, Users,
   HandHeart, Newspaper, Radio, CalendarDays, BookOpen, Library, Heart,
@@ -11,10 +11,10 @@ import { BottomDock } from "@/components/bible/BottomDock";
 import { CopticWatermark } from "@/components/coptic";
 import { CHURCH_POSTS, POST_TYPE_META, type ChurchPost } from "@/data/church-posts";
 import {
-  PRAYER_REQUESTS, PRAYER_TABS, filterPrayers, prayerStats,
-  ENCOURAGEMENT_MESSAGES, ENCOURAGEMENT_TOTAL, ENCOURAGEMENT_CHIPS, ENCOURAGEMENT_MAX,
-  type PrayerFilter, type PrayerRequest, type EncouragementMessage,
+  PRAYER_REQUESTS, prayerStats, ENCOURAGEMENT_TOTAL,
+  type PrayerRequest,
 } from "@/data/prayer-requests";
+
 
 import cardChurch from "@/assets/home/card-church.jpg";
 import newsCandle from "@/assets/home/news-candle.jpg";

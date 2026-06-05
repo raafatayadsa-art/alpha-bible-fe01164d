@@ -34,7 +34,6 @@ import { Route as ProfileMembershipRouteImport } from './routes/profile.membersh
 import { Route as ProfileChurchRouteImport } from './routes/profile.church'
 import { Route as ProfileAppearanceRouteImport } from './routes/profile.appearance'
 import { Route as FeastsEventIdRouteImport } from './routes/feasts.$eventId'
-import { Route as ChurchPrayerRouteImport } from './routes/church.prayer'
 import { Route as AgpeyaSavedRouteImport } from './routes/agpeya.saved'
 import { Route as AgpeyaPrayerIdRouteImport } from './routes/agpeya.$prayerId'
 import { Route as BookChapterRouteImport } from './routes/$book.$chapter'
@@ -166,11 +165,6 @@ const FeastsEventIdRoute = FeastsEventIdRouteImport.update({
   path: '/feasts/$eventId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChurchPrayerRoute = ChurchPrayerRouteImport.update({
-  id: '/prayer',
-  path: '/prayer',
-  getParentRoute: () => ChurchRoute,
-} as any)
 const AgpeyaSavedRoute = AgpeyaSavedRouteImport.update({
   id: '/agpeya/saved',
   path: '/agpeya/saved',
@@ -211,7 +205,6 @@ export interface FileRoutesByFullPath {
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
   '/agpeya/saved': typeof AgpeyaSavedRoute
-  '/church/prayer': typeof ChurchPrayerRoute
   '/feasts/$eventId': typeof FeastsEventIdRoute
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
@@ -243,7 +236,6 @@ export interface FileRoutesByTo {
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
   '/agpeya/saved': typeof AgpeyaSavedRoute
-  '/church/prayer': typeof ChurchPrayerRoute
   '/feasts/$eventId': typeof FeastsEventIdRoute
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
@@ -277,7 +269,6 @@ export interface FileRoutesById {
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
   '/agpeya/saved': typeof AgpeyaSavedRoute
-  '/church/prayer': typeof ChurchPrayerRoute
   '/feasts/$eventId': typeof FeastsEventIdRoute
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
@@ -312,7 +303,6 @@ export interface FileRouteTypes {
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
     | '/agpeya/saved'
-    | '/church/prayer'
     | '/feasts/$eventId'
     | '/profile/appearance'
     | '/profile/church'
@@ -344,7 +334,6 @@ export interface FileRouteTypes {
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
     | '/agpeya/saved'
-    | '/church/prayer'
     | '/feasts/$eventId'
     | '/profile/appearance'
     | '/profile/church'
@@ -377,7 +366,6 @@ export interface FileRouteTypes {
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
     | '/agpeya/saved'
-    | '/church/prayer'
     | '/feasts/$eventId'
     | '/profile/appearance'
     | '/profile/church'
@@ -603,13 +591,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeastsEventIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/church/prayer': {
-      id: '/church/prayer'
-      path: '/prayer'
-      fullPath: '/church/prayer'
-      preLoaderRoute: typeof ChurchPrayerRouteImport
-      parentRoute: typeof ChurchRoute
-    }
     '/agpeya/saved': {
       id: '/agpeya/saved'
       path: '/agpeya/saved'
@@ -661,13 +642,11 @@ const BookRouteChildren: BookRouteChildren = {
 const BookRouteWithChildren = BookRoute._addFileChildren(BookRouteChildren)
 
 interface ChurchRouteChildren {
-  ChurchPrayerRoute: typeof ChurchPrayerRoute
   ChurchChatContactIdRoute: typeof ChurchChatContactIdRoute
   ChurchPostIdRoute: typeof ChurchPostIdRoute
 }
 
 const ChurchRouteChildren: ChurchRouteChildren = {
-  ChurchPrayerRoute: ChurchPrayerRoute,
   ChurchChatContactIdRoute: ChurchChatContactIdRoute,
   ChurchPostIdRoute: ChurchPostIdRoute,
 }
@@ -706,3 +685,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
