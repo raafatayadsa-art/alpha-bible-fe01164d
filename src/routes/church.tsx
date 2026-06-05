@@ -4,8 +4,9 @@ import {
   ArrowRight, Phone, MessageCircle, MapPin, ShieldCheck, Users,
   HandHeart, Newspaper, Radio, CalendarDays, BookOpen, Library, Heart,
   Play, ChevronLeft, Clock, Sparkles, Bell, Flame, Pin, Plus,
-  Navigation, Share2, Crown, UserCog, Send,
+  Navigation, Share2, Crown, UserCog, Send, Lock,
 } from "lucide-react";
+import { CHURCH_CONTACTS, type ChurchContact } from "@/data/church-contacts";
 import { BottomDock } from "@/components/bible/BottomDock";
 import { CopticWatermark } from "@/components/coptic";
 import { CHURCH_POSTS, POST_TYPE_META, type ChurchPost } from "@/data/church-posts";
