@@ -30,7 +30,6 @@ import { Route as ProfileSecurityRouteImport } from './routes/profile.security'
 import { Route as ProfilePersonalRouteImport } from './routes/profile.personal'
 import { Route as ProfileMessagesRouteImport } from './routes/profile.messages'
 import { Route as ProfileMembershipRouteImport } from './routes/profile.membership'
-import { Route as ProfileFamilyRouteImport } from './routes/profile.family'
 import { Route as ProfileChurchRouteImport } from './routes/profile.church'
 import { Route as ProfileAppearanceRouteImport } from './routes/profile.appearance'
 import { Route as FeastsEventIdRouteImport } from './routes/feasts.$eventId'
@@ -144,11 +143,6 @@ const ProfileMembershipRoute = ProfileMembershipRouteImport.update({
   path: '/profile/membership',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileFamilyRoute = ProfileFamilyRouteImport.update({
-  id: '/profile/family',
-  path: '/profile/family',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProfileChurchRoute = ProfileChurchRouteImport.update({
   id: '/profile/church',
   path: '/profile/church',
@@ -201,7 +195,6 @@ export interface FileRoutesByFullPath {
   '/feasts/$eventId': typeof FeastsEventIdRoute
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
-  '/profile/family': typeof ProfileFamilyRoute
   '/profile/membership': typeof ProfileMembershipRoute
   '/profile/messages': typeof ProfileMessagesRoute
   '/profile/personal': typeof ProfilePersonalRoute
@@ -231,7 +224,6 @@ export interface FileRoutesByTo {
   '/feasts/$eventId': typeof FeastsEventIdRoute
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
-  '/profile/family': typeof ProfileFamilyRoute
   '/profile/membership': typeof ProfileMembershipRoute
   '/profile/messages': typeof ProfileMessagesRoute
   '/profile/personal': typeof ProfilePersonalRoute
@@ -263,7 +255,6 @@ export interface FileRoutesById {
   '/feasts/$eventId': typeof FeastsEventIdRoute
   '/profile/appearance': typeof ProfileAppearanceRoute
   '/profile/church': typeof ProfileChurchRoute
-  '/profile/family': typeof ProfileFamilyRoute
   '/profile/membership': typeof ProfileMembershipRoute
   '/profile/messages': typeof ProfileMessagesRoute
   '/profile/personal': typeof ProfilePersonalRoute
@@ -296,7 +287,6 @@ export interface FileRouteTypes {
     | '/feasts/$eventId'
     | '/profile/appearance'
     | '/profile/church'
-    | '/profile/family'
     | '/profile/membership'
     | '/profile/messages'
     | '/profile/personal'
@@ -326,7 +316,6 @@ export interface FileRouteTypes {
     | '/feasts/$eventId'
     | '/profile/appearance'
     | '/profile/church'
-    | '/profile/family'
     | '/profile/membership'
     | '/profile/messages'
     | '/profile/personal'
@@ -357,7 +346,6 @@ export interface FileRouteTypes {
     | '/feasts/$eventId'
     | '/profile/appearance'
     | '/profile/church'
-    | '/profile/family'
     | '/profile/membership'
     | '/profile/messages'
     | '/profile/personal'
@@ -388,7 +376,6 @@ export interface RootRouteChildren {
   FeastsEventIdRoute: typeof FeastsEventIdRoute
   ProfileAppearanceRoute: typeof ProfileAppearanceRoute
   ProfileChurchRoute: typeof ProfileChurchRoute
-  ProfileFamilyRoute: typeof ProfileFamilyRoute
   ProfileMembershipRoute: typeof ProfileMembershipRoute
   ProfileMessagesRoute: typeof ProfileMessagesRoute
   ProfilePersonalRoute: typeof ProfilePersonalRoute
@@ -551,13 +538,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileMembershipRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile/family': {
-      id: '/profile/family'
-      path: '/profile/family'
-      fullPath: '/profile/family'
-      preLoaderRoute: typeof ProfileFamilyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/profile/church': {
       id: '/profile/church'
       path: '/profile/church'
@@ -648,7 +628,6 @@ const rootRouteChildren: RootRouteChildren = {
   FeastsEventIdRoute: FeastsEventIdRoute,
   ProfileAppearanceRoute: ProfileAppearanceRoute,
   ProfileChurchRoute: ProfileChurchRoute,
-  ProfileFamilyRoute: ProfileFamilyRoute,
   ProfileMembershipRoute: ProfileMembershipRoute,
   ProfileMessagesRoute: ProfileMessagesRoute,
   ProfilePersonalRoute: ProfilePersonalRoute,
@@ -664,3 +643,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
