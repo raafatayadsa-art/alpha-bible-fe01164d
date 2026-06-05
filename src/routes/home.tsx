@@ -429,8 +429,8 @@ function HomeScreen() {
             items={primary}
             direction={1}
             height={228}
-            cardWidthPct={68}
-            peekPct={64}
+            cardWidthPct={62}
+            peekPct={54}
             getKey={(c) => c.key}
             renderCard={(c) => (
               <Link to={c.to as any} aria-label={c.title} className="block">
@@ -452,8 +452,8 @@ function HomeScreen() {
             items={daily}
             direction={-1}
             height={150}
-            cardWidthPct={72}
-            peekPct={66}
+            cardWidthPct={66}
+            peekPct={56}
             getKey={(d) => d.key}
             renderCard={(d) => (
               <Link to={d.to as any} aria-label={d.title} className="block">
@@ -604,7 +604,7 @@ function HeroStack({
 
   const currentMod = ((index % total) + total) % total;
   const slots = [-2, -1, 0, 1, 2];
-  const peekPct = 78; // base offset between cards
+  const peekPct = 62; // base offset between cards — keeps side cards visibly peeking
 
   return (
     <section className="mt-5 select-none">
