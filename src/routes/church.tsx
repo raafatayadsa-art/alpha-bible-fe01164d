@@ -587,76 +587,21 @@ function UpcomingMeetings() {
 }
 
 /* ============================================================ */
-/* Prayer Requests Card                                          */
+/* Prayer Requests Preview Card (links to /prayer-requests)      */
 /* ============================================================ */
 
-type PrayerCardState =
-  | { kind: "loading" }
-  | { kind: "error"; message: string }
-  | { kind: "ready"; items: PrayerRequest[] };
-
-function usePrayerData(): PrayerCardState {
-  const [state, setState] = useState<PrayerCardState>({ kind: "loading" });
-  useEffect(() => {
-    let alive = true;
-    // Simulated fetch — replace with real backend when connected.
-    const id = setTimeout(() => {
-      if (!alive) return;
-      try {
-        setState({ kind: "ready", items: PRAYER_REQUESTS });
-      } catch (e: any) {
-        setState({ kind: "error", message: e?.message ?? "تعذر تحميل الطلبات" });
-      }
-    }, 350);
-    return () => {
-      alive = false;
-      clearTimeout(id);
-    };
-  }, []);
-  return state;
-}
-
 function PrayerRequestsCard() {
-  const state = usePrayerData();
-  const [tab, setTab] = useState<PrayerFilter>("all");
-  const [prayedIds, setPrayedIds] = useState<Set<string>>(() => new Set());
-  const [messages, setMessages] = useState<EncouragementMessage[]>(ENCOURAGEMENT_MESSAGES);
-  const [showEncourage, setShowEncourage] = useState(false);
-
-  const all = state.kind === "ready" ? state.items : [];
-  const filtered = useMemo(
-    () => filterPrayers(all, tab).sort((a, b) => a.ageMinutes - b.ageMinutes),
-    [all, tab]
-  );
-  const latest = filtered[0];
-  const stats = useMemo(() => prayerStats(all), [all]);
-  const totalMessages = ENCOURAGEMENT_TOTAL + (messages.length - ENCOURAGEMENT_MESSAGES.length);
-
-  const togglePray = (id: string) => {
-    setPrayedIds((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-  };
-
-  const addEncouragement = (text: string) => {
-    const trimmed = text.trim();
-    if (!trimmed) return;
-    setMessages((prev) => [
-      { id: `local-${Date.now()}`, author: "أنت", text: trimmed.slice(0, ENCOURAGEMENT_MAX), time: "الآن" },
-      ...prev,
-    ]);
-    setShowEncourage(false);
-  };
-
-  const hasPrayed = latest ? prayedIds.has(latest.id) : false;
-  const liveCount = latest ? latest.prayers + (hasPrayed ? 1 : 0) : 0;
+  const items = PRAYER_REQUESTS;
+  const latest = [...items].sort((a, b) => a.ageMinutes - b.ageMinutes)[0];
+  const stats = prayerStats(items);
 
   return (
     <section>
       <SectionTitle title="طلبات الصلاة" />
-      <div className="relative overflow-hidden rounded-[28px] border border-white/70 bg-[#fbf3e1]/85 backdrop-blur-xl shadow-[0_24px_50px_-26px_rgba(60,40,16,0.55),inset_0_1px_0_rgba(255,255,255,0.85)]">
+      <Link
+        to="/prayer-requests"
+        className="block relative overflow-hidden rounded-[28px] border border-white/70 bg-[#fbf3e1]/85 backdrop-blur-xl shadow-[0_24px_50px_-26px_rgba(60,40,16,0.55),inset_0_1px_0_rgba(255,255,255,0.85)] active:scale-[0.99] transition-transform"
+      >
         {/* Hero image */}
         <div className="relative block h-[150px] w-full overflow-hidden">
           <img
@@ -684,140 +629,59 @@ function PrayerRequestsCard() {
           </div>
         </div>
 
-        {/* Live stats row — 3 cols */}
+        {/* Stats row */}
         <div className="grid grid-cols-3 gap-2 px-3.5 pt-3">
-          <StatPill
-            icon={<HandHeart className="h-3 w-3" strokeWidth={2.6} />}
-            label="صلوا"
-            value={stats.peoplePrayed + (hasPrayed ? 1 : 0)}
-            tone="purple"
-          />
-          <StatPill
-            icon={<MessageSquareHeart className="h-3 w-3" strokeWidth={2.6} />}
-            label="رسالة"
-            value={totalMessages}
-            tone="rose"
-          />
-          <StatPill
-            icon={<Sparkles className="h-3 w-3" strokeWidth={2.6} />}
-            label="نشط"
-            value={stats.active}
-            tone="green"
-          />
-        </div>
-
-        {/* Tabs */}
-        <div className="px-3.5 pt-3">
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-            {PRAYER_TABS.map((t) => {
-              const active = tab === t.key;
-              return (
-                <button
-                  key={t.key}
-                  type="button"
-                  onClick={() => setTab(t.key)}
-                  className={
-                    "shrink-0 rounded-full px-3 py-1.5 text-[11px] font-extrabold transition-all border " +
-                    (active
-                      ? "bg-gradient-to-l from-[#c79356] to-[#d6a862] text-white border-transparent shadow-[0_6px_14px_-8px_rgba(199,147,86,0.7)]"
-                      : "bg-white/70 text-[#7a5a30] border-[#efe2c4] hover:bg-white/90")
-                  }
-                >
-                  {t.label}
-                </button>
-              );
-            })}
-          </div>
+          <StatPill icon={<Sparkles className="h-3 w-3" strokeWidth={2.6} />} label="نشط" value={stats.active} tone="purple" />
+          <StatPill icon={<HandHeart className="h-3 w-3" strokeWidth={2.6} />} label="صلّوا" value={stats.peoplePrayed} tone="green" />
+          <StatPill icon={<MessageSquareHeart className="h-3 w-3" strokeWidth={2.6} />} label="رسالة" value={ENCOURAGEMENT_TOTAL} tone="rose" />
         </div>
 
         {/* Latest preview */}
-        <div className="px-3.5 pt-3">
-          {state.kind === "loading" ? (
-            <PrayerSkeleton />
-          ) : state.kind === "error" ? (
-            <PrayerErrorState message={state.message} />
-          ) : !latest ? (
-            <PrayerEmptyState filter={tab} />
-          ) : (
-            <PrayerPreview item={latest} liveCount={liveCount} />
-          )}
-        </div>
-
-        {/* Prayer actions */}
-        {latest && state.kind === "ready" ? (
-          <div className="px-3.5 pt-3 grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => togglePray(latest.id)}
-              aria-pressed={hasPrayed}
-              className={
-                "inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-2.5 text-[12px] font-extrabold transition-all active:scale-[0.98] border " +
-                (hasPrayed
-                  ? "bg-gradient-to-l from-[#1f8a5a] to-[#2ea870] text-white border-transparent shadow-[0_10px_22px_-12px_rgba(31,138,90,0.7)]"
-                  : "bg-gradient-to-l from-[#8a6ec1] to-[#a07ec4] text-white border-transparent shadow-[0_10px_22px_-12px_rgba(138,110,193,0.7)]")
-              }
-            >
-              {hasPrayed ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <HandHeart className="h-3.5 w-3.5" strokeWidth={2.6} />}
-              {hasPrayed ? "تمت الصلاة" : "صليت لأجلها"}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowEncourage(true)}
-              className="inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-2.5 text-[12px] font-extrabold border bg-white/85 text-[#7a5a30] border-[#efe2c4] active:scale-[0.98] transition-all"
-            >
-              <MessageSquareHeart className="h-3.5 w-3.5" strokeWidth={2.6} />
-              رسالة تشجيع
-            </button>
+        {latest ? (
+          <div className="px-3.5 pt-3">
+            <div className="rounded-2xl bg-white/80 border border-white/80 p-3 text-right shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#8a6ec1]/15 px-2 py-0.5 text-[10px] font-extrabold text-[#6a4ab5] border border-[#8a6ec1]/25">
+                  <HandHeart className="h-2.5 w-2.5" strokeWidth={2.8} />
+                  {latest.category}
+                </span>
+                {latest.status === "urgent" ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#c44569]/15 px-2 py-0.5 text-[10px] font-extrabold text-[#a8344f] border border-[#c44569]/25">
+                    <Flame className="h-2.5 w-2.5" strokeWidth={2.8} />
+                    عاجلة
+                  </span>
+                ) : null}
+                <span className="ms-auto inline-flex items-center gap-1 text-[10px] font-bold text-[#7a5a30]">
+                  <Clock className="h-2.5 w-2.5" />
+                  {latest.time}
+                </span>
+              </div>
+              <p className="font-arabic-serif text-[13px] font-extrabold text-[#3a2a18] leading-tight">
+                {latest.title}
+              </p>
+              <p className="mt-1 text-[11.5px] text-[#6a543a] leading-snug line-clamp-2">
+                {latest.request}
+              </p>
+              <div className="mt-1.5 inline-flex items-center gap-1 text-[10px] font-bold text-[#8a6325]">
+                <Heart className="h-2.5 w-2.5 fill-current" strokeWidth={0} />
+                {latest.prayers.toLocaleString("ar-EG")} صلّوا معه
+              </div>
+            </div>
           </div>
         ) : null}
 
-        {/* Encouragement preview */}
-        <div className="px-3.5 pt-3">
-          <p className="mb-2 text-[11px] font-extrabold text-[#7a5a30] inline-flex items-center gap-1.5">
-            <MessageSquareHeart className="h-3 w-3 text-[#c44569]" strokeWidth={2.6} />
-            أحدث رسائل التشجيع
-          </p>
-          <div className="space-y-1.5">
-            {messages.slice(0, 2).map((m) => (
-              <div
-                key={m.id}
-                className="rounded-2xl bg-white/80 border border-white/80 px-3 py-2 text-right shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
-              >
-                <p className="text-[12px] text-[#3a2a18] leading-snug">{m.text}</p>
-                <div className="mt-1 flex items-center justify-between text-[10px] text-[#7a5a30]">
-                  <span className="font-bold">{m.author}</span>
-                  <span>{m.time}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            className="mt-2 w-full text-center text-[11px] font-extrabold text-[#8a6ec1] py-1"
-          >
-            عرض جميع الرسائل ({totalMessages.toLocaleString("ar-EG")})
-          </button>
-        </div>
-
-        {/* CTA */}
-        <div className="p-3.5 pt-3">
-          <Link
-            to="/church/prayer"
-            className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-l from-[#c79356] to-[#d6a862] px-4 py-3 text-[13px] font-extrabold text-white shadow-[0_12px_28px_-12px_rgba(199,147,86,0.7)] active:scale-[0.98] transition-transform"
-          >
-            <BookOpen className="h-4 w-4" />
+        {/* CTAs */}
+        <div className="p-3.5 pt-3 grid grid-cols-2 gap-2">
+          <span className="inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-2.5 text-[12px] font-extrabold bg-gradient-to-l from-[#8a6ec1] to-[#a07ec4] text-white shadow-[0_10px_22px_-12px_rgba(138,110,193,0.7)]">
+            <HandHeart className="h-3.5 w-3.5" strokeWidth={2.6} />
+            صلّي الآن
+          </span>
+          <span className="inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-2.5 text-[12px] font-extrabold bg-gradient-to-l from-[#c79356] to-[#d6a862] text-white shadow-[0_12px_28px_-12px_rgba(199,147,86,0.7)]">
+            <BookOpen className="h-3.5 w-3.5" />
             عرض جميع الطلبات
-            <ChevronLeft className="h-4 w-4" />
-          </Link>
+          </span>
         </div>
-      </div>
-
-      {showEncourage ? (
-        <EncourageModal
-          onClose={() => setShowEncourage(false)}
-          onSend={addEncouragement}
-        />
-      ) : null}
+      </Link>
     </section>
   );
 }
@@ -848,174 +712,7 @@ function StatPill({
   );
 }
 
-function EncourageModal({
-  onClose, onSend,
-}: {
-  onClose: () => void;
-  onSend: (text: string) => void;
-}) {
-  const [text, setText] = useState("");
-  const remaining = ENCOURAGEMENT_MAX - text.length;
 
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="رسالة تشجيع"
-      className="fixed inset-0 z-50 grid place-items-center px-4"
-    >
-      <button
-        type="button"
-        aria-label="إغلاق"
-        onClick={onClose}
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-      />
-      <div className="relative w-full max-w-[340px] rounded-3xl border border-white/70 bg-[#fbf3e1] shadow-[0_30px_60px_-20px_rgba(60,40,16,0.6)] p-4 text-right">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="font-arabic-serif text-[15px] font-extrabold text-[#3a2a18] inline-flex items-center gap-1.5">
-            <MessageSquareHeart className="h-4 w-4 text-[#c44569]" strokeWidth={2.6} />
-            رسالة تشجيع
-          </h4>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="إغلاق"
-            className="grid h-7 w-7 place-items-center rounded-full bg-white/80 border border-[#efe2c4] text-[#7a5a30] active:scale-90"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
-        </div>
-
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value.slice(0, ENCOURAGEMENT_MAX))}
-          maxLength={ENCOURAGEMENT_MAX}
-          rows={3}
-          placeholder="اكتب كلمة تشجيع أو صلاة قصيرة"
-          className="w-full resize-none rounded-2xl bg-white/90 border border-[#efe2c4] px-3 py-2 text-[12.5px] text-[#3a2a18] placeholder:text-[#a89878] focus:outline-none focus:ring-2 focus:ring-[#c79356]/40"
-        />
-        <div className="mt-1 flex items-center justify-between text-[10px] text-[#7a5a30]">
-          <span>{remaining.toLocaleString("ar-EG")} حرف متبقي</span>
-        </div>
-
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {ENCOURAGEMENT_CHIPS.map((c) => (
-            <button
-              key={c.text}
-              type="button"
-              onClick={() => setText(`${c.emoji} ${c.text}`.slice(0, ENCOURAGEMENT_MAX))}
-              className="rounded-full bg-white/80 border border-[#efe2c4] px-2.5 py-1 text-[11px] font-bold text-[#7a5a30] active:scale-95"
-            >
-              {c.emoji} {c.text}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-3 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 rounded-full bg-white/80 border border-[#efe2c4] py-2 text-[12px] font-extrabold text-[#7a5a30]"
-          >
-            إلغاء
-          </button>
-          <button
-            type="button"
-            onClick={() => onSend(text)}
-            disabled={!text.trim()}
-            className="flex-[1.3] inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-l from-[#c44569] to-[#d96585] py-2 text-[12px] font-extrabold text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_10px_22px_-12px_rgba(196,69,105,0.7)]"
-          >
-            <Send className="h-3.5 w-3.5" strokeWidth={2.6} />
-            إرسال
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-function PrayerPreview({ item, liveCount }: { item: PrayerRequest; liveCount: number }) {
-  return (
-    <Link
-      to="/church/prayer"
-      className="block rounded-2xl bg-white/80 border border-white/80 p-3 text-right shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_14px_-12px_rgba(120,80,30,0.4)] active:scale-[0.99] transition-transform"
-    >
-      <div className="flex items-center gap-2 mb-1.5">
-        <span className="inline-flex items-center gap-1 rounded-full bg-[#8a6ec1]/15 px-2 py-0.5 text-[10px] font-extrabold text-[#6a4ab5] border border-[#8a6ec1]/25">
-          <HandHeart className="h-2.5 w-2.5" strokeWidth={2.8} />
-          {item.category}
-        </span>
-        {item.status === "urgent" ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#c44569]/15 px-2 py-0.5 text-[10px] font-extrabold text-[#a8344f] border border-[#c44569]/25">
-            <Flame className="h-2.5 w-2.5" strokeWidth={2.8} />
-            عاجلة
-          </span>
-        ) : item.status === "answered" ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#1f8a5a]/15 px-2 py-0.5 text-[10px] font-extrabold text-[#136a44] border border-[#1f8a5a]/25">
-            <ShieldCheck className="h-2.5 w-2.5" strokeWidth={2.8} />
-            تمت الصلاة
-          </span>
-        ) : null}
-        <span className="ms-auto inline-flex items-center gap-1 text-[10px] font-bold text-[#7a5a30]">
-          <Clock className="h-2.5 w-2.5" />
-          {item.time}
-        </span>
-      </div>
-      <p className="font-arabic-serif text-[13.5px] font-extrabold text-[#3a2a18] leading-tight">
-        {item.title}
-      </p>
-      <p className="mt-1 text-[11.5px] text-[#6a543a] leading-snug line-clamp-2">
-        {item.request}
-      </p>
-      <div className="mt-2 flex items-center justify-between">
-        <span className="text-[10.5px] font-bold text-[#7a5a30]">{item.name}</span>
-        <span className="inline-flex items-center gap-1 rounded-full bg-[#c79356]/12 px-2 py-0.5 text-[10px] font-extrabold text-[#8a6325] border border-[#c79356]/25">
-          <Heart className="h-2.5 w-2.5 fill-current" strokeWidth={0} />
-          {liveCount.toLocaleString("ar-EG")} صلّوا
-        </span>
-      </div>
-    </Link>
-  );
-}
-
-function PrayerSkeleton() {
-  return (
-    <div className="rounded-2xl bg-white/60 border border-white/70 p-3 animate-pulse" aria-busy="true">
-      <div className="flex gap-2 mb-2">
-        <span className="h-4 w-14 rounded-full bg-[#efe2c4]" />
-        <span className="h-4 w-10 rounded-full bg-[#efe2c4]" />
-      </div>
-      <div className="h-3.5 w-3/4 rounded bg-[#efe2c4] mb-1.5" />
-      <div className="h-3 w-full rounded bg-[#f1e6cb]" />
-      <div className="h-3 w-2/3 rounded bg-[#f1e6cb] mt-1.5" />
-    </div>
-  );
-}
-
-function PrayerEmptyState({ filter }: { filter: PrayerFilter }) {
-  const messages: Record<PrayerFilter, string> = {
-    all: "لا توجد طلبات صلاة حالياً",
-    urgent: "لا توجد طلبات عاجلة الآن",
-    answered: "لم تُختم أي طلبة بعد",
-    mine: "لم تُضف طلبة شخصية بعد",
-  };
-  return (
-    <div className="rounded-2xl bg-white/70 border border-dashed border-[#c79356]/40 p-4 text-center">
-      <Sparkles className="h-5 w-5 text-[#8a6ec1] mx-auto" strokeWidth={2.2} />
-      <p className="mt-1.5 text-[12px] font-bold text-[#7a5a30]">{messages[filter]}</p>
-    </div>
-  );
-}
-
-function PrayerErrorState({ message }: { message: string }) {
-  return (
-    <div className="rounded-2xl bg-[#fbeaec] border border-[#c44569]/30 p-3 text-center">
-      <p className="text-[11.5px] font-bold text-[#8a2540]">تعذّر تحميل الطلبات</p>
-      <p className="mt-0.5 text-[10.5px] text-[#a04060]">{message}</p>
-    </div>
-  );
-}
 
 /* ============================================================ */
 /* Live Broadcast                                                */
