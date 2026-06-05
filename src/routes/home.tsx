@@ -410,12 +410,26 @@ function HomeScreen() {
           </div>
         </header>
 
-        {/* HERO STACK CAROUSEL — Apple Wallet style, autoplay + infinite */}
-        <HeroStack
-          cards={heroCards}
-          savedSet={savedSet}
-          onToggleSaved={toggleSaved}
-        />
+        {/* HERO CAROUSEL — same shared-progress infinite wheel as below */}
+        <section className="mt-5">
+          <Coverflow
+            items={heroCards}
+            direction={1}
+            height={268}
+            cardWidthPct={86}
+            peekPct={62}
+            getKey={(c) => c.id}
+            renderCard={(c, isActive) => (
+              <HeroCardView
+                card={c}
+                index={0}
+                total={heroCards.length}
+                saved={savedSet.has(c.id)}
+                onToggleSaved={() => toggleSaved(c.id)}
+              />
+            )}
+          />
+        </section>
 
         {/* PRIMARY STACKED CAROUSEL — auto-rotating cover flow, infinite */}
         <section className="mt-7">
