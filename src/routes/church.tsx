@@ -10,6 +10,10 @@ import { CHURCH_CONTACTS, type ChurchContact } from "@/data/church-contacts";
 import { BottomDock } from "@/components/bible/BottomDock";
 import { CopticWatermark } from "@/components/coptic";
 import { CHURCH_POSTS, POST_TYPE_META, type ChurchPost } from "@/data/church-posts";
+import {
+  PRAYER_REQUESTS, PRAYER_TABS, filterPrayers, prayerStats,
+  type PrayerFilter, type PrayerRequest,
+} from "@/data/prayer-requests";
 
 import cardChurch from "@/assets/home/card-church.jpg";
 import newsCandle from "@/assets/home/news-candle.jpg";
