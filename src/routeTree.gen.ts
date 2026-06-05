@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as PrayerRequestsRouteImport } from './routes/prayer-requests'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
@@ -43,6 +44,11 @@ import { Route as ChurchChatContactIdRouteImport } from './routes/church.chat.$c
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrayerRequestsRoute = PrayerRequestsRouteImport.update({
+  id: '/prayer-requests',
+  path: '/prayer-requests',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -200,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/diagnostics': typeof DiagnosticsRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
+  '/prayer-requests': typeof PrayerRequestsRoute
   '/search': typeof SearchRoute
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
@@ -231,6 +238,7 @@ export interface FileRoutesByTo {
   '/diagnostics': typeof DiagnosticsRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
+  '/prayer-requests': typeof PrayerRequestsRoute
   '/search': typeof SearchRoute
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
@@ -264,6 +272,7 @@ export interface FileRoutesById {
   '/diagnostics': typeof DiagnosticsRoute
   '/home': typeof HomeRoute
   '/onboarding': typeof OnboardingRoute
+  '/prayer-requests': typeof PrayerRequestsRoute
   '/search': typeof SearchRoute
   '/$book/$chapter': typeof BookChapterRoute
   '/agpeya/$prayerId': typeof AgpeyaPrayerIdRoute
@@ -298,6 +307,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/home'
     | '/onboarding'
+    | '/prayer-requests'
     | '/search'
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/home'
     | '/onboarding'
+    | '/prayer-requests'
     | '/search'
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
@@ -361,6 +372,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/home'
     | '/onboarding'
+    | '/prayer-requests'
     | '/search'
     | '/$book/$chapter'
     | '/agpeya/$prayerId'
@@ -394,6 +406,7 @@ export interface RootRouteChildren {
   DiagnosticsRoute: typeof DiagnosticsRoute
   HomeRoute: typeof HomeRoute
   OnboardingRoute: typeof OnboardingRoute
+  PrayerRequestsRoute: typeof PrayerRequestsRoute
   SearchRoute: typeof SearchRoute
   AgpeyaPrayerIdRoute: typeof AgpeyaPrayerIdRoute
   AgpeyaSavedRoute: typeof AgpeyaSavedRoute
@@ -420,6 +433,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prayer-requests': {
+      id: '/prayer-requests'
+      path: '/prayer-requests'
+      fullPath: '/prayer-requests'
+      preLoaderRoute: typeof PrayerRequestsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -664,6 +684,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnosticsRoute: DiagnosticsRoute,
   HomeRoute: HomeRoute,
   OnboardingRoute: OnboardingRoute,
+  PrayerRequestsRoute: PrayerRequestsRoute,
   SearchRoute: SearchRoute,
   AgpeyaPrayerIdRoute: AgpeyaPrayerIdRoute,
   AgpeyaSavedRoute: AgpeyaSavedRoute,
@@ -685,13 +706,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
