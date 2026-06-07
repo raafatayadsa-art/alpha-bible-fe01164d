@@ -869,41 +869,52 @@ function PremiumPostCard({ post }: { post: ChurchPost }) {
 
   return (
     <article
-      className="shrink-0 snap-center w-[92vw] max-w-[440px] relative rounded-[28px] border border-white/75 bg-[#fbf3e1]/92 backdrop-blur-xl shadow-[0_24px_50px_-26px_rgba(120,80,30,0.55),inset_0_1px_0_rgba(255,255,255,0.9)] overflow-hidden"
+      className="shrink-0 snap-center w-[88vw] max-w-[420px] relative rounded-[28px] border border-white/75 bg-[#fbf3e1]/92 backdrop-blur-xl shadow-[0_24px_50px_-26px_rgba(120,80,30,0.55),inset_0_1px_0_rgba(255,255,255,0.9)] overflow-hidden"
     >
       <PostHeader post={post} canManage={canManage} onManage={() => setPopup("manage")} />
 
       {/* Hero image */}
       <Link to="/church/post/$id" params={{ id: post.id }} className="block px-3.5 pt-3">
         <div className="relative overflow-hidden rounded-[22px] border border-white/70 shadow-[0_14px_28px_-18px_rgba(60,40,16,0.55)]">
-          <img src={post.image} alt={post.title} className="block h-[180px] w-full object-cover" loading="lazy" />
+          <img src={post.image} alt={post.title} className="block h-[150px] w-full object-cover" loading="lazy" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a0f04]/45 via-transparent to-transparent" />
         </div>
       </Link>
 
       {/* Title + excerpt */}
-      <div className="px-4 pt-3 text-right">
-        <h3 className="font-arabic-serif text-[17px] font-extrabold text-[#2a1d10] leading-snug">{post.title}</h3>
-        <p className={"mt-1.5 text-[12.5px] text-[#4a3a26] leading-relaxed " + (expanded ? "" : "line-clamp-2")}>
+      <div className="px-4 pt-2.5 text-right">
+        <h3 className="font-arabic-serif text-[16.5px] font-extrabold text-[#2a1d10] leading-snug">{post.title}</h3>
+        <p className={"mt-1 text-[12.5px] text-[#4a3a26] leading-relaxed " + (expanded ? "" : "line-clamp-2")}>
           {post.excerpt}
         </p>
         {post.excerpt.length > 60 && !expanded ? (
           <button
             type="button"
             onClick={() => setExpanded(true)}
-            className="mt-1 text-[11.5px] font-extrabold text-[#b8893a] active:scale-95"
+            className="mt-0.5 text-[11.5px] font-extrabold text-[#b8893a] active:scale-95"
           >
             عرض المزيد
           </button>
         ) : null}
       </div>
 
-      {/* Primary CTA */}
-      <div className="px-4 pt-3">
+      {/* Primary CTA: [stats 25%] + [action 75%] */}
+      <div className="px-4 pt-2.5 flex items-stretch gap-2">
+        <div
+          className="basis-1/4 shrink-0 rounded-2xl bg-white/85 border border-[#efe2c4] px-2 py-1.5 text-center flex flex-col justify-center"
+          aria-label={`${cta.statCount} ${cta.statLabel}`}
+        >
+          <div className="text-[14px] font-extrabold text-[#2a1d10] leading-none tabular-nums">
+            {cta.statCount.toString()}
+          </div>
+          <div className="mt-0.5 text-[9.5px] font-extrabold text-[#7a5a30] leading-tight">
+            {cta.statLabel}
+          </div>
+        </div>
         <button
           type="button"
           onClick={onCta}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-2xl py-2.5 text-[13px] font-extrabold text-white active:scale-[0.98] transition-transform"
+          className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl py-1.5 text-[13px] font-extrabold text-white active:scale-[0.98] transition-transform"
           style={{ background: cta.bg, boxShadow: `0 14px 26px -14px ${cta.shadow}` }}
         >
           {cta.label}
@@ -912,37 +923,37 @@ function PremiumPostCard({ post }: { post: ChurchPost }) {
       </div>
 
       {/* Counters */}
-      <div className="mx-4 mt-3 flex items-center justify-between rounded-2xl bg-white/70 border border-white/80 px-3 py-2 text-[12px] font-extrabold text-[#3a2a18]">
+      <div className="mx-4 mt-2.5 flex items-center justify-between rounded-2xl bg-white/70 border border-white/80 px-3.5 py-2 text-[13px] font-extrabold text-[#3a2a18]">
         <button
           type="button"
           onClick={toggleLike}
-          className="inline-flex items-center gap-1.5 active:scale-95"
-          aria-label="إعجاب"
+          className="inline-flex items-center gap-2 active:scale-95"
+          aria-label="Like"
         >
-          <Heart className={"h-4 w-4 " + (eng.liked ? "text-[#e0464d] fill-current" : "text-[#c44569]")} strokeWidth={2.4} />
-          <span>{eng.likes.toLocaleString("ar-EG")}</span>
+          <Heart className={"h-[20px] w-[20px] " + (eng.liked ? "text-[#e0464d] fill-current" : "text-[#c44569]")} strokeWidth={2.2} />
+          <span className="tabular-nums">{eng.likes.toString()}</span>
         </button>
-        <button type="button" className="inline-flex items-center gap-1.5 active:scale-95" aria-label="تعليقات">
-          <MessageCircle className="h-4 w-4 text-[#5b8fd1]" strokeWidth={2.4} />
-          <span>{eng.comments.length.toLocaleString("ar-EG")}</span>
+        <button type="button" className="inline-flex items-center gap-2 active:scale-95" aria-label="Comments">
+          <MessageCircle className="h-[20px] w-[20px] text-[#5b8fd1]" strokeWidth={2.2} />
+          <span className="tabular-nums">{eng.comments.length.toString()}</span>
         </button>
-        <button type="button" className="inline-flex items-center gap-1.5 active:scale-95" aria-label="مشاركة">
-          <Share2 className="h-4 w-4 text-[#7a4a26]" strokeWidth={2.4} />
-          <span>{eng.shares.toLocaleString("ar-EG")}</span>
+        <button type="button" className="inline-flex items-center gap-2 active:scale-95" aria-label="Share">
+          <Share2 className="h-[20px] w-[20px] text-[#7a4a26]" strokeWidth={2.2} />
+          <span className="tabular-nums">{eng.shares.toString()}</span>
         </button>
       </div>
 
       {/* Latest comment */}
       {latest ? (
-        <div className="mx-4 mt-2 flex items-start gap-2 rounded-2xl bg-white/55 border border-white/70 px-3 py-2 text-right">
+        <div className="mx-4 mt-2 flex items-start gap-2.5 rounded-2xl bg-white/55 border border-white/70 px-3 py-2 text-right">
           <div className="min-w-0 flex-1">
-            <div className="text-[12px] leading-snug text-[#2a1d10]">
-              <span className="font-extrabold text-[#7a4a26]">{latest.name}: </span>
-              <span>{latest.text}</span>
-            </div>
+            <div className="text-[12px] font-extrabold text-[#7a4a26] leading-tight">{latest.name}</div>
+            <div className="mt-0.5 text-[12px] leading-snug text-[#2a1d10]">{latest.text}</div>
           </div>
-          <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-br from-[#f5e6c2] to-[#d4b06a] grid place-items-center text-[10.5px] font-extrabold text-[#5a3a1a] border border-white/70">
-            {latest.name.slice(0, 1)}
+          <div className="h-8 w-8 shrink-0 rounded-full overflow-hidden border border-white/70 ring-1 ring-[#efe2c4] bg-[#f5e6c2]">
+            {latest.avatar ? (
+              <img src={latest.avatar} alt="" className="h-full w-full object-cover" />
+            ) : null}
           </div>
         </div>
       ) : null}
