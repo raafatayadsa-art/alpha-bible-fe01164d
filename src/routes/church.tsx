@@ -711,7 +711,7 @@ function ManageButton({ post }: { post: ChurchPost }) {
 type EngagementState = {
   liked: boolean;
   likes: number;
-  comments: { id: string; name: string; text: string; at: number }[];
+  comments: { id: string; name: string; text: string; at: number; avatar?: string }[];
   shares: number;
 };
 
@@ -723,6 +723,7 @@ const SEED_TEXTS = [
   "متشوقين جدا للندوة",
   "بركة وصلوات",
 ];
+const AVATAR_POOL = [cardChildren, cardAgpeya, cardKatameros, cardChurch, newsYouth, newsMass];
 
 function seedEngagement(post: ChurchPost): EngagementState {
   // Stable pseudo-random based on id
@@ -732,12 +733,19 @@ function seedEngagement(post: ChurchPost): EngagementState {
   const sharesN = 3 + ((h >> 3) % 40);
   const nameIdx = h % SEED_NAMES.length;
   const textIdx = (h >> 5) % SEED_TEXTS.length;
+  const avatarIdx = (h >> 7) % AVATAR_POOL.length;
   return {
     liked: false,
     likes,
     shares: sharesN,
     comments: [
-      { id: "seed", name: SEED_NAMES[nameIdx], text: SEED_TEXTS[textIdx], at: Date.now() - 3 * 3600 * 1000 },
+      {
+        id: "seed",
+        name: SEED_NAMES[nameIdx],
+        text: SEED_TEXTS[textIdx],
+        at: Date.now() - 3 * 3600 * 1000,
+        avatar: AVATAR_POOL[avatarIdx],
+      },
     ],
   };
 }
@@ -747,27 +755,33 @@ type CTASpec = {
   bg: string;
   shadow: string;
   kind: "link" | "reserve" | "attend" | "prayer" | "live" | "details" | "congrats" | "condolence";
+  statLabel: string;
+  statCount: number;
 };
 
 function ctaFor(post: ChurchPost): CTASpec {
+  let h = 0;
+  for (let i = 0; i < post.id.length; i++) h = (h * 33 + post.id.charCodeAt(i)) >>> 0;
+  const n = (min: number, span: number) => min + ((h >> 2) % span);
+
   switch (post.type) {
     case "trip":
-      return { label: "احجز الآن", bg: "linear-gradient(180deg,#1f9d63,#157a4a)", shadow: "rgba(31,138,90,0.55)", kind: "reserve" };
+      return { label: "Book Now", bg: "linear-gradient(180deg,#1f9d63,#157a4a)", shadow: "rgba(31,138,90,0.55)", kind: "reserve", statLabel: "Booked", statCount: n(20, 80) };
     case "meeting":
     case "liturgy":
-      return { label: "سجل حضورك", bg: "linear-gradient(180deg,#7c5ad1,#5a3eb0)", shadow: "rgba(124,90,209,0.55)", kind: "attend" };
+      return { label: "Register", bg: "linear-gradient(180deg,#7c5ad1,#5a3eb0)", shadow: "rgba(124,90,209,0.55)", kind: "attend", statLabel: "Interested", statCount: n(40, 160) };
     case "prayer":
-      return { label: "صلي من أجله", bg: "linear-gradient(180deg,#3f7ed6,#2a5fb0)", shadow: "rgba(63,126,214,0.55)", kind: "prayer" };
+      return { label: "🙏 I Prayed", bg: "linear-gradient(180deg,#3f7ed6,#2a5fb0)", shadow: "rgba(63,126,214,0.55)", kind: "prayer", statLabel: "Prayed", statCount: n(80, 300) };
     case "announcement":
-      return { label: "عرض التفاصيل", bg: "linear-gradient(180deg,#f59042,#d96f1f)", shadow: "rgba(217,111,31,0.55)", kind: "details" };
+      return { label: "View Details", bg: "linear-gradient(180deg,#f59042,#d96f1f)", shadow: "rgba(217,111,31,0.55)", kind: "details", statLabel: "Views", statCount: n(120, 500) };
     case "event":
-      return { label: "شاهد البث", bg: "linear-gradient(180deg,#e0464d,#b8232b)", shadow: "rgba(184,35,43,0.55)", kind: "live" };
+      return { label: "Watch Live", bg: "linear-gradient(180deg,#e0464d,#b8232b)", shadow: "rgba(184,35,43,0.55)", kind: "live", statLabel: "Watching Now", statCount: n(15, 80) };
     case "wedding":
-      return { label: "شارك التهنئة", bg: "linear-gradient(180deg,#e58aa0,#c44569)", shadow: "rgba(196,69,105,0.5)", kind: "congrats" };
+      return { label: "Send Congrats", bg: "linear-gradient(180deg,#e58aa0,#c44569)", shadow: "rgba(196,69,105,0.5)", kind: "congrats", statLabel: "Congrats", statCount: n(30, 120) };
     case "condolence":
-      return { label: "أرسل تعزية", bg: "linear-gradient(180deg,#8a7257,#6a543a)", shadow: "rgba(106,84,58,0.55)", kind: "condolence" };
+      return { label: "Send Condolence", bg: "linear-gradient(180deg,#8a7257,#6a543a)", shadow: "rgba(106,84,58,0.55)", kind: "condolence", statLabel: "Condolences", statCount: n(20, 90) };
     default:
-      return { label: "عرض التفاصيل", bg: "linear-gradient(180deg,#b8893a,#7a4a26)", shadow: "rgba(122,74,38,0.55)", kind: "details" };
+      return { label: "View Details", bg: "linear-gradient(180deg,#b8893a,#7a4a26)", shadow: "rgba(122,74,38,0.55)", kind: "details", statLabel: "Views", statCount: n(80, 300) };
   }
 }
 
